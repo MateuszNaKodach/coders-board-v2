@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug: CodersBoard - Backend",
+            "type": "node",
+            "request": "attach",
+            "remoteRoot": "/app",
+            "localRoot": "${workspaceFolder}/backend/",
+            "protocol": "inspector",
+            "port": 9229,
+            "restart": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        }
+    ]
+}
