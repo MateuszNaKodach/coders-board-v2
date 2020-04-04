@@ -18,7 +18,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk=0.0.0.0:9229 -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "ci-format": "prettier -c \"src/**/*.ts\" \"test/**/*.ts\"",
+    "ci-lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --format codeframe"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
