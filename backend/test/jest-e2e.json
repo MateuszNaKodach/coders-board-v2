@@ -5,5 +5,13 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@coders-board-library/event-sourcing/(.*)": "<rootDir>/../libs/event-sourcing/src/$1",
+    "@coders-board-library/event-sourcing": "<rootDir>/../libs/event-sourcing/src",
+    "@coders-board-library/time-provider/(.*)": "<rootDir>/../libs/time-provider/src/$1",
+    "@coders-board-library/time-provider": "<rootDir>/../libs/time-provider/src",
+    "@coders-board-library/public-messages/(.*)": "<rootDir>/../libs/public-messages/src/$1",
+    "@coders-board-library/public-messages": "<rootDir>/../libs/public-messages/src"
   }
 }

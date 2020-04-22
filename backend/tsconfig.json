@@ -9,7 +9,19 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true
+    "incremental": true,
+    "paths": {
+      "@coders-board-library/event-sourcing": ["libs/event-sourcing/src"],
+      "@coders-board-library/event-sourcing/*": ["libs/event-sourcing/src/*"],
+      "@coders-board-library/time-provider": ["libs/time-provider/src"],
+      "@coders-board-library/time-provider/*": ["libs/time-provider/src/*"],
+      "@coders-board-library/public-messages": [
+        "libs/public-messages/src"
+      ],
+      "@coders-board-library/public-messages/*": [
+        "libs/public-messages/src/*"
+      ]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }

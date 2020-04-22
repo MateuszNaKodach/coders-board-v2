@@ -1,4 +1,36 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "projects": {
+    "event-sourcing": {
+      "type": "library",
+      "root": "libs/event-sourcing",
+      "entryFile": "index",
+      "sourceRoot": "libs/event-sourcing/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/event-sourcing/tsconfig.lib.json"
+      }
+    },
+    "time-provider": {
+      "type": "library",
+      "root": "libs/time-provider",
+      "entryFile": "index",
+      "sourceRoot": "libs/time-provider/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/time-provider/tsconfig.lib.json"
+      }
+    },
+    "public-messages": {
+      "type": "library",
+      "root": "libs/public-messages",
+      "entryFile": "index",
+      "sourceRoot": "libs/public-messages/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/public-messages/tsconfig.lib.json"
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": true
+  }
 }

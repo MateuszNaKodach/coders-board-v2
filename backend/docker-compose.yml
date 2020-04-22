@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   coders-board:
@@ -10,16 +10,39 @@ services:
       context: .
       target: development
 
+    container_name: coders-board-nestjs
     volumes:
       - .:/app
       - /app/node_modules
     ports:
       - 3000:3000
       - 9229:9229
+    environment:
+      DATABASE_MODE: in-memory
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
     command:
       - start:debug
     networks:
       - coders-board-network
+
+  postgres:
+    image: postgres:12
+    container_name: coders-board-postgres
+    restart: always
+    ports:
+      - 5002:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: coders-board
+    networks:
+      - coders-board-network
+    #volumes:
+    # - ../pgdata:/var/lib/postgresql/data #keep data outside container
+
 networks:
   coders-board-network:
     name: coders-board-network
