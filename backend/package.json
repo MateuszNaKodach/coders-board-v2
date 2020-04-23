@@ -77,6 +77,7 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
+      "@coders-board-library/assert-type": "<rootDir>/libs/assert-type/src",
       "@coders-board-library/event-sourcing/(.*)": "<rootDir>/libs/event-sourcing/src/$1",
       "@coders-board-library/event-sourcing": "<rootDir>/libs/event-sourcing/src",
       "@coders-board-library/time-provider/(.*)": "<rootDir>/libs/time-provider/src/$1",
