@@ -1,0 +1,6 @@
+query materialTags {
+  materialTags {
+    id
+    name
+  }
+}

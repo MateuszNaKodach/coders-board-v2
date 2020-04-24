@@ -1,0 +1,39 @@
+query materials {
+	materials {
+    id
+    name
+    url
+    image
+    tags {
+      id
+      name
+    }
+  }
+}
+
+mutation createMaterial($image: String, $name: String!, $url: String!, $tags: [String!]!) {
+  createMaterial(image: $image, name: $name, url: $url, tags: $tags) {
+    id
+    name
+    url
+    image
+  }
+}
+
+mutation updateMaterial($id: ID!, $image: String, $name: String!, $url: String!, $tags: [String!]!) {
+  updateMaterial(id: $id, image: $image, name: $name, url: $url, tags: $tags) {
+    id
+    name
+    url
+    image
+  }
+}
+
+mutation deleteMaterial($id: ID!) {
+  deleteMaterial(id: $id) {
+    id
+    name
+    url
+    image
+  }
+}

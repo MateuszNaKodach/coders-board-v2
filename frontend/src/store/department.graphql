@@ -1,0 +1,8 @@
+query departments {
+	departments {
+		id
+    name
+    description
+    active
+  }
+}
