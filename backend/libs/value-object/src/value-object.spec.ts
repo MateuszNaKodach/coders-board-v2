@@ -1,4 +1,4 @@
-import { ValueObjectType, ValueObject } from './value-object';
+import { ValueObjectFactory, ValueObject } from './value-object';
 import {
   EmptyStringPolicy,
   ConcatPolicy,
@@ -13,15 +13,16 @@ import {
   HasMethodWithReturnType,
 } from '@coders-board-library/assert-type';
 
-@ValueObjectType
-class LastName extends ValueObject<'LastName', LastName, string>(
+class LastName extends ValueObjectFactory.String(
+  'LastName',
   EmptyStringPolicy,
 ) {}
-
-@ValueObjectType
-class PersonalEmail extends ValueObject<'PersonalEmail', PersonalEmail, string>(
+class PersonalEmail extends ValueObjectFactory.String(
+  'PersonalEmail',
   ConcatPolicy(EmptyStringPolicy, EmailPolicy),
 ) {}
+
+class Struct extends ValueObject<{ x: number; y: number }>()('Struct') {}
 
 describe('ValueObject', () => {
   it('Does not have public constructor', () => {

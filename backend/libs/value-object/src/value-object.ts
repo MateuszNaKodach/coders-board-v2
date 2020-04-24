@@ -1,12 +1,23 @@
 import { ValueObjectPolicy } from './value-object-policy';
 
-interface IValueObject<S extends string, N, T> {
+type ValueObjectTypeDefinition =
+  | Readonly<{ [k: string]: any }>
+  | string
+  | number;
+type ValueObjectFactoryTypeDefinition<S extends string, T> = {
+  from: (_: T) => IValueObject<S, T>;
+  Type: () => S;
+};
+
+interface IValueObject<S extends string, T> {
   readonly raw: T;
   Type(): S;
-  equals(val: T | N): boolean;
+  equals(val: T | IValueObject<S, T>): boolean;
 }
 
-function isValueObject<N extends IValueObject<S, N, T>, S extends string, T>(
+const ValueObjectsSet = new Set<string>();
+
+function isValueObject<N extends IValueObject<S, T>, S extends string, T>(
   val: T | N,
 ): val is N {
   return (
@@ -16,37 +27,52 @@ function isValueObject<N extends IValueObject<S, N, T>, S extends string, T>(
   );
 }
 
-
-function ValueObject<S extends string, N, T>(
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  policy: ValueObjectPolicy<T> = () => { },
-) {
-  return class TValueObject implements IValueObject<S, N, T> {
-    protected constructor(readonly raw: T) { }
-
-    Type(): S {
-      return TValueObject.name as S;
+function ValueObject<T extends ValueObjectTypeDefinition>() {
+  return function ValueObjectConstructor<S extends string>(
+    typeName: S,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    policy: ValueObjectPolicy<T> = (_: T) => {},
+  ) {
+    if (ValueObjectsSet.has(typeName)) {
+      throw Error(`ValueObject with name ${typeName} currently exists`);
     }
+    ValueObjectsSet.add(typeName);
+    return class ValueObjectFactory implements IValueObject<S, Readonly<T>> {
+      protected constructor(readonly raw: T) {}
 
-    static from(val: T): N {
-      policy(val);
-      return (new TValueObject(val) as unknown) as N;
-    }
-
-    equals(val: T | N): boolean {
-      if (isValueObject(val)) {
-        const _val = (val as unknown) as IValueObject<S, N, T>;
-        if (this.Type() !== _val.Type()) return false;
-        return this.raw === _val.raw;
+      Type(): S {
+        return (typeName as unknown) as S;
       }
-      return this.raw === val;
-    }
+
+      static Type(): S {
+        return (typeName as unknown) as S;
+      }
+
+      static from(val: T): IValueObject<S, Readonly<T>> {
+        policy(val);
+        return new ValueObjectFactory(val);
+      }
+
+      equals(val: T | IValueObject<S, T>): boolean {
+        if (isValueObject(val)) {
+          if (this.Type() !== val.Type()) return false;
+          return this.raw === val.raw;
+        }
+        return this.raw === val;
+      }
+    };
   };
 }
 
-function ValueObjectType<T extends ReturnType<typeof ValueObject>>(target: T) {
-  (target as any).__proto__.prototype.Type = () => target.name;
-  return target;
-}
+const ValueObjectFactory = {
+  String: ValueObject<string>(),
+  Number: ValueObject<number>(),
+};
 
-export { isValueObject, ValueObject, ValueObjectType };
+export {
+  ValueObjectTypeDefinition,
+  ValueObjectFactoryTypeDefinition,
+  isValueObject,
+  ValueObject,
+  ValueObjectFactory,
+};
