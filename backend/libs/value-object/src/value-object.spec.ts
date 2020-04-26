@@ -1,4 +1,4 @@
-import { ValueObjectFactory, ValueObject } from './value-object';
+import { ValueObjectFactory, ValueObject, ValueObjectClass } from './value-object';
 import {
   EmptyStringPolicy,
   ConcatPolicy,
@@ -16,13 +16,13 @@ import {
 class LastName extends ValueObjectFactory.String(
   'LastName',
   EmptyStringPolicy,
-) {}
+) { }
 class PersonalEmail extends ValueObjectFactory.String(
   'PersonalEmail',
   ConcatPolicy(EmptyStringPolicy, EmailPolicy),
-) {}
+) { }
 
-class Struct extends ValueObject<{ x: number; y: number }>()('Struct') {}
+class Struct extends ValueObject<{ x: number; y: number }>()('Struct') { }
 
 describe('ValueObject', () => {
   it('Does not have public constructor', () => {
@@ -51,3 +51,19 @@ describe('ValueObjects which have the same generic parameter type and', () => {
     });
   });
 });
+class Foo extends ValueObjectFactory.String('Foo') {
+  /**
+   * Foo
+   */
+  public method() {
+    return 10;
+  }
+
+}
+
+const FooFactory = ValueObjectClass(Foo)<Foo>();
+
+
+let foo = FooFactory.from("fooo");
+foo.method();
+foo.equals(FooFactory.from("ass"));
