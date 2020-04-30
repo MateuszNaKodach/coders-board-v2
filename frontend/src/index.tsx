@@ -1,34 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import { GlobalStyles } from 'components';
-import AppProviders from 'context';
-import Root from 'pages/Root';
 import * as serviceWorker from './serviceWorker';
-
-// if (process.env.NODE_ENV === 'development') {
-//   // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-//   const axe = require('react-axe');
-//   axe(React, ReactDOM, 2000);
-// }
-
-if (process.env.NODE_ENV === 'development') {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-  const whyDidYouRender = require('@welldone-software/why-did-you-render');
-  whyDidYouRender(React);
-}
+import { Providers } from './Providers';
+import { Routes } from './Routes';
 
 ReactDOM.render(
-  <AppProviders>
-    <BrowserRouter>
-      <GlobalStyles />
-      <Root />
-    </BrowserRouter>
-  </AppProviders>,
+  <React.StrictMode>
+    <Providers>
+      <Routes />
+    </Providers>
+  </React.StrictMode>,
   document.getElementById('root'),
-  () => {
-    document.getElementById('preloading-styles')!.remove();
-  },
 );
 
 // If you want your app to work offline and load faster, you can change

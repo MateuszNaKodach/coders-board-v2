@@ -1,24 +1,28 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+const path = require('path');
 const CracoAntDesignPlugin = require('craco-antd');
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
-const customizeTheme = require('./src/generated/customizeTheme');
+const CracoAlias = require('craco-alias');
 
 module.exports = {
-  plugins:
-    process.env.NODE_ENV !== 'test'
-      ? [
-          {
-            plugin: CracoAntDesignPlugin,
-            options: {
-              customizeTheme,
-            },
-          },
-        ]
-      : undefined,
-  babel: {
-    plugins: ['lodash', 'babel-plugin-styled-components'],
+  plugins: [
+    {
+      plugin: CracoAntDesignPlugin,
+    },
+    {
+      plugin: CracoAlias,
+      options: {
+        source: 'tsconfig',
+        baseUrl: './',
+        tsConfigPath: path.resolve(__dirname, 'tsconfig.paths.json'),
+      },
+    },
+  ],
+  eslint: {
+    enable: false,
   },
-  webpack: {
-    plugins: [new LodashModuleReplacementPlugin()],
+  typescript: {
+    enableTypeChecking: false,
+  },
+  babel: {
+    plugins: ['emotion'],
   },
 };

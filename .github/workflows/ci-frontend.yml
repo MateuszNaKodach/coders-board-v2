@@ -48,45 +48,45 @@ jobs:
         run: yarn build
         working-directory: ${{ env.working-directory }}
 
-  format:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest] #, windows-latest, macos-latest]
-        node: [12.x] # 10.x
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  # format:
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest] #, windows-latest, macos-latest]
+  #       node: [12.x] # 10.x
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node }}
+  #     - name: Use Node.js ${{ matrix.node-version }}
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: ${{ matrix.node }}
 
-      # TODO: yarn cache setup
-      # - name: Get node_modules cache dir
-      #   id: npm-cache
-      #   run: |
-      #     echo "::set-output name=dir::$(npm config get cache)"
-      # - name: Cache node modules
-      #   uses: actions/cache@v1
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: ${{ steps.npm-cache.outputs.dir }}
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
+  # TODO: yarn cache setup
+  # - name: Get node_modules cache dir
+  #   id: npm-cache
+  #   run: |
+  #     echo "::set-output name=dir::$(npm config get cache)"
+  # - name: Cache node modules
+  #   uses: actions/cache@v1
+  #   env:
+  #     cache-name: cache-node-modules
+  #   with:
+  #     path: ${{ steps.npm-cache.outputs.dir }}
+  #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+  #     restore-keys: |
+  #       ${{ runner.os }}-build-${{ env.cache-name }}-
+  #       ${{ runner.os }}-build-
+  #       ${{ runner.os }}-
 
-      - name: Install dependencies
-        run: yarn install
-        working-directory: ${{ env.working-directory }}
+  # - name: Install dependencies
+  #   run: yarn install
+  #   working-directory: ${{ env.working-directory }}
 
-      - name: Run formatter
-        run: yarn ci-format
-        working-directory: ${{ env.working-directory }}
+  # - name: Run formatter
+  #   run: yarn ci-format
+  #   working-directory: ${{ env.working-directory }}
 
   lint:
     runs-on: ${{ matrix.os }}
@@ -125,64 +125,57 @@ jobs:
         working-directory: ${{ env.working-directory }}
 
       - name: Run linter
-        run: yarn ci-lint
+        run: yarn check:lint
         working-directory: ${{ env.working-directory }}
-
-  tests:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest] #, windows-latest, macos-latest]
-        node: [12.x] # 10.x
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node }}
-
-      # TODO: yarn cache setup
-      # - name: Get node_modules cache dir
-      #   id: npm-cache
-      #   run: |
-      #     echo "::set-output name=dir::$(npm config get cache)"
-      # - name: Cache node modules
-      #   uses: actions/cache@v1
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: ${{ steps.npm-cache.outputs.dir }}
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install
-        working-directory: ${{ env.working-directory }}
-
-      - name: Run tests
-        run: yarn ci-test
-        working-directory: ${{ env.working-directory }}
-
-  build-docker:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Run docker build
-        run: |
-          if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build
-            docker-compose --file docker-compose.test.yml run sut
-          else
-            docker build . --file Dockerfile
-          fi
-        working-directory: ${{ env.working-directory }}
+  # tests:
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest] #, windows-latest, macos-latest]
+  #       node: [12.x] # 10.x
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #     - name: Use Node.js ${{ matrix.node-version }}
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: ${{ matrix.node }}
+  #     # TODO: yarn cache setup
+  #     # - name: Get node_modules cache dir
+  #     #   id: npm-cache
+  #     #   run: |
+  #     #     echo "::set-output name=dir::$(npm config get cache)"
+  #     # - name: Cache node modules
+  #     #   uses: actions/cache@v1
+  #     #   env:
+  #     #     cache-name: cache-node-modules
+  #     #   with:
+  #     #     path: ${{ steps.npm-cache.outputs.dir }}
+  #     #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+  #     #     restore-keys: |
+  #     #       ${{ runner.os }}-build-${{ env.cache-name }}-
+  #     #       ${{ runner.os }}-build-
+  #     #       ${{ runner.os }}-
+  #     - name: Install dependencies
+  #       run: yarn install
+  #       working-directory: ${{ env.working-directory }}
+  #     - name: Run tests
+  #       run: yarn ci-test
+  #       working-directory: ${{ env.working-directory }}
+  # build-docker:
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest]
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #     - name: Run docker build
+  #       run: |
+  #         if [ -f docker-compose.test.yml ]; then
+  #           docker-compose --file docker-compose.test.yml build
+  #           docker-compose --file docker-compose.test.yml run sut
+  #         else
+  #           docker build . --file Dockerfile
+  #         fi
+  #       working-directory: ${{ env.working-directory }}

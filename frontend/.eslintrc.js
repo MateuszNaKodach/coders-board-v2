@@ -4,63 +4,88 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   extends: [
     'airbnb',
-    'eslint:recommended',
-    'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
+    'plugin:import/typescript',
     'plugin:prettier/recommended',
+    'prettier/@typescript-eslint',
   ],
-  plugins: ['react', '@typescript-eslint', 'prettier'],
+  plugins: ['react', 'react-hooks', '@typescript-eslint', 'jest', 'prettier'],
   env: {
-    es6: true,
-    node: true,
     browser: true,
+    jest: true,
   },
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 2020,
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
     },
   },
   rules: {
-    'no-console': 0,
-    'spaced-comment': ['error', 'always', { markers: ['/'] }],
     'import/prefer-default-export': 0,
-    'react/prop-types': 0,
+    'react/state-in-constructor': 0,
     'react/static-property-placement': 0,
     'react/jsx-curly-newline': 0,
-    'react/state-in-constructor': 0,
-    'react/destructuring-assignment': 0,
-    'react/jsx-filename-extension': [2, { extensions: ['.tsx'] }],
-    'react/jsx-curly-newline': 0,
-    'react/jsx-props-no-spreading': 0,
-    'react/jsx-one-expression-per-line': 0,
+    'no-console': 0,
+    'import/no-extraneous-dependencies': [
+      'error',
+      { devDependencies: ['**/*.test.tsx', '**/*.stories.tsx', 'craco.config.js', 'src/setupTests.ts'] },
+    ],
+    'spaced-comment': [2, 'always', { markers: ['/'] }],
+    'react/jsx-filename-extension': [2, { extensions: ['.ts', '.tsx'] }],
     '@typescript-eslint/explicit-function-return-type': 0,
-    '@typescript-eslint/no-non-null-assertion': 0,
-    "import/extensions": [
-      "error",
-      "ignorePackages",
+    '@typescript-eslint/no-unused-vars': [2, { argsIgnorePattern: '^_' }],
+    'react/jsx-one-expression-per-line': 0,
+    'react/destructuring-assignment': 0,
+    'import/extensions': [
+      'error',
+      'ignorePackages',
       {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
-    ]
+        js: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
+    ],
   },
+  overrides: [
+    {
+      files: ['*.tsx'],
+      rules: {
+        'react/jsx-props-no-spreading': 0,
+        'react/prop-types': 0,
+        'import/no-unresolved': 0,
+      },
+    },
+    {
+      files: ['**/store/*.ts'],
+      rules: {
+        'no-param-reassign': 0,
+      },
+    },
+    {
+      files: ['**/models/*.ts'],
+      rules: {
+        'import/no-cycle': 0,
+      },
+    },
+    {
+      files: ['*.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 0,
+      },
+    },
+  ],
   settings: {
     react: {
       version: 'detect',
-    },
-    'import/extensions': ['.js', '.ts', '.tsx', '.svg'],
-    'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
     'import/resolver': {
       node: {
         paths: [path.resolve(__dirname, 'src')],
         extensions: ['.js', '.ts', '.tsx'],
+      },
+      typescript: {
+        directory: path.resolve(__dirname, 'tsconfig.json'),
       },
     },
   },
