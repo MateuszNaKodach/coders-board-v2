@@ -1,36 +1,6 @@
 version: '3.7'
 
 services:
-  coders-board:
-    build:
-      args:
-        NODE_ENV: development
-        IMAGE_BASE_DEV: node:alpine
-        IMAGE_BASE_PROD: node:alpine
-      context: .
-      target: development
-
-    container_name: coders-board-nestjs
-    volumes:
-      - .:/app
-      - /app/node_modules
-    ports:
-      - 3000:3000
-      - 9229:9229
-    environment:
-      EVENTSOURCING_MODE: inmemory
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_USERNAME: postgres
-      DATABASE_PASSWORD: postgres
-      EVENTSTORE_USERNAME: admin
-      EVENTSTORE_PASSWORD: changeit
-      EVENTSTORE_URL: http://eventstore:2113
-    command:
-      - start:debug
-    networks:
-      - coders-board-network
-
   postgres:
     image: postgres:12
     container_name: coders-board-postgres

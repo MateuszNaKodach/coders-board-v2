@@ -5,41 +5,41 @@ import {
   Module,
   Type,
 } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
-import { CodersBoardTimeProviderAdapter } from './time/coders-board-time-provider.adapter';
+import {CqrsModule} from '@nestjs/cqrs';
+import {CodersBoardTimeProviderAdapter} from './time/coders-board-time-provider.adapter';
 import {
   TIME_PROVIDER,
   TimeProvider,
   TimeProviderModule,
 } from '@coders-board-library/time-provider';
-import { EventSourcingModule } from '@coders-board-library/event-sourcing';
+import {EventSourcingModule} from '@coders-board-library/event-sourcing';
 
-const timeProviderModule = TimeProviderModule.register({ source: 'system' });
+const timeProviderModule = TimeProviderModule.register({source: 'system'});
 const typeOrmEventSourcingModule = EventSourcingModule.registerTypeOrmAsync(
-  {
-    imports: [timeProviderModule],
-    inject: [TimeProvider],
-    useFactory: (timeProvider: TimeProvider) => {
-      return {
-        time: timeProvider.currentDate,
-      };
+    {
+      imports: [timeProviderModule],
+      inject: [TimeProvider],
+      useFactory: (timeProvider: TimeProvider) => {
+        return {
+          time: timeProvider.currentDate,
+        };
+      },
     },
-  },
-  {
-    type: 'postgres',
-    host: process.env.DATABASE_HOST,
-    port: process.env.DATABASE_PORT
-      ? parseInt(process.env.DATABASE_PORT, 10)
-      : 5002,
-    username: process.env.DATABASE_USERNAME
-      ? process.env.DATABASE_USERNAME
-      : 'postgres',
-    password: process.env.DATABASE_PASSWORD
-      ? process.env.DATABASE_PASSWORD
-      : 'postgres',
-    database: 'coders-board',
-    synchronize: true,
-  },
+    {
+      type: 'postgres',
+      host: process.env.DATABASE_HOST,
+      port: process.env.DATABASE_PORT
+          ? parseInt(process.env.DATABASE_PORT, 10)
+          : 5002,
+      username: process.env.DATABASE_USERNAME
+          ? process.env.DATABASE_USERNAME
+          : 'postgres',
+      password: process.env.DATABASE_PASSWORD
+          ? process.env.DATABASE_PASSWORD
+          : 'postgres',
+      database: 'coders-board',
+      synchronize: true,
+    },
 );
 const inMemoryEventSourcingModule = EventSourcingModule.registerInMemoryAsync({
   imports: [timeProviderModule],
@@ -52,23 +52,21 @@ const inMemoryEventSourcingModule = EventSourcingModule.registerInMemoryAsync({
 });
 
 const eventStoreEventSourcingModule = EventSourcingModule.registerEventStoreAsync(
-  {
-    imports: [timeProviderModule],
-    inject: [TimeProvider],
-    useFactory: (timeProvider: TimeProvider) => {
-      return {
-        time: timeProvider.currentDate,
-      };
+    {
+      imports: [timeProviderModule],
+      inject: [TimeProvider],
+      useFactory: (timeProvider: TimeProvider) => {
+        return {
+          time: timeProvider.currentDate,
+        };
+      },
     },
-  },
 );
 
 const eventSourcingModule =
-  'typeorm' === process.env.EVENTSOURCING_MODE
-    ? typeOrmEventSourcingModule
-    : 'eventstore' === process.env.EVENTSOURCING_MODE
-    ? eventStoreEventSourcingModule
-    : inMemoryEventSourcingModule;
+    'typeorm' === process.env.EVENTSOURCING_MODE
+        ? typeOrmEventSourcingModule
+        : ('eventstore' === process.env.EVENTSOURCING_MODE ? eventStoreEventSourcingModule : inMemoryEventSourcingModule);
 
 @Module({
   imports: [CqrsModule, timeProviderModule, eventSourcingModule],
@@ -80,4 +78,5 @@ const eventSourcingModule =
   ],
   exports: [CqrsModule, TIME_PROVIDER, eventSourcingModule, timeProviderModule],
 })
-export class SharedKernelInfrastructureModule {}
+export class SharedKernelInfrastructureModule {
+}
