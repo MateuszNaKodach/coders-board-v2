@@ -18,7 +18,7 @@ services:
       - 3000:3000
       - 9229:9229
     environment:
-      DATABASE_MODE: in-memory
+      EVENTSOURCING_MODE: in-memory
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_USERNAME: postgres
@@ -42,6 +42,24 @@ services:
       - coders-board-network
     #volumes:
     # - ../pgdata:/var/lib/postgresql/data #keep data outside container
+
+  eventstore.db:
+    image: eventstore/eventstore
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_INT_TCP_PORT=1112
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_INT_HTTP_PORT=2112
+      - EVENTSTORE_EXT_HTTP_PORT=2113
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+    ports:
+      - "1112:1112"
+      - "1113:1113"
+      - "2112:2112"
+      - "2113:2113"
+    networks:
+      - coders-board-network
 
 networks:
   coders-board-network:

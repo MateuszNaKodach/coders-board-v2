@@ -1,56 +1,67 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
-import { EVENT_STORAGE, EventStorage } from './event-storage/event-storage';
+import { EVENT_STORAGE } from './api/event-storage';
 import { TypeOrmEventStorage } from './event-storage/typeorm/event-storage.typeorm';
 import { InMemoryEventStorage } from './event-storage/in-memory/event-storage.in-memory';
 import { DomainEventEntity } from './event-storage/typeorm/event.typeorm-entity';
 import { EventSourcingModuleConfig } from './event-sourcing.module-config';
-import { Repository } from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
 import { EventSourcingModuleAsyncConfig } from '@coders-board-library/event-sourcing/event-sourcing.module-async-config';
-import { Time } from '@coders-board-library/event-sourcing/time.type';
 import { EventSourcingModuleConfigFactory } from '@coders-board-library/event-sourcing/event-sourcing.module-config-factory';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 const EVENT_SOURCING_CONFIG = Symbol();
+const DEFAULT_EVENT_STORAGE_NAME = 'public';
 
 @Module({})
 export class EventSourcingModule {
-  static register(config: EventSourcingModuleConfig): DynamicModule {
-    const configProvider: Provider = {
-      provide: EVENT_SOURCING_CONFIG,
-      useValue: config,
-    };
-    if (config.eventStorage === 'typeorm') {
-      const optionalImports = [];
-      optionalImports.push(config.typeOrmModule);
-      return {
-        module: EventSourcingModule,
-        imports: [...optionalImports],
-        providers: [
-          {
-            provide: EVENT_STORAGE,
-            useFactory: (typeOrmRepository: Repository<DomainEventEntity>) =>
-              new TypeOrmEventStorage(config.time, typeOrmRepository),
-          },
-        ],
-        exports: [EVENT_STORAGE],
-      };
-    }
-
+  static registerTypeOrmAsync(
+    config: EventSourcingModuleAsyncConfig,
+    databaseConnectionOptions: Omit<
+      PostgresConnectionOptions,
+      'schema' | 'entities'
+    >,
+  ): DynamicModule {
+    const TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION = Symbol(
+      'TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION',
+    );
     return {
       module: EventSourcingModule,
+      imports: config.imports || [],
       providers: [
-        configProvider,
+        this.createAsyncProviders(config),
+        {
+          provide: TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION,
+          inject: [EVENT_SOURCING_CONFIG],
+          useFactory: async (config: EventSourcingModuleConfig) =>
+            await createConnection({
+              ...databaseConnectionOptions,
+              schema: config.eventStorageName || DEFAULT_EVENT_STORAGE_NAME,
+              entities: [DomainEventEntity],
+            }),
+        },
         {
           provide: EVENT_STORAGE,
-          useFactory: (config: EventSourcingModuleConfig) =>
-            new InMemoryEventStorage(config.time),
-          inject: [EVENT_SOURCING_CONFIG],
+          inject: [
+            EVENT_SOURCING_CONFIG,
+            TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION,
+          ],
+          useFactory: (
+            config: EventSourcingModuleConfig,
+            connection: Connection,
+          ) =>
+            new TypeOrmEventStorage(
+              config.time,
+              connection.getRepository<DomainEventEntity>(DomainEventEntity),
+            ),
         },
       ],
       exports: [EVENT_STORAGE],
     };
   }
 
-  static registerAsync(config: EventSourcingModuleAsyncConfig): DynamicModule {
+  static registerInMemoryAsync(
+    config: EventSourcingModuleAsyncConfig,
+  ): DynamicModule {
     return {
       module: EventSourcingModule,
       imports: config.imports || [],

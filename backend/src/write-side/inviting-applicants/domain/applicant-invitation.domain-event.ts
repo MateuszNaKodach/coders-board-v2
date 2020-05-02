@@ -20,7 +20,7 @@ export namespace ApplicantInvitationDomainEvent {
     }
 
     get aggregateType(): string {
-      return 'ApplicantInvitation';
+      return ApplicantInvitation.name;
     }
   }
 

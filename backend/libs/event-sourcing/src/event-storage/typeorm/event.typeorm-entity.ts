@@ -23,7 +23,7 @@ export class DomainEventEntity implements StorageEventEntry {
   readonly order: number;
 
   @Column({ type: 'json' })
-  readonly payload: any;
+  readonly payload: unknown;
 
   constructor(
     eventId: string,
@@ -32,7 +32,7 @@ export class DomainEventEntity implements StorageEventEntry {
     aggregateId: string,
     aggregateType: string,
     order: number,
-    payload: any,
+    payload: unknown,
   ) {
     this.eventId = eventId;
     this.eventType = eventType;
@@ -50,7 +50,7 @@ export class DomainEventEntity implements StorageEventEntry {
     aggregateId: string;
     aggregateType: string;
     order: number;
-    payload: any;
+    payload: unknown;
   }) {
     return new DomainEventEntity(
       props.eventId,

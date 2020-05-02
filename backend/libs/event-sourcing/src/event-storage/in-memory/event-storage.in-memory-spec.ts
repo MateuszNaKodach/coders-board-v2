@@ -1,7 +1,8 @@
 import { InMemoryEventStorage } from '@coders-board-library/event-sourcing/event-storage/in-memory/event-storage.in-memory';
-import { EventStorage } from '@coders-board-library/event-sourcing/event-storage/event-storage';
+import { EventStorage } from '@coders-board-library/event-sourcing/api/event-storage';
 import * as moment from 'moment';
 import { EventStreamVersion } from '@coders-board-library/event-sourcing/api/event-stream-version.valueobject';
+import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
 
 const time = {
   15_00: moment.utc(new Date(2020, 4, 7, 15, 0)).toDate(),
@@ -13,6 +14,7 @@ const time = {
 const events = {
   aggregate1: {
     id: 'aggregateId1',
+    eventStreamId: EventStreamId.from('aggregateType1', 'aggregateId1'),
     event1: {
       eventId: 'eventId1.1',
       eventType: 'EVENT_TYPE_1',
@@ -32,6 +34,7 @@ const events = {
   },
   aggregate2: {
     id: 'aggregateId2',
+    eventStreamId: EventStreamId.from('aggregateType2', 'aggregateId2'),
     event1: {
       eventId: 'eventId2.1',
       eventType: 'EVENT_TYPE_1',
@@ -62,38 +65,67 @@ describe('Feature: In memory event storage', () => {
   describe('Given: Events to store', () => {
     describe('When: store the events', () => {
       beforeEach(() => {
-        eventStorage.store(events.aggregate1.event1);
-        eventStorage.store(events.aggregate2.event1);
-        eventStorage.store(events.aggregate1.event2);
-        eventStorage.store(events.aggregate2.event2);
+        eventStorage.store(
+          events.aggregate1.eventStreamId,
+          events.aggregate1.event1,
+        );
+        eventStorage.store(
+          events.aggregate2.eventStreamId,
+          events.aggregate2.event1,
+        );
+        eventStorage.store(
+          events.aggregate1.eventStreamId,
+          events.aggregate1.event2,
+        );
+        eventStorage.store(
+          events.aggregate2.eventStreamId,
+          events.aggregate2.event2,
+        );
       });
 
       it('Then: The event should be queryable by all event', async () => {
         currentDate = time['1540'];
-        const stored = await eventStorage.readEvents(events.aggregate1.id);
+        const stored = await eventStorage.readEvents(
+          events.aggregate1.eventStreamId,
+        );
         expect(stored).toContain(events.aggregate1.event1);
         expect(stored).toContain(events.aggregate1.event2);
       });
 
       it('Then: The event should be queryable by time', async () => {
         expect(
-          await eventStorage.readEvents(events.aggregate1.id, time['1520']),
+          await eventStorage.readEvents(
+            events.aggregate1.eventStreamId,
+            time['1520'],
+          ),
         ).toStrictEqual([]);
         expect(
-          await eventStorage.readEvents(events.aggregate1.id, time['1530']),
+          await eventStorage.readEvents(
+            events.aggregate1.eventStreamId,
+            time['1530'],
+          ),
         ).toContain(events.aggregate1.event1);
 
         expect(
-          await eventStorage.readEvents(events.aggregate1.id, time['1540']),
+          await eventStorage.readEvents(
+            events.aggregate1.eventStreamId,
+            time['1540'],
+          ),
         ).toContain(events.aggregate1.event1);
         expect(
-          await eventStorage.readEvents(events.aggregate1.id, time['1540']),
+          await eventStorage.readEvents(
+            events.aggregate1.eventStreamId,
+            time['1540'],
+          ),
         ).toContain(events.aggregate1.event2);
       });
 
       it('Then: The event cannot be stored twice', async () => {
         await expect(
-          eventStorage.store(events.aggregate1.event1),
+          eventStorage.store(
+            events.aggregate1.eventStreamId,
+            events.aggregate1.event1,
+          ),
         ).rejects.toMatch(
           `Event stream already contains this event with id ${events.aggregate1.event1.eventId}!`,
         );
@@ -109,7 +141,11 @@ describe('Feature: In memory event storage', () => {
           payload: {},
         };
         await expect(
-          eventStorage.store(anotherEvent2, EventStreamVersion.exactly(1)),
+          eventStorage.store(
+            events.aggregate1.eventStreamId,
+            anotherEvent2,
+            EventStreamVersion.exactly(1),
+          ),
         ).rejects.toMatch(
           `Event stream for aggregate was modified! Expected version: 1, but actual is: 2`,
         );

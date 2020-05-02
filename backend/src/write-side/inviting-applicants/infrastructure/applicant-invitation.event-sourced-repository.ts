@@ -5,7 +5,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   EVENT_STORAGE,
   EventStorage,
-} from '@coders-board-library/event-sourcing/event-storage/event-storage';
+} from '@coders-board-library/event-sourcing/api/event-storage';
 import { EventBus } from '@nestjs/cqrs';
 import { TimeProviderPort } from '../../shared-kernel/domain/time-provider.port';
 import { StorageEventEntry } from '@coders-board-library/event-sourcing/api/storage-event-entry';
@@ -46,4 +46,6 @@ export class ApplicantInvitationEventSourcedRepository
       throw new Error('UNHANDLED_EVENT_RECONSTRUCTION');
     }
   }
+
+  aggregateType = ApplicantInvitation.name;
 }
