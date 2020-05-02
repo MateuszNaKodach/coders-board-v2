@@ -24,8 +24,8 @@ export abstract class EventSourcedAggregateRootRepository<
   async findById(id: I): Promise<T | null> {
     const events = await this.eventStorage.readEvents(
       EventStreamId.props({
-        aggregateId: id.raw,
-        aggregateType: this.aggregateType,
+        streamId: id.raw,
+        streamGroup: this.aggregateType,
       }),
     );
     if (events.length === 0) {
@@ -53,8 +53,8 @@ export abstract class EventSourcedAggregateRootRepository<
     return this.eventStorage
       .storeAll(
         EventStreamId.props({
-          aggregateId: aggregate.aggregateId.raw,
-          aggregateType: this.aggregateType,
+          streamId: aggregate.aggregateId.raw,
+          streamGroup: this.aggregateType,
         }),
         uncommitedEvents,
         EventStreamVersion.exactly(aggregate.aggregateVersion.raw),

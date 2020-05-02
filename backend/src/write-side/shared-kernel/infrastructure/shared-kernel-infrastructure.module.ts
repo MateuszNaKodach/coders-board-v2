@@ -1,4 +1,10 @@
-import { Module } from '@nestjs/common';
+import {
+  DynamicModule,
+  ForwardReference,
+  Inject,
+  Module,
+  Type,
+} from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CodersBoardTimeProviderAdapter } from './time/coders-board-time-provider.adapter';
 import {
@@ -45,11 +51,23 @@ const inMemoryEventSourcingModule = EventSourcingModule.registerInMemoryAsync({
   },
 });
 
+const eventStoreEventSourcingModule = EventSourcingModule.registerEventStoreAsync(
+  {
+    imports: [timeProviderModule],
+    inject: [TimeProvider],
+    useFactory: (timeProvider: TimeProvider) => {
+      return {
+        time: timeProvider.currentDate,
+      };
+    },
+  },
+);
+
 const eventSourcingModule =
   'typeorm' === process.env.EVENTSOURCING_MODE
     ? typeOrmEventSourcingModule
     : 'eventstore' === process.env.EVENTSOURCING_MODE
-    ? null
+    ? eventStoreEventSourcingModule
     : inMemoryEventSourcingModule;
 
 @Module({

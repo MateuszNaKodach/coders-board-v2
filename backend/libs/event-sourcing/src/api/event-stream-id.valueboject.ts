@@ -1,28 +1,49 @@
-const EVENT_STREAM_ID_PARTS_SEPARATOR = '_';
+export const EVENT_STREAM_GROUP_SEPARATOR = '-';
 
 export class EventStreamId {
   private constructor(
-    readonly aggregateType: string,
-    readonly aggregateId: string,
+    readonly streamGroup: string,
+    readonly streamId: string,
   ) {}
 
-  static from(aggregateType: string, aggregateId: string) {
-    return new EventStreamId(aggregateType, aggregateId);
+  static from(streamGroup: string, streamId: string) {
+    if (
+      streamGroup === undefined ||
+      streamGroup === '' ||
+      streamId === undefined ||
+      streamId === ''
+    ) {
+      throw new Error(
+        `EventStreamId must follow format: "streamGroup${EVENT_STREAM_GROUP_SEPARATOR}streamId". Actual: ${streamGroup}${EVENT_STREAM_GROUP_SEPARATOR}${streamId}`,
+      );
+    }
+    if (streamGroup.includes(EVENT_STREAM_GROUP_SEPARATOR)) {
+      throw new Error(
+        `Stream group cannot include ${EVENT_STREAM_GROUP_SEPARATOR}. Actual: ${streamGroup}`,
+      );
+    }
+    return new EventStreamId(streamGroup, streamId);
   }
 
   static fromRaw(raw: string) {
-    const eventStreamIdParts = raw.split(EVENT_STREAM_ID_PARTS_SEPARATOR);
-    if (eventStreamIdParts.length < 2) {
-      throw new Error('Invalid eventStreamId format: ' + raw);
+    const streamGroup = raw.substr(
+      0,
+      raw.indexOf(EVENT_STREAM_GROUP_SEPARATOR),
+    );
+    const streamId = raw.substr(raw.indexOf(EVENT_STREAM_GROUP_SEPARATOR) + 1);
+    if (streamGroup === undefined || streamGroup === '') {
+      throw new Error(
+        `EventStreamId must follow format: "streamGroup${EVENT_STREAM_GROUP_SEPARATOR}streamId". Actual: ${raw}`,
+      );
     }
-    return new EventStreamId(eventStreamIdParts[0], eventStreamIdParts[1]);
+    return new EventStreamId(streamGroup, streamId);
   }
 
-  static props(props: { aggregateType: string; aggregateId: string }) {
-    return new EventStreamId(props.aggregateType, props.aggregateId);
+  static props(props: { streamGroup: string; streamId: string }) {
+    return EventStreamId.from(props.streamGroup, props.streamId);
   }
 
   get raw() {
-    return `${this.aggregateType}${EVENT_STREAM_ID_PARTS_SEPARATOR}${this.aggregateId}`;
+    return `${this.streamGroup}${EVENT_STREAM_GROUP_SEPARATOR}${this.streamId}`;
   }
 }

@@ -6,7 +6,7 @@ export const EVENT_STORAGE = 'EventStorage';
 
 export interface EventStorage {
   store(
-    streamId: EventStreamId,
+    eventStreamId: EventStreamId,
     event: StorageEventEntry,
     expectedVersion?: EventStreamVersion,
   ): Promise<any>;
@@ -14,13 +14,13 @@ export interface EventStorage {
   //TODO: Consider interface change to return stored events and errors
   // or leave only method for store one event or do storeAll in one transaction
   storeAll(
-    streamId: EventStreamId,
+    eventStreamId: EventStreamId,
     events: StorageEventEntry[],
     expectedVersion?: EventStreamVersion,
   ): Promise<any>;
 
   readEvents(
-    streamId: EventStreamId,
+    eventStreamId: EventStreamId,
     toDate?: Date,
   ): Promise<StorageEventEntry[]>;
 }

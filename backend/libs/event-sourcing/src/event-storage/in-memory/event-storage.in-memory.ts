@@ -1,23 +1,21 @@
 import { EventStorage } from '../../api/event-storage';
 import * as moment from 'moment';
-import { Injectable } from '@nestjs/common';
 import { EventStreamVersion } from '../../api/event-stream-version.valueobject';
 import { StorageEventEntry } from '../../api/storage-event-entry';
 import { Time } from '../../time.type';
 import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
 
-@Injectable()
 export class InMemoryEventStorage implements EventStorage {
   private eventStreams: { [key: string]: StorageEventEntry[] } = {};
 
   constructor(private readonly time: Time) {}
 
   store(
-    streamId: EventStreamId,
+    eventStreamId: EventStreamId,
     event: StorageEventEntry,
     expectedVersion: EventStreamVersion | undefined = undefined,
   ): Promise<void> {
-    const foundStream = this.eventStreams[streamId.raw];
+    const foundStream = this.eventStreams[eventStreamId.raw];
     if (foundStream && foundStream.find(e => e.eventId === event.eventId)) {
       return Promise.reject(
         `Event stream already contains this event with id ${event.eventId}!`,
@@ -30,29 +28,29 @@ export class InMemoryEventStorage implements EventStorage {
           `Event stream for aggregate was modified! Expected version: ${expectedVersion.raw}, but actual is: ${aggregateEvents}`,
         );
       }
-      this.eventStreams[streamId.raw] = [event];
+      this.eventStreams[eventStreamId.raw] = [event];
     } else {
       if (expectedVersion && expectedVersion.raw !== aggregateEvents) {
         return Promise.reject(
           `Event stream for aggregate was modified! Expected version: ${expectedVersion.raw}, but actual is: ${aggregateEvents}`,
         );
       }
-      this.eventStreams[streamId.raw].push(event);
+      this.eventStreams[eventStreamId.raw].push(event);
     }
     return Promise.resolve();
   }
 
   storeAll(
-    streamId: EventStreamId,
+    eventStreamId: EventStreamId,
     events: StorageEventEntry[],
     expectedVersion: EventStreamVersion | undefined = undefined,
   ): Promise<void> {
     return Promise.all(
       events
-        .filter(event => event.aggregateId === streamId.aggregateId)
+        .filter(event => event.aggregateId === eventStreamId.streamId)
         .map((value, index) =>
           this.store(
-            streamId,
+            eventStreamId,
             value,
             expectedVersion
               ? EventStreamVersion.exactly(expectedVersion.raw + index)
@@ -62,15 +60,15 @@ export class InMemoryEventStorage implements EventStorage {
     ).then();
   }
 
-  readEvents(streamId: EventStreamId, toDate?: Date) {
+  readEvents(eventStreamId: EventStreamId, toDate?: Date) {
     const maxEventDate = toDate ? toDate : this.time();
-    const events = this.getEventsBy(streamId).filter(it =>
+    const events = this.getEventsBy(eventStreamId).filter(it =>
       moment(it.occurredAt).isSameOrBefore(moment(maxEventDate)),
     );
     return Promise.resolve(events);
   }
 
-  private getEventsBy(streamId: EventStreamId): StorageEventEntry[] {
-    return this.eventStreams[streamId.raw] || [];
+  private getEventsBy(eventStreamId: EventStreamId): StorageEventEntry[] {
+    return this.eventStreams[eventStreamId.raw] || [];
   }
 }
