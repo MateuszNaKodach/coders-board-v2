@@ -6,7 +6,6 @@ import {
   EVENT_STORAGE,
   EventStorage,
 } from '@coders-board-library/event-sourcing/api/event-storage';
-import { EventBus } from '@nestjs/cqrs';
 import { TimeProviderPort } from '../../shared-kernel/domain/time-provider.port';
 import { StorageEventEntry } from '@coders-board-library/event-sourcing/api/storage-event-entry';
 import { DomainEvent } from '../../shared-kernel/domain/domain-event';
@@ -14,6 +13,10 @@ import { ApplicantInvitationDomainEvent } from '../domain/applicant-invitation.d
 import { DomainEventId } from '../../shared-kernel/domain/domain-event-id.valueobject';
 import { ApplicantInvitationRepository } from '../domain/applicant-invitation.repository';
 import { TIME_PROVIDER } from '@coders-board-library/time-provider';
+import {
+  DOMAIN_EVENT_PUBLISHER,
+  DomainEventPublisher,
+} from '../../shared-kernel/infrastructure/domain-event-publisher/domain-event-publisher';
 
 @Injectable()
 export class ApplicantInvitationEventSourcedRepository
@@ -25,9 +28,9 @@ export class ApplicantInvitationEventSourcedRepository
   constructor(
     @Inject(TIME_PROVIDER) timeProvider: TimeProviderPort,
     @Inject(EVENT_STORAGE) eventStorage: EventStorage,
-    eventBus: EventBus,
+    @Inject(DOMAIN_EVENT_PUBLISHER) domainEventPublisher: DomainEventPublisher,
   ) {
-    super(timeProvider, eventStorage, eventBus);
+    super(timeProvider, eventStorage, domainEventPublisher);
   }
 
   protected newAggregate(): ApplicantInvitation {

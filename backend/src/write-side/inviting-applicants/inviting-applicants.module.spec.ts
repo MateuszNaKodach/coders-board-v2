@@ -6,11 +6,15 @@ import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { ApplicantInvitationPublicEvent } from '@coders-board-library/public-messages';
 import ApplicantInvited = ApplicantInvitationPublicEvent.ApplicantInvited;
 import {
-  EventBusSpy,
+  EventPublisherSpy,
   expectOnlyPublishedEvent,
 } from '@coders-board-library/public-messages/shared/public-messages.test-utils';
 import CancelApplicantInvitation = ApplicantInvitationCommand.CancelApplicantInvitation;
 import ApplicantInvitationCancelled = ApplicantInvitationPublicEvent.ApplicantInvitationCancelled;
+import {
+  EXTERNAL_EVENT_PUBLISHER,
+  ExternalEventPublisher,
+} from '../shared-kernel/application/external-event-publisher/external-event-publisher';
 
 /**
  * Test of InvitingApplicants. In tests of logic we bypass presentation layer.
@@ -28,7 +32,7 @@ const person = {
 
 describe('Feature: Inviting applicants', () => {
   let commandBus: CommandBus;
-  let eventBusPublishSpy: EventBusSpy;
+  let eventPublisherPublishSpy: EventPublisherSpy;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -36,7 +40,7 @@ describe('Feature: Inviting applicants', () => {
     }).compile();
     await app.init();
     commandBus = app.get<CommandBus>(CommandBus);
-    eventBusPublishSpy = eventBusSpy(app);
+    eventPublisherPublishSpy = eventPublisherSpy(app);
   });
 
   describe('Given: Applicant to invite', () => {
@@ -54,7 +58,7 @@ describe('Feature: Inviting applicants', () => {
       });
 
       it('Then: Applicant should be invited', () => {
-        expectOnlyPublishedEvent(eventBusPublishSpy, {
+        expectOnlyPublishedEvent(eventPublisherPublishSpy, {
           type: ApplicantInvited,
           payload: {
             firstName: inviteCommand.firstName,
@@ -73,7 +77,7 @@ describe('Feature: Inviting applicants', () => {
         });
 
         it('Then: Applicant invitation should be cancelled', () => {
-          expectOnlyPublishedEvent(eventBusPublishSpy, {
+          expectOnlyPublishedEvent(eventPublisherPublishSpy, {
             type: ApplicantInvitationCancelled,
             payload: {
               firstName: inviteCommand.firstName,
@@ -85,13 +89,13 @@ describe('Feature: Inviting applicants', () => {
       });
 
       afterEach(() => {
-        eventBusPublishSpy.mockClear();
+        eventPublisherPublishSpy.mockClear();
       });
     });
   });
 });
 
-function eventBusSpy(app: TestingModule): EventBusSpy {
-  const eventBus = app.get<EventBus>(EventBus);
+function eventPublisherSpy(app: TestingModule): EventPublisherSpy {
+  const eventBus = app.get<ExternalEventPublisher>(EXTERNAL_EVENT_PUBLISHER);
   return jest.spyOn(eventBus, 'publish');
 }

@@ -1,4 +1,4 @@
-import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { ApplicantInvitationDomainEvent } from '../domain/applicant-invitation.domain-event';
 import { ApplicantInvitationPublicEvent } from '@coders-board-library/public-messages';
 import {
@@ -6,6 +6,10 @@ import {
   ApplicantInvitationRepository,
 } from '../domain/applicant-invitation.repository';
 import { Inject } from '@nestjs/common';
+import {
+  EXTERNAL_EVENT_PUBLISHER,
+  ExternalEventPublisher,
+} from '../../shared-kernel/application/external-event-publisher/external-event-publisher';
 
 /**
  * Each domain event which should be available for read-models and other context on the write-side need
@@ -17,17 +21,14 @@ export namespace EventPropagator {
   @EventsHandler(ApplicantInvited)
   class ApplicantInvited
     implements IEventHandler<ApplicantInvitationDomainEvent.ApplicantInvited> {
-    constructor(private readonly eventBus: EventBus) {}
+    constructor(
+      @Inject(EXTERNAL_EVENT_PUBLISHER)
+      private readonly externalEventPublisher: ExternalEventPublisher,
+    ) {}
 
     handle(event: ApplicantInvitationDomainEvent.ApplicantInvited) {
       //TODO: Saving in outbox and publishing after in batches
-      if (!event.eventId) {
-        console.log(
-          `Wrong event ${JSON.stringify(event)}. Find out why and fix it!`,
-        );
-        return; //FIXME: Investigate this error!
-      }
-      this.eventBus.publish(
+      this.externalEventPublisher.publish(
         new ApplicantInvitationPublicEvent.ApplicantInvited(
           event.eventId.raw,
           event.occurredAt,
@@ -47,7 +48,8 @@ export namespace EventPropagator {
     implements
       IEventHandler<ApplicantInvitationDomainEvent.InvitationCancelled> {
     constructor(
-      private readonly eventBus: EventBus,
+      @Inject(EXTERNAL_EVENT_PUBLISHER)
+      private readonly externalEventPublisher: ExternalEventPublisher,
       @Inject(APPLICANT_INVITATION_REPOSITORY)
       private readonly applicantInvitationRepository: ApplicantInvitationRepository,
     ) {}
@@ -56,7 +58,7 @@ export namespace EventPropagator {
       const invitation = await this.applicantInvitationRepository.findById(
         event.aggregateId,
       );
-      this.eventBus.publish(
+      this.externalEventPublisher.publish(
         new ApplicantInvitationPublicEvent.ApplicantInvitationCancelled(
           event.eventId.raw,
           event.occurredAt,

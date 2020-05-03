@@ -8,10 +8,10 @@ interface Type<T> extends Function {
   new (...args: any[]): T;
 }
 
-export type EventBusSpy = SpyInstance<void, [any]>;
+export type EventPublisherSpy = SpyInstance<void, [any]>;
 
 export function expectOnlyPublishedEvent<T extends PublicEvent>(
-  eventBusSpy: EventBusSpy,
+  eventBusSpy: EventPublisherSpy,
   expected: ExpectedPublishEvent<T>,
 ) {
   let publishedEvent;

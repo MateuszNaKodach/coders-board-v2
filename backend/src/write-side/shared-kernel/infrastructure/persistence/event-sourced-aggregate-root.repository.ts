@@ -1,4 +1,3 @@
-import { EventBus } from '@nestjs/cqrs';
 import { AbstractAggregateRoot } from '../../domain/abstract-aggregate-root';
 import { AggregateId } from '../../domain/aggregate-id.valueobject';
 import { AggregateRootRepository } from '../../domain/aggregate-root.repository';
@@ -8,6 +7,7 @@ import { StorageEventEntry } from '@coders-board-library/event-sourcing/api/stor
 import { TimeProviderPort } from '../../domain/time-provider.port';
 import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
 import { EventStreamVersion } from '@coders-board-library/event-sourcing/api/event-stream-version.valueobject';
+import { DomainEventPublisher } from '../domain-event-publisher/domain-event-publisher';
 
 export abstract class EventSourcedAggregateRootRepository<
   I extends AggregateId,
@@ -18,7 +18,7 @@ export abstract class EventSourcedAggregateRootRepository<
   protected constructor(
     protected readonly timeProvider: TimeProviderPort,
     private readonly eventStorage: EventStorage,
-    private readonly eventBus: EventBus,
+    private readonly domainEventPublisher: DomainEventPublisher,
   ) {}
 
   async findById(id: I): Promise<T | null> {
@@ -59,7 +59,9 @@ export abstract class EventSourcedAggregateRootRepository<
         uncommitedEvents,
         EventStreamVersion.exactly(aggregate.aggregateVersion.raw),
       )
-      .then(() => this.eventBus.publishAll(aggregate.getUncommittedEvents()))
+      .then(() =>
+        this.domainEventPublisher.publishAll(aggregate.getUncommittedEvents()),
+      )
       .then(() => aggregate.clearUncommittedEvents());
   }
 

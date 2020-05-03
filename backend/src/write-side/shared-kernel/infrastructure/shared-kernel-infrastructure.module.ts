@@ -5,7 +5,7 @@ import {
   Module,
   Type,
 } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
+import { CommandBus, CqrsModule, EventBus } from '@nestjs/cqrs';
 import { CodersBoardTimeProviderAdapter } from './time/coders-board-time-provider.adapter';
 import {
   TIME_PROVIDER,
@@ -13,6 +13,14 @@ import {
   TimeProviderModule,
 } from '@coders-board-library/time-provider';
 import { EventSourcingModule } from '@coders-board-library/event-sourcing';
+import { DOMAIN_EVENT_PUBLISHER } from './domain-event-publisher/domain-event-publisher';
+import { NestJsDomainEventPublisher } from './domain-event-publisher/nestjs-domain-event-publisher';
+import { LoggingDomainEventPublisher } from './domain-event-publisher/logging-domain-event-publisher';
+import { EXTERNAL_EVENT_PUBLISHER } from '../application/external-event-publisher/external-event-publisher';
+import { LoggingExternalEventPublisher } from './external-event-publisher/logging-external-event-publisher';
+import { NestJsExternalEventPublisher } from './external-event-publisher/nest-js-external-event-publisher';
+import { EXTERNAL_COMMAND_SENDER } from '../application/external-command-sender/external-command-sender';
+import { NestJsExternalCommandSender } from './external-command-sender/nestjs-external-command-sender';
 
 const timeProviderModule = TimeProviderModule.register({ source: 'system' });
 const typeOrmEventSourcingModule = EventSourcingModule.registerTypeOrmAsync(
@@ -77,7 +85,36 @@ const eventSourcingModule =
       provide: TIME_PROVIDER,
       useClass: CodersBoardTimeProviderAdapter,
     },
+    {
+      provide: DOMAIN_EVENT_PUBLISHER,
+      inject: [EventBus],
+      useFactory: (eventBus: EventBus) =>
+        new LoggingDomainEventPublisher(
+          new NestJsDomainEventPublisher(eventBus),
+        ),
+    },
+    {
+      provide: EXTERNAL_EVENT_PUBLISHER,
+      inject: [EventBus],
+      useFactory: (eventBus: EventBus) =>
+        new LoggingExternalEventPublisher(
+          new NestJsExternalEventPublisher(eventBus),
+        ),
+    },
+    {
+      provide: EXTERNAL_COMMAND_SENDER,
+      inject: [CommandBus],
+      useFactory: (commandBus: CommandBus) =>
+        new NestJsExternalCommandSender(commandBus),
+    },
   ],
-  exports: [CqrsModule, TIME_PROVIDER, eventSourcingModule, timeProviderModule],
+  exports: [
+    CqrsModule,
+    TIME_PROVIDER,
+    eventSourcingModule,
+    timeProviderModule,
+    DOMAIN_EVENT_PUBLISHER,
+    EXTERNAL_EVENT_PUBLISHER,
+  ],
 })
 export class SharedKernelInfrastructureModule {}

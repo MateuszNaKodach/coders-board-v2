@@ -17,7 +17,7 @@ services:
     # - ../pgdata:/var/lib/postgresql/data #keep data outside container
 
   eventstore:
-    container_name: coders-board-eventstore.
+    container_name: coders-board-eventstore
     image: eventstore/eventstore
     environment:
       - EVENTSTORE_CLUSTER_SIZE=1
