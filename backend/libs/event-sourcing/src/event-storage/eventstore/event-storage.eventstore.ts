@@ -4,7 +4,7 @@ import { HttpService, Injectable } from '@nestjs/common';
 import { EventStreamVersion } from '../../api/event-stream-version.valueobject';
 import { StorageEventEntry } from '../../api/storage-event-entry';
 import { Time } from '../../time.type';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
 
 const EXPECTED_ANY_VERSION = -2;

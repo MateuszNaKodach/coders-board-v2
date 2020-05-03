@@ -14,7 +14,7 @@ export class StoreInEventStorageAndForwardExternalEventBus
   ) {}
 
   async publish<T extends PublicEvent>(event: T) {
-    if (event.eventId) {
+    if (!event.eventId) {
       return;
     }
     await this.eventStorage.store(

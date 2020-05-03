@@ -28,7 +28,7 @@ export namespace EventPropagator {
 
     handle(event: ApplicantInvitationDomainEvent.ApplicantInvited) {
       //TODO: Saving in outbox and publishing after in batches
-      this.externalEventPublisher.publish(
+      return this.externalEventPublisher.publish(
         new ApplicantInvitationPublicEvent.ApplicantInvited(
           event.eventId.raw,
           event.occurredAt,
@@ -58,7 +58,7 @@ export namespace EventPropagator {
       const invitation = await this.applicantInvitationRepository.findById(
         event.aggregateId,
       );
-      this.externalEventPublisher.publish(
+      return this.externalEventPublisher.publish(
         new ApplicantInvitationPublicEvent.ApplicantInvitationCancelled(
           event.eventId.raw,
           event.occurredAt,
