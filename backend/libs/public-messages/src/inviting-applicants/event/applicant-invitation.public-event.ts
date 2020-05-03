@@ -8,9 +8,9 @@ export namespace ApplicantInvitationPublicEvent {
       eventId: string,
       occurredAt: Date,
       aggregateId: string,
-      payload: P,
+      data: P,
     ) {
-      super(eventId, occurredAt, aggregateId, payload);
+      super(eventId, occurredAt, aggregateId, data);
     }
 
     get aggregateType(): string {
@@ -18,39 +18,39 @@ export namespace ApplicantInvitationPublicEvent {
     }
   }
 
-  export type ApplicantInvitedPayload = {
+  export type ApplicantInvitedData = {
     personalEmail: string;
     firstName: string;
     lastName: string;
   };
   export class ApplicantInvited extends ApplicantInvitationAbstractPublicEvent<
-    ApplicantInvitedPayload
+    ApplicantInvitedData
   > {
     constructor(
       eventId: string,
       occurredAt: Date,
       aggregateId: string,
-      payload: ApplicantInvitationPublicEvent.ApplicantInvitedPayload,
+      data: ApplicantInvitationPublicEvent.ApplicantInvitedData,
     ) {
-      super(eventId, occurredAt, aggregateId, payload);
+      super(eventId, occurredAt, aggregateId, data);
     }
   }
 
-  export type ApplicantInvitationCancelledPayload = {
+  export type ApplicantInvitationCancelledData = {
     personalEmail: string;
     firstName: string;
     lastName: string;
   };
   export class ApplicantInvitationCancelled extends ApplicantInvitationAbstractPublicEvent<
-    ApplicantInvitationCancelledPayload
+    ApplicantInvitationCancelledData
   > {
     constructor(
       eventId: string,
       occurredAt: Date,
       aggregateId: string,
-      payload: ApplicantInvitationPublicEvent.ApplicantInvitationCancelledPayload,
+      data: ApplicantInvitationPublicEvent.ApplicantInvitationCancelledData,
     ) {
-      super(eventId, occurredAt, aggregateId, payload);
+      super(eventId, occurredAt, aggregateId, data);
     }
   }
 }

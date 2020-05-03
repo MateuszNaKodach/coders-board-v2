@@ -8,7 +8,7 @@ export interface Type<T> extends Function {
 
 export type ExpectedDomainEvent<T extends DomainEvent> = {
   type: Type<T>;
-  payload: T['payload'];
+  data: T['data'];
 };
 
 export function expectDomainEvent<T extends DomainEvent>(
@@ -21,7 +21,7 @@ export function expectDomainEvent<T extends DomainEvent>(
   const foundEvent = domainEvents.find(it => it instanceof expected.type);
   if (isDomainEvent(foundEvent)) {
     expect(foundEvent).toBeInstanceOf(expected.type);
-    expect(foundEvent.payload).toStrictEqual(expected.payload);
+    expect(foundEvent.data).toStrictEqual(expected.data);
   } else {
     throw new Error('Aggregate root has not applied expected domain event!');
   }

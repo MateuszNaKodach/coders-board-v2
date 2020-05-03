@@ -25,7 +25,7 @@ export function expectOnlyPublishedEvent<T extends PublicEvent>(
 
 export type ExpectedPublishEvent<T extends PublicEvent> = {
   type: Type<T>;
-  payload: T['payload'];
+  data: T['data'];
 };
 
 export function expectEvent<T extends PublicEvent>(
@@ -34,7 +34,7 @@ export function expectEvent<T extends PublicEvent>(
 ) {
   if (isPublicEvent(actual)) {
     expect(actual).toBeInstanceOf(expected.type);
-    expect(actual.payload).toStrictEqual(expected.payload);
+    expect(actual.data).toStrictEqual(expected.data);
   } else {
     throw new Error('Event is not public event!');
   }

@@ -39,7 +39,7 @@ describe('Feature: Applicant invitation', () => {
         it('Then: The applicant should be invited', () => {
           expectDomainEvent(applicantInvitation, {
             type: ApplicantInvited,
-            payload: { ...person.janKowalski },
+            data: { ...person.janKowalski },
           });
         });
       });
@@ -90,7 +90,7 @@ describe('Feature: Applicant invitation', () => {
         it('Then: The applicant invitation should be cancelled', () => {
           expectDomainEvent(applicantInvitation, {
             type: InvitationCancelled,
-            payload: {},
+            data: {},
           });
         });
       });

@@ -42,8 +42,8 @@ export class ApplicantInvitationEventSourcedRepository
       return new ApplicantInvitationDomainEvent[event.eventType](
         DomainEventId.of(event.eventId),
         event.occurredAt,
-        ApplicantInvitationId.of(event.aggregateId),
-        event.payload,
+        ApplicantInvitationId.of(event.streamId),
+        event.data,
       );
     } catch (error) {
       throw new Error('UNHANDLED_EVENT_RECONSTRUCTION');

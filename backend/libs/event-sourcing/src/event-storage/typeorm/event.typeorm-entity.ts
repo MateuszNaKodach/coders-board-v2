@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryColumn, Index } from 'typeorm';
 import { StorageEventEntry } from '../../api/storage-event-entry';
 
 @Entity({ name: 'eventsourcing_domain_events', orderBy: { occurredAt: 'ASC' } })
-@Index(['aggregateId', 'order'], { unique: true })
+@Index(['streamId', 'order'], { unique: true })
 export class DomainEventEntity implements StorageEventEntry {
   @PrimaryColumn()
   readonly eventId: string;
@@ -14,52 +14,52 @@ export class DomainEventEntity implements StorageEventEntry {
   readonly occurredAt: Date;
 
   @Column()
-  readonly aggregateId: string;
+  readonly streamId: string;
 
   @Column()
-  readonly aggregateType: string;
+  readonly streamGroup: string;
 
   @Column()
   readonly order: number;
 
   @Column({ type: 'json' })
-  readonly payload: unknown;
+  readonly data: unknown;
 
   constructor(
     eventId: string,
     eventType: string,
     occurredAt: Date,
-    aggregateId: string,
-    aggregateType: string,
+    streamId: string,
+    streamGroup: string,
     order: number,
-    payload: unknown,
+    data: unknown,
   ) {
     this.eventId = eventId;
     this.eventType = eventType;
     this.occurredAt = occurredAt;
-    this.aggregateId = aggregateId;
+    this.streamId = streamId;
     this.order = order;
-    this.payload = payload;
-    this.aggregateType = aggregateType;
+    this.data = data;
+    this.streamGroup = streamGroup;
   }
 
   static fromProps(props: {
     eventId: string;
     eventType: string;
     occurredAt: Date;
-    aggregateId: string;
-    aggregateType: string;
+    streamId: string;
+    streamGroup: string;
     order: number;
-    payload: unknown;
+    data: unknown;
   }) {
     return new DomainEventEntity(
       props.eventId,
       props.eventType,
       props.occurredAt,
-      props.aggregateId,
-      props.aggregateType,
+      props.streamId,
+      props.streamGroup,
       props.order,
-      props.payload,
+      props.data,
     );
   }
 }

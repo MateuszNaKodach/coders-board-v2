@@ -21,6 +21,11 @@ import { LoggingExternalEventPublisher } from './external-event-publisher/loggin
 import { NestJsExternalEventPublisher } from './external-event-publisher/nest-js-external-event-publisher';
 import { EXTERNAL_COMMAND_SENDER } from '../application/external-command-sender/external-command-sender';
 import { NestJsExternalCommandSender } from './external-command-sender/nestjs-external-command-sender';
+import { StoreInEventStorageAndForwardExternalEventBus } from './external-event-publisher/store-and-forward-external-event-publisher';
+import {
+  EVENT_STORAGE,
+  EventStorage,
+} from '@coders-board-library/event-sourcing/api/event-storage';
 
 const timeProviderModule = TimeProviderModule.register({ source: 'system' });
 const typeOrmEventSourcingModule = EventSourcingModule.registerTypeOrmAsync(
@@ -95,10 +100,13 @@ const eventSourcingModule =
     },
     {
       provide: EXTERNAL_EVENT_PUBLISHER,
-      inject: [EventBus],
-      useFactory: (eventBus: EventBus) =>
+      inject: [EventBus, EVENT_STORAGE],
+      useFactory: (eventBus: EventBus, eventStorage: EventStorage) =>
         new LoggingExternalEventPublisher(
-          new NestJsExternalEventPublisher(eventBus),
+          new StoreInEventStorageAndForwardExternalEventBus(
+            eventStorage,
+            new NestJsExternalEventPublisher(eventBus),
+          ),
         ),
     },
     {

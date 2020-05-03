@@ -9,18 +9,18 @@ export abstract class AbstractDomainEvent<
   readonly eventId: DomainEventId;
   readonly occurredAt: Date;
   readonly aggregateId: I;
-  readonly payload: T;
+  readonly data: T;
 
   protected constructor(
     eventId: DomainEventId,
     occurredAt: Date,
     aggregateId: I,
-    payload: T,
+    data: T,
   ) {
     this.eventId = eventId;
     this.occurredAt = occurredAt;
     this.aggregateId = aggregateId;
-    this.payload = payload;
+    this.data = data;
   }
 
   get eventType(): string {

@@ -4,8 +4,8 @@ export interface PublicEvent<P extends any = any> {
   readonly eventType: string;
   readonly aggregateId: string;
   readonly aggregateType: string;
-  readonly payload: P;
-}
+  readonly data: P;
+} //TODO: Remaster interface. Consider delete aggregate concept? What about read models in this case? Add source - module / BC?
 
 export abstract class AbstractPublicEvent<P extends any = any>
   implements PublicEvent<P> {
@@ -13,7 +13,7 @@ export abstract class AbstractPublicEvent<P extends any = any>
     readonly eventId: string,
     readonly occurredAt: Date,
     readonly aggregateId: string,
-    readonly payload: P,
+    readonly data: P,
   ) {}
 
   get eventType(): string {

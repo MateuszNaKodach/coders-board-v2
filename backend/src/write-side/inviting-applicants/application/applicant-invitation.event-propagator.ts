@@ -34,9 +34,9 @@ export namespace EventPropagator {
           event.occurredAt,
           event.aggregateId.raw,
           {
-            personalEmail: event.payload.personalEmail.raw,
-            firstName: event.payload.firstName.raw,
-            lastName: event.payload.lastName.raw,
+            personalEmail: event.data.personalEmail.raw,
+            firstName: event.data.firstName.raw,
+            lastName: event.data.lastName.raw,
           },
         ),
       );

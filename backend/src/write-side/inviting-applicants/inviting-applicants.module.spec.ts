@@ -60,7 +60,7 @@ describe('Feature: Inviting applicants', () => {
       it('Then: Applicant should be invited', () => {
         expectOnlyPublishedEvent(eventPublisherPublishSpy, {
           type: ApplicantInvited,
-          payload: {
+          data: {
             firstName: inviteCommand.firstName,
             lastName: inviteCommand.lastName,
             personalEmail: inviteCommand.personalEmail,
@@ -79,7 +79,7 @@ describe('Feature: Inviting applicants', () => {
         it('Then: Applicant invitation should be cancelled', () => {
           expectOnlyPublishedEvent(eventPublisherPublishSpy, {
             type: ApplicantInvitationCancelled,
-            payload: {
+            data: {
               firstName: inviteCommand.firstName,
               lastName: inviteCommand.lastName,
               personalEmail: inviteCommand.personalEmail,

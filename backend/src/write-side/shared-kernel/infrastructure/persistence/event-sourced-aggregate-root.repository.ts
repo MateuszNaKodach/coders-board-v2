@@ -70,11 +70,11 @@ export abstract class EventSourcedAggregateRootRepository<
   ): StorageEventEntry {
     return {
       eventId: event.eventId.raw,
-      aggregateId: event.aggregateId.raw,
-      aggregateType: event.aggregateType,
+      streamId: event.aggregateId.raw,
+      streamGroup: event.aggregateType,
       occurredAt: event.occurredAt,
       eventType: event.eventType,
-      payload: event.payload,
+      data: event.data,
     };
   }
 }

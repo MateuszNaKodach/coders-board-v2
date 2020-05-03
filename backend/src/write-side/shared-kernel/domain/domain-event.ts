@@ -12,5 +12,5 @@ export interface DomainEvent<I extends AggregateId = AggregateId, T = any> {
   readonly eventType: string;
   readonly aggregateId: I;
   readonly aggregateType: string;
-  readonly payload: T;
+  readonly data: T;
 }

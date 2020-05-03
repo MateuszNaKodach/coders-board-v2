@@ -40,9 +40,9 @@ export class ApplicantInvitation extends AbstractAggregateRoot<
   onApplicantInvited(event: ApplicantInvitationDomainEvent.ApplicantInvited) {
     this.id = event.aggregateId;
     this._status = InvitationStatus.INVITED;
-    this._personalEmail = event.payload.personalEmail;
-    this._firstName = event.payload.firstName;
-    this._lastName = event.payload.lastName;
+    this._personalEmail = event.data.personalEmail;
+    this._firstName = event.data.firstName;
+    this._lastName = event.data.lastName;
   }
 
   cancel() {

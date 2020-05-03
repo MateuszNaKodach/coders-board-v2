@@ -21,7 +21,7 @@ export class TypeOrmEventStorage implements EventStorage {
     expectedVersion?: EventStreamVersion,
   ): Promise<void> {
     const aggregateEvents = await this.typeOrmRepository.count({
-      where: { aggregateId: eventStreamId.streamId },
+      where: { streamId: eventStreamId.streamId },
     });
     if (expectedVersion && expectedVersion.raw !== aggregateEvents) {
       throw new Error(
@@ -41,11 +41,11 @@ export class TypeOrmEventStorage implements EventStorage {
     events: StorageEventEntry[],
   ): Promise<void> {
     const aggregateEvents = await this.typeOrmRepository.count({
-      where: { aggregateId: eventStreamId.streamId },
+      where: { streamId: eventStreamId.streamId },
     });
     const nextEventOrder = aggregateEvents + 1;
     const typeOrmEvents = events
-      .filter(event => event.aggregateId === eventStreamId.streamId)
+      .filter(event => event.streamId === eventStreamId.streamId)
       .map((e, i) =>
         DomainEventEntity.fromProps({ ...e, order: nextEventOrder + i }),
       );
@@ -55,7 +55,7 @@ export class TypeOrmEventStorage implements EventStorage {
   readEvents(eventStreamId: EventStreamId, toDate?: Date) {
     const maxEventDate = toDate ? toDate : this.time();
     return this.typeOrmRepository
-      .find({ where: { aggregateId: eventStreamId.streamId } }) // TODO: Query with occurredAt
+      .find({ where: { streamId: eventStreamId.streamId } }) // TODO: Query with occurredAt
       .then(found =>
         found.filter(it =>
           moment(it.occurredAt).isSameOrBefore(moment(maxEventDate)),

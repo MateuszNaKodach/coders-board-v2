@@ -14,9 +14,9 @@ export namespace ApplicantInvitationDomainEvent {
       eventId: DomainEventId,
       occurredAt: Date,
       aggregateId: ApplicantInvitationId,
-      payload: P,
+      data: P,
     ) {
-      super(eventId, occurredAt, aggregateId, payload);
+      super(eventId, occurredAt, aggregateId, data);
     }
 
     get aggregateType(): string {
@@ -24,25 +24,25 @@ export namespace ApplicantInvitationDomainEvent {
     }
   }
 
-  type ApplicantInvitedPayload = {
+  type ApplicantInvitedData = {
     personalEmail: PersonalEmail;
     firstName: FirstName;
     lastName: LastName;
   };
 
   export class ApplicantInvited extends AbstractApplicantInvitationDomainEvent<
-    ApplicantInvitedPayload
+    ApplicantInvitedData
   > {
     static newFrom(
       aggregateId: ApplicantInvitationId,
       occurredAt: Date,
-      payload: ApplicantInvitedPayload,
+      data: ApplicantInvitedData,
     ) {
       return new ApplicantInvited(
         DomainEventId.generate(),
         occurredAt,
         aggregateId,
-        payload,
+        data,
       );
     }
   }
@@ -51,13 +51,13 @@ export namespace ApplicantInvitationDomainEvent {
     static newFrom(
       aggregateId: ApplicantInvitationId,
       occurredAt: Date,
-      payload: {},
+      data: {},
     ) {
       return new InvitationCancelled(
         DomainEventId.generate(),
         occurredAt,
         aggregateId,
-        payload,
+        data,
       );
     }
   }

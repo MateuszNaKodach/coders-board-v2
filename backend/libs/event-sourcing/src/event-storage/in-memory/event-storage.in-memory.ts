@@ -47,7 +47,7 @@ export class InMemoryEventStorage implements EventStorage {
   ): Promise<void> {
     return Promise.all(
       events
-        .filter(event => event.aggregateId === eventStreamId.streamId)
+        .filter(event => event.streamId === eventStreamId.streamId)
         .map((value, index) =>
           this.store(
             eventStreamId,

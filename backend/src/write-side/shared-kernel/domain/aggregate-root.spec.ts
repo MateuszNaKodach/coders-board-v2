@@ -28,9 +28,9 @@ export namespace SampleDomainEvent {
       eventId: DomainEventId,
       occurredAt: Date,
       aggregateId: SampleAggregateId,
-      payload: P,
+      data: P,
     ) {
-      super(eventId, occurredAt, aggregateId, payload);
+      super(eventId, occurredAt, aggregateId, data);
     }
 
     get aggregateType(): string {
@@ -38,39 +38,35 @@ export namespace SampleDomainEvent {
     }
   }
 
-  type SomethingHappenedPayload = {
+  type SomethingHappenedData = {
     stringVariable: string;
     numberVariable: number;
   };
 
   export class SomethingHappened extends AbstractSampleAbstractDomainEvent<
-    SomethingHappenedPayload
+    SomethingHappenedData
   > {
     static newFrom(
       aggregateId: SampleAggregateId,
       occurredAt: Date,
-      payload: SomethingHappenedPayload,
+      data: SomethingHappenedData,
     ) {
       return new SomethingHappened(
         DomainEventId.generate(),
         occurredAt,
         aggregateId,
-        payload,
+        data,
       );
     }
   }
 
   export class SomethingWithoutEventHandlerHappened extends AbstractSampleAbstractDomainEvent<{}> {
-    static newFrom(
-      aggregateId: SampleAggregateId,
-      occurredAt: Date,
-      payload: {},
-    ) {
+    static newFrom(aggregateId: SampleAggregateId, occurredAt: Date, data: {}) {
       return new SomethingWithoutEventHandlerHappened(
         DomainEventId.generate(),
         occurredAt,
         aggregateId,
-        payload,
+        data,
       );
     }
   }
@@ -96,7 +92,7 @@ class SampleAggregateRoot extends AbstractAggregateRoot<SampleAggregateId> {
 
   onSomethingHappened(event: SampleDomainEvent.SomethingHappened) {
     this.id = event.aggregateId;
-    this.stringVariable = event.payload.stringVariable;
+    this.stringVariable = event.data.stringVariable;
   }
 
   doSomethingWithoutEventHandler() {
@@ -135,7 +131,7 @@ describe('Feature: Event Sourced Aggregate Root', () => {
       it('Then: Event should be applied', () => {
         expectDomainEvent(sampleAggregateRoot, {
           type: SampleDomainEvent.SomethingHappened,
-          payload: command,
+          data: command,
         });
       });
     });

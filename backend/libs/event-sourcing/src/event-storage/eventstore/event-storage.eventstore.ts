@@ -26,7 +26,7 @@ export class EventStoreEventStorage implements EventStorage {
     const storageEventDto: StorageEventDto = {
       eventId: event.eventId,
       eventType: event.eventType,
-      data: event.payload,
+      data: event.data,
       metadata: {},
     };
     return this.httpService
@@ -50,7 +50,7 @@ export class EventStoreEventStorage implements EventStorage {
   ): Promise<void> {
     return Promise.all(
       events
-        .filter(event => event.aggregateId === eventStreamId.streamId)
+        .filter(event => event.streamId === eventStreamId.streamId)
         .map((value, index) =>
           this.store(
             eventStreamId,
@@ -87,10 +87,10 @@ export class EventStoreEventStorage implements EventStorage {
             return {
               eventId: it.eventId,
               eventType: it.eventType,
-              occurredAt: it.updated,
-              aggregateId: EventStreamId.fromRaw(it.streamId).streamId,
-              aggregateType: EventStreamId.fromRaw(it.streamId).streamGroup,
-              payload: it.data,
+              occurredAt: new Date(it.updated),
+              streamId: EventStreamId.fromRaw(it.streamId).streamId,
+              streamGroup: EventStreamId.fromRaw(it.streamId).streamGroup,
+              data: JSON.parse(it.data),
             };
           }),
         ),

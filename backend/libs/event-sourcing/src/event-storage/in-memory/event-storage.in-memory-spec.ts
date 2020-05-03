@@ -18,18 +18,18 @@ const events = {
     event1: {
       eventId: 'eventId1.1',
       eventType: 'EVENT_TYPE_1',
-      aggregateId: 'aggregateId1',
-      aggregateType: 'aggregateType1',
+      streamId: 'aggregateId1',
+      streamGroup: 'aggregateType1',
       occurredAt: time['1530'],
-      payload: { value: 'value' },
+      data: { value: 'value' },
     },
     event2: {
       eventId: 'eventId1.2',
       eventType: 'EVENT_TYPE_2',
-      aggregateId: 'aggregateId1',
-      aggregateType: 'aggregateType1',
+      streamId: 'aggregateId1',
+      streamGroup: 'aggregateType1',
       occurredAt: time['1540'],
-      payload: {},
+      data: {},
     },
   },
   aggregate2: {
@@ -38,18 +38,18 @@ const events = {
     event1: {
       eventId: 'eventId2.1',
       eventType: 'EVENT_TYPE_1',
-      aggregateId: 'aggregateId2',
-      aggregateType: 'aggregateType2',
+      streamId: 'aggregateId2',
+      streamGroup: 'aggregateType2',
       occurredAt: time['1530'],
-      payload: { value: 'value' },
+      data: { value: 'value' },
     },
     event2: {
       eventId: 'eventId2.2',
       eventType: 'EVENT_TYPE_2',
-      aggregateId: 'aggregateId2',
-      aggregateType: 'aggregateType2',
+      streamId: 'aggregateId2',
+      streamGroup: 'aggregateType2',
       occurredAt: time['1540'],
-      payload: {},
+      data: {},
     },
   },
 };
@@ -135,10 +135,10 @@ describe('Feature: In memory event storage', () => {
         const anotherEvent2 = {
           eventId: 'eventId1.2_2',
           eventType: 'EVENT_TYPE_2',
-          aggregateId: 'aggregateId1',
-          aggregateType: 'aggregateType1',
+          streamId: 'aggregateId1',
+          streamGroup: 'aggregateType1',
           occurredAt: time['1540'],
-          payload: {},
+          data: {},
         };
         await expect(
           eventStorage.store(
