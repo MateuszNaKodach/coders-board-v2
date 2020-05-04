@@ -88,19 +88,20 @@ export class EventSourcingModule {
   static registerEventStoreAsync(
     config: EventSourcingModuleAsyncConfig,
   ): DynamicModule {
+    const eventStoreHttpModule = HttpModule.register({
+      baseURL: process.env.EVENTSTORE_URL,
+      withCredentials: true,
+      auth: {
+        username: process.env.EVENTSTORE_USERNAME,
+        password: process.env.EVENTSTORE_PASSWORD,
+      },
+    });
     return {
       module: EventSourcingModule,
       imports:
         [
           ...config.imports,
-          HttpModule.register({
-            baseURL: process.env.EVENTSTORE_URL,
-            withCredentials: true,
-            auth: {
-              username: process.env.EVENTSTORE_USERNAME,
-              password: process.env.EVENTSTORE_PASSWORD,
-            },
-          }),
+          eventStoreHttpModule,
         ] || [],
       providers: [
         this.createAsyncProviders(config),
