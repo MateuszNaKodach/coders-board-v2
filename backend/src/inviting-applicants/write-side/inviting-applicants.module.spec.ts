@@ -14,7 +14,7 @@ import ApplicantInvitationCancelled = ApplicantInvitationPublicEvent.ApplicantIn
 import {
   EXTERNAL_EVENT_PUBLISHER,
   ExternalEventPublisher,
-} from '../shared-kernel/application/external-event-publisher/external-event-publisher';
+} from '../../shared-kernel/write-side/application/external-event-publisher/external-event-publisher';
 
 /**
  * Test of InvitingApplicants. In tests of logic we bypass presentation layer.

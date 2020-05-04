@@ -1,6 +1,6 @@
-import { AbstractAggregateRoot } from '../../shared-kernel/domain/abstract-aggregate-root';
+import { AbstractAggregateRoot } from '../../../shared-kernel/write-side/domain/abstract-aggregate-root';
 import { ApplicantInvitationId } from './applicant-invitation-id.valueobject';
-import { TimeProviderPort } from '../../shared-kernel/domain/time-provider.port';
+import { TimeProviderPort } from '../../../shared-kernel/write-side/domain/time-provider.port';
 import { PersonalEmail } from './personal-email.valueobject';
 import { FirstName } from './first-name.value-object';
 import { LastName } from './last-name.value-object';

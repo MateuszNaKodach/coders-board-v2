@@ -9,7 +9,7 @@ import { Inject } from '@nestjs/common';
 import {
   EXTERNAL_EVENT_PUBLISHER,
   ExternalEventPublisher,
-} from '../../shared-kernel/application/external-event-publisher/external-event-publisher';
+} from '../../../shared-kernel/write-side/application/external-event-publisher/external-event-publisher';
 
 /**
  * Each domain event which should be available for read-models and other context on the write-side need

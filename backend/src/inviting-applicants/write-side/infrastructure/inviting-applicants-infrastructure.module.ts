@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ApplicantInvitationEventSourcedRepository } from './applicant-invitation.event-sourced-repository';
-import { SharedKernelInfrastructureModule } from '../../shared-kernel/infrastructure/shared-kernel-infrastructure.module';
+import { SharedKernelInfrastructureModule } from '../../../shared-kernel/write-side/infrastructure/shared-kernel-infrastructure.module';
 import { APPLICANT_INVITATION_REPOSITORY } from '../domain/applicant-invitation.repository';
 
 @Module({

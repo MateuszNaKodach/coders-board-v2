@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { InvitingApplicantsModule } from './write-side/inviting-applicants/inviting-applicants.module';
+import { InvitingApplicantsModule } from './inviting-applicants/write-side/inviting-applicants.module';
 
 @Module({
   imports: [InvitingApplicantsModule],

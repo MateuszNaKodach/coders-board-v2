@@ -4,7 +4,7 @@ import {
   APPLICANT_INVITATION_REPOSITORY,
   ApplicantInvitationRepository,
 } from '../domain/applicant-invitation.repository';
-import { TimeProviderPort } from '../../shared-kernel/domain/time-provider.port';
+import { TimeProviderPort } from '../../../shared-kernel/write-side/domain/time-provider.port';
 import { ApplicantInvitationId } from '../domain/applicant-invitation-id.valueobject';
 import { ApplicantInvitation } from '../domain/applicant-invitation.aggregate-root';
 import { PersonalEmail } from '../domain/personal-email.valueobject';

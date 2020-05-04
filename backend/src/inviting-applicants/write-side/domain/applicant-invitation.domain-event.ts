@@ -1,7 +1,7 @@
-import { AbstractDomainEvent } from '../../shared-kernel/domain/abstract-domain-event';
+import { AbstractDomainEvent } from '../../../shared-kernel/write-side/domain/abstract-domain-event';
 import { ApplicantInvitationId } from './applicant-invitation-id.valueobject';
 import { ApplicantInvitation } from './applicant-invitation.aggregate-root';
-import { DomainEventId } from '../../shared-kernel/domain/domain-event-id.valueobject';
+import { DomainEventId } from '../../../shared-kernel/write-side/domain/domain-event-id.valueobject';
 import { PersonalEmail } from './personal-email.valueobject';
 import { FirstName } from './first-name.value-object';
 import { LastName } from './last-name.value-object';

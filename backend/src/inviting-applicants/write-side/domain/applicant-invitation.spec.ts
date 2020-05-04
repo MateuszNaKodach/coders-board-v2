@@ -1,4 +1,4 @@
-import { TimeProviderPort } from '../../shared-kernel/domain/time-provider.port';
+import { TimeProviderPort } from '../../../shared-kernel/write-side/domain/time-provider.port';
 import { SystemTimeProvider } from '@coders-board-library/time-provider/system-time-provider';
 import { PersonalEmail } from './personal-email.valueobject';
 import { FirstName } from './first-name.value-object';
@@ -8,7 +8,7 @@ import { ApplicantInvitationId } from './applicant-invitation-id.valueobject';
 import { ApplicantInvitationDomainEvent } from './applicant-invitation.domain-event';
 import ApplicantInvited = ApplicantInvitationDomainEvent.ApplicantInvited;
 import InvitationCancelled = ApplicantInvitationDomainEvent.InvitationCancelled;
-import { expectDomainEvent } from '../../shared-kernel/domain/aggregate-root.test-utils';
+import { expectDomainEvent } from '../../../shared-kernel/write-side/domain/aggregate-root.test-utils';
 
 const person = {
   janKowalski: {
