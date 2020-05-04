@@ -1,5 +1,6 @@
 export const EVENT_STREAM_GROUP_SEPARATOR = '-';
 
+//TODO: Change to EventStreamName?
 export class EventStreamId {
   private constructor(
     readonly streamGroup: string,

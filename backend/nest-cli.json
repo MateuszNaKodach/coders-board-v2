@@ -28,9 +28,33 @@
       "compilerOptions": {
         "tsConfigPath": "libs/public-messages/tsconfig.lib.json"
       }
+    },
+    "rxjs-utils": {
+      "type": "library",
+      "root": "libs/rxjs-utils",
+      "entryFile": "index",
+      "sourceRoot": "libs/rxjs-utils/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/rxjs-utils/tsconfig.lib.json"
+      }
+    },
+    "axios-utils": {
+      "type": "library",
+      "root": "libs/axios-utils",
+      "entryFile": "index",
+      "sourceRoot": "libs/axios-utils/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/axios-utils/tsconfig.lib.json"
+      }
     }
   },
   "compilerOptions": {
-    "webpack": true
+    "webpack": true,
+    "assets": [
+      {
+        "include": "**/*.projection.*",
+        "watchAssets": true
+      }
+    ]
   }
 }

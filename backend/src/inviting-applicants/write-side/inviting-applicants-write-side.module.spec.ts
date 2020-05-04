@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { InvitingApplicantsModule } from './inviting-applicants.module';
+import { InvitingApplicantsWriteSideModule } from './inviting-applicants-write-side.module';
 import { ApplicantInvitationCommand } from '@coders-board-library/public-messages/inviting-applicants/command/applicant-invitation.command';
 import InviteApplicantToAssociation = ApplicantInvitationCommand.InviteApplicantToAssociation;
-import { CommandBus, EventBus } from '@nestjs/cqrs';
+import { CommandBus } from '@nestjs/cqrs';
 import { ApplicantInvitationPublicEvent } from '@coders-board-library/public-messages';
 import ApplicantInvited = ApplicantInvitationPublicEvent.ApplicantInvited;
 import {
@@ -36,7 +36,7 @@ describe('Feature: Inviting applicants', () => {
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      imports: [InvitingApplicantsModule],
+      imports: [InvitingApplicantsWriteSideModule],
     }).compile();
     await app.init();
     commandBus = app.get<CommandBus>(CommandBus);

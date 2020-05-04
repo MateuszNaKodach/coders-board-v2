@@ -1,8 +1,13 @@
 import { Module } from '@nestjs/common';
-import { InvitingApplicantsModule } from './inviting-applicants/write-side/inviting-applicants.module';
+import { InvitingApplicantsWriteSideModule } from './inviting-applicants/write-side/inviting-applicants-write-side.module';
+import {InvitingApplicantsReadSideModule} from "./inviting-applicants/read-side/inviting-applicants-read-side.module";
+
+const boundedContexts = {
+  invitingApplicants: [InvitingApplicantsWriteSideModule, InvitingApplicantsReadSideModule]
+}
 
 @Module({
-  imports: [InvitingApplicantsModule],
+  imports: [...boundedContexts.invitingApplicants],
   controllers: [],
   providers: [],
 })

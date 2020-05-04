@@ -12,7 +12,7 @@ import CancelApplicantInvitation = ApplicantInvitationCommand.CancelApplicantInv
     InvitingApplicantsInfrastructureModule,
   ],
 })
-export class InvitingApplicantsModule implements OnModuleInit {
+export class InvitingApplicantsWriteSideModule implements OnModuleInit {
   constructor(private readonly commandBus: CommandBus) {}
 
   //FIXME: Delete. Just to init some data.

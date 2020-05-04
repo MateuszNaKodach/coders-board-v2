@@ -1,5 +1,9 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts"],
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
@@ -12,6 +16,10 @@
     "@coders-board-library/time-provider/(.*)": "<rootDir>/../libs/time-provider/src/$1",
     "@coders-board-library/time-provider": "<rootDir>/../libs/time-provider/src",
     "@coders-board-library/public-messages/(.*)": "<rootDir>/../libs/public-messages/src/$1",
-    "@coders-board-library/public-messages": "<rootDir>/../libs/public-messages/src"
+    "@coders-board-library/public-messages": "<rootDir>/../libs/public-messages/src",
+    "@coders-board-library/rxjs-utils/(.*)": "<rootDir>/../libs/rxjs-utils/src/$1",
+    "@coders-board-library/rxjs-utils": "<rootDir>/../libs/rxjs-utils/src",
+    "@coders-board-library/axios-utils/(.*)": "<rootDir>/../libs/axios-utils/src/$1",
+    "@coders-board-library/axios-utils": "<rootDir>/../libs/axios-utils/src"
   }
 }

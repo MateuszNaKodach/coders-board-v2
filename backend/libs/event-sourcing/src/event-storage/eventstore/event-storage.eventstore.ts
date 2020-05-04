@@ -1,22 +1,25 @@
 import { EventStorage } from '../../api/event-storage';
 import * as moment from 'moment';
-import { HttpService, Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/common';
 import { EventStreamVersion } from '../../api/event-stream-version.valueobject';
 import { StorageEventEntry } from '../../api/storage-event-entry';
 import { Time } from '../../time.type';
 import { map } from 'rxjs/operators';
 import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
+import {axiosLoggingInterceptor} from "@coders-board-library/axios-utils";
 
 const EXPECTED_ANY_VERSION = -2;
 const EXPECTED_STREAM_NOT_EXISTS = -1;
 const EXPECTED_STREAM_IS_EMPTY = 0;
 
-@Injectable()
 export class EventStoreEventStorage implements EventStorage {
   constructor(
     private readonly time: Time,
     private readonly httpService: HttpService,
-  ) {}
+  ) {
+    const loggingInterceptor = axiosLoggingInterceptor(reqRes => console.log(reqRes), false, true);
+    this.httpService.axiosRef.interceptors.response.use(loggingInterceptor.onRejected, loggingInterceptor.onFulfilled);
+  }
 
   store(
     eventStreamId: EventStreamId,
@@ -79,6 +82,7 @@ export class EventStoreEventStorage implements EventStorage {
       .get(`/streams/${eventStreamId.raw}?embed=body`, {
         headers: {
           Accept: 'application/vnd.eventstore.atom+json',
+          'ES-LongPool': 15
         },
       })
       .pipe(
