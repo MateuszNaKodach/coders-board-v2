@@ -57,7 +57,7 @@ export abstract class EventSourcedAggregateRootRepository<
           streamGroup: this.aggregateType,
         }),
         uncommitedEvents,
-        EventStreamVersion.exactly(aggregate.aggregateVersion.raw),
+        EventStreamVersion.exactly(aggregate.committedVersion.raw),
       )
       .then(() =>
         this.domainEventPublisher.publishAll(aggregate.getUncommittedEvents()),

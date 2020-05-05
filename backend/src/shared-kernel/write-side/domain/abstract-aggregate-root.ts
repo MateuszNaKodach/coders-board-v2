@@ -59,7 +59,7 @@ export abstract class AbstractAggregateRoot<I extends AggregateId> {
     return this.id;
   }
 
-  get aggregateVersion() {
+  get committedVersion() {
     return this.version;
   }
 }
