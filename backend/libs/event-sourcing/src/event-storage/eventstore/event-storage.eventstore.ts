@@ -50,7 +50,10 @@ export class EventStoreEventStorage implements EventStorage {
       eventId: event.eventId,
       eventType: event.eventType,
       data: event.data,
-      metadata: {},
+      metadata: {
+        aggregateId: event.streamId,
+        occurredAt: event.occurredAt
+      },
     };
     return storageEventDto;
   }

@@ -1,7 +1,7 @@
 export const axiosLoggingInterceptor = (
-  logger: (reqRes: any) => void,
-  logFulfilled: boolean,
-  logRejected: boolean,
+    logger: (reqRes: any) => void,
+    logFulfilled: boolean,
+    logRejected: boolean,
 ) => {
   return {
     onFulfilled: res => {
@@ -18,3 +18,5 @@ export const axiosLoggingInterceptor = (
     },
   };
 };
+
+export const axiosLoggingInterceptorEnv = axiosLoggingInterceptor(r => console.log(r), String(process.env.AXIOS_LOG_FULFILLED || false) == "true", String(process.env.AXIOS_LOG_REJECTED || true) == "true")
