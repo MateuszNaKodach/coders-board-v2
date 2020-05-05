@@ -1,18 +1,16 @@
+import {DynamicModule, HttpModule, HttpService, Inject, Module, OnModuleInit,} from '@nestjs/common';
+import {PROJECTION_SOURCES_PROVIDER, ProjectionSources,} from './projection-sources';
+import {ResourcesProjectionSources} from '../../infrastructure/eventstore/resources-projection-sources';
+import {HttpProjectionsManager} from '../../infrastructure/eventstore/http-projections-manager';
+import {ProjectionContext} from './projection-context';
+import {ProjectionName} from "./projection-name";
+import {PROJECTIONS_MANAGER, ProjectionsManager} from "./projections-manager";
 import {
-  HttpModule,
-  HttpService,
-  Inject,
-  Module,
-  OnModuleInit,
-} from '@nestjs/common';
-import {
-  PROJECTION_SOURCES_PROVIDER,
-  ProjectionSources,
-} from './projection-sources';
-import { ResourcesProjectionSources } from '../../infrastructure/eventstore/resources-projection-sources';
-import { HttpProjectionsManager } from '../../infrastructure/eventstore/http-projections-manager';
-import { ProjectionContext } from './projection-context';
-import { axiosLoggingInterceptor } from '@coders-board-library/axios-utils/axios-utils/logging.interceptor';
+  InvitingApplicantsEventStoreProjectionModuleConfig,
+  PROJECTIONS
+} from "./inviting-applicants-event-store-projection.module-config";
+
+const PROJECTIONS_DIR = Symbol("PROJECTIONS_DIR");
 
 const eventStoreHttpModule = HttpModule.register({
   baseURL: process.env.EVENTSTORE_URL,
@@ -27,40 +25,61 @@ const eventStoreHttpModule = HttpModule.register({
   imports: [eventStoreHttpModule],
   providers: [
     {
+      inject: [PROJECTIONS_DIR],
+      useFactory: (projectionsDir: string) => new ResourcesProjectionSources(projectionsDir),
       provide: PROJECTION_SOURCES_PROVIDER,
-      useClass: ResourcesProjectionSources,
     },
     {
       inject: [HttpService],
-      useFactory: (httpService: HttpService) =>
-        new ProjectionContext(new HttpProjectionsManager(httpService)),
+      useFactory: (httpService: HttpService) => {
+        return new HttpProjectionsManager(httpService)
+      },
+      provide: PROJECTIONS_MANAGER
+    },
+    {
+      inject: [PROJECTIONS_MANAGER],
+      useFactory: (projectionsManager: ProjectionsManager) => {
+        return new ProjectionContext(projectionsManager)
+      },
       provide: ProjectionContext,
     },
   ],
 })
 export class InvitingApplicantsEventStoreProjectionModule
-  implements OnModuleInit {
-  constructor(
-    @Inject(PROJECTION_SOURCES_PROVIDER)
-    private readonly projectionSources: ProjectionSources,
-    private readonly projectionContext: ProjectionContext,
-    private httpService: HttpService,
-  ) {}
+    implements OnModuleInit {
+
+  static register(
+      config: InvitingApplicantsEventStoreProjectionModuleConfig,
+  ): DynamicModule {
+    const projections = {
+      provide: PROJECTIONS,
+      useValue: config.projections,
+    };
+    const projectionsDir = {
+      provide: PROJECTIONS_DIR,
+      useValue: config.projectionsDir,
+    };
+    return {
+      module: InvitingApplicantsEventStoreProjectionModule,
+      providers: [projections, projectionsDir],
+      exports: [],
+    };
+  }
+
+  constructor(@Inject(PROJECTION_SOURCES_PROVIDER)
+              private readonly projectionSources: ProjectionSources,
+              private readonly projectionContext: ProjectionContext,
+              @Inject(PROJECTIONS) private readonly projections: ProjectionName[]) {
+  }
 
   async onModuleInit() {
-    //const loggingInterceptor = axiosLoggingInterceptor(reqRes => console.log(reqRes), false, true);
-    //this.httpService.axiosRef.interceptors.response.use(loggingInterceptor.onFulfilled, loggingInterceptor.onRejected);
-
-    const counterQuery = this.projectionSources.projectionQuerySource(
-      'counter',
-    );
-    await this.projectionContext.ensureProjection(
-      'sampleCounter',
-      counterQuery,
-    );
-    const sampleCounterProjectionState = await this.projectionContext.projectionState<
-      any
-    >('sampleCounter');
-    console.log('STATE', sampleCounterProjectionState);
+    return await Promise.all(
+        this.projections.map(projectionName => {
+              const projectionSource = this.projectionSources.projectionSource(projectionName)
+              return this.projectionContext.ensureProjection(projectionName, projectionSource);
+            }
+        )
+    ).catch(e => new Error("Failed to create required projections, due to: " + e.message));
   }
 }
+

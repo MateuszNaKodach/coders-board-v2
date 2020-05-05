@@ -60,10 +60,10 @@ export class HttpProjectionsManager implements ProjectionsManager {
       .pipe(map(response => response.data));
   }
 
-  createContinuous(name: string, query: string): Observable<boolean> {
+  create(name: string, query: string, mode: "continuous" | "onetime" = "continuous"): Observable<boolean> {
     return this.httpService
       .post<void>(
-        `/projections/continuous?name=${name}&type=JS&emit=true`,
+        `/projections/${mode}?name=${name}&type=JS&emit=true`,
         query,
       )
       .pipe(
