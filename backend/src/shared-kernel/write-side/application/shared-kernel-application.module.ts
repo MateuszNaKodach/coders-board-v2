@@ -1,8 +1,7 @@
-import {Module} from "@nestjs/common";
+import { Module } from '@nestjs/common';
 
 @Module({
   controllers: [],
   imports: [],
 })
-export class SharedKernelApplicationModule  {
-}
+export class SharedKernelApplicationModule {}

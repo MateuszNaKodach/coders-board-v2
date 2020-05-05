@@ -1,5 +1,5 @@
-import {Observable} from "rxjs";
-import {ProjectionDetails} from "./projection-details";
+import { Observable } from 'rxjs';
+import { ProjectionDetails } from './projection-details';
 
 export interface ProjectionsManager {
   getAll(): Observable<ProjectionDetails[]>;

@@ -1,4 +1,8 @@
-export const axiosLoggingInterceptor = (logger: (reqRes: any) => void, logFulfilled: boolean, logRejected: boolean) => {
+export const axiosLoggingInterceptor = (
+  logger: (reqRes: any) => void,
+  logFulfilled: boolean,
+  logRejected: boolean,
+) => {
   return {
     onFulfilled: res => {
       if (logFulfilled) {
@@ -11,6 +15,6 @@ export const axiosLoggingInterceptor = (logger: (reqRes: any) => void, logFulfil
         logger(res);
       }
       return res;
-    }
-  }
-}
+    },
+  };
+};

@@ -98,11 +98,7 @@ export class EventSourcingModule {
     });
     return {
       module: EventSourcingModule,
-      imports:
-        [
-          ...config.imports,
-          eventStoreHttpModule,
-        ] || [],
+      imports: [...config.imports, eventStoreHttpModule] || [],
       providers: [
         this.createAsyncProviders(config),
         {

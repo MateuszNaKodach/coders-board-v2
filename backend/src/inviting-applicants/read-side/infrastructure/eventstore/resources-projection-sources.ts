@@ -1,10 +1,11 @@
-import {ProjectionSources} from "../../projection/eventstore/projection-sources";
-import * as fs from "fs";
+import { ProjectionSources } from '../../projection/eventstore/projection-sources';
+import * as fs from 'fs';
 
 export class ResourcesProjectionSources implements ProjectionSources {
-
   projectionQuerySource(name: string): string {
-    return fs.readFileSync(`./resources/inviting-applicants/read-side/projection/eventstore/${name}.projection.ts`, {encoding: "utf-8"})
+    return fs.readFileSync(
+      `./resources/inviting-applicants/read-side/projection/eventstore/${name}.projection.ts`,
+      { encoding: 'utf-8' },
+    );
   }
-
 }
