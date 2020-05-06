@@ -94,7 +94,9 @@
       "@coders-board-library/rxjs-utils/(.*)": "<rootDir>/libs/rxjs-utils/src/$1",
       "@coders-board-library/rxjs-utils": "<rootDir>/libs/rxjs-utils/src",
       "@coders-board-library/axios-utils/(.*)": "<rootDir>/libs/axios-utils/src/$1",
-      "@coders-board-library/axios-utils": "<rootDir>/libs/axios-utils/src"
+      "@coders-board-library/axios-utils": "<rootDir>/libs/axios-utils/src",
+      "@coders-board-library/eventstore-projections/(.*)": "<rootDir>/libs/eventstore-projections/src/$1",
+      "@coders-board-library/eventstore-projections": "<rootDir>/libs/eventstore-projections/src"
     }
   },
   "eslintIgnore": [

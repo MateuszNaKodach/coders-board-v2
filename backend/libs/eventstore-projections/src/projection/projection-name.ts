@@ -10,16 +10,18 @@ export class ProjectionName {
   }
 
   static from(id: string, version: number) {
-    if (!id || id === "") {
-      throw new Error("Projection id cannot be empty!")
+    if (!id || id === '') {
+      throw new Error('Projection id cannot be empty!');
     }
     if (!version || version < 1 || !this.isInteger(version)) {
-      throw new Error("Projection version must be integer greater or equal to 1!")
+      throw new Error(
+        'Projection version must be integer greater or equal to 1!',
+      );
     }
     return new ProjectionName(id, version);
   }
 
-  static fromProps(props: { id: string, version: number }) {
+  static fromProps(props: { id: string; version: number }) {
     return this.from(props.id, props.version);
   }
 

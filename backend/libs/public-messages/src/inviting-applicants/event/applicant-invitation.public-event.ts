@@ -23,7 +23,7 @@ export namespace ApplicantInvitationPublicEvent {
     firstName: string;
     lastName: string;
   };
-  export class ApplicantInvited extends ApplicantInvitationAbstractPublicEvent<
+  export class ApplicantInvitedPublicEvent extends ApplicantInvitationAbstractPublicEvent<
     ApplicantInvitedData
   > {
     constructor(
@@ -41,7 +41,7 @@ export namespace ApplicantInvitationPublicEvent {
     firstName: string;
     lastName: string;
   };
-  export class ApplicantInvitationCancelled extends ApplicantInvitationAbstractPublicEvent<
+  export class ApplicantInvitationCancelledPublicEvent extends ApplicantInvitationAbstractPublicEvent<
     ApplicantInvitationCancelledData
   > {
     constructor(

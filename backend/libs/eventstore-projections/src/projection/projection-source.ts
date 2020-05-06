@@ -11,11 +11,11 @@ export class ProjectionConfig {
   }
 
   static default() {
-    return new ProjectionConfig(ProjectionMode.CONTINUOUS)
+    return new ProjectionConfig(ProjectionMode.CONTINUOUS);
   }
 }
 
 export enum ProjectionMode {
-  CONTINUOUS = "continuous",
-  ONE_TIME = "onetime"
+  CONTINUOUS = 'continuous',
+  ONE_TIME = 'onetime',
 }

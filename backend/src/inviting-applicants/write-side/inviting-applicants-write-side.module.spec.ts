@@ -3,18 +3,21 @@ import { InvitingApplicantsWriteSideModule } from './inviting-applicants-write-s
 import { ApplicantInvitationCommand } from '@coders-board-library/public-messages/inviting-applicants/command/applicant-invitation.command';
 import InviteApplicantToAssociation = ApplicantInvitationCommand.InviteApplicantToAssociation;
 import { CommandBus } from '@nestjs/cqrs';
-import { ApplicantInvitationPublicEvent } from '@coders-board-library/public-messages';
-import ApplicantInvited = ApplicantInvitationPublicEvent.ApplicantInvited;
+import {
+  ApplicantInvitationPublicEvent,
+  expectLastPublishedEventAsync,
+} from '@coders-board-library/public-messages';
 import {
   EventPublisherSpy,
-  expectOnlyPublishedEvent,
+  expectLastPublishedEvent,
 } from '@coders-board-library/public-messages/shared/public-messages.test-utils';
 import CancelApplicantInvitation = ApplicantInvitationCommand.CancelApplicantInvitation;
-import ApplicantInvitationCancelled = ApplicantInvitationPublicEvent.ApplicantInvitationCancelled;
 import {
   EXTERNAL_EVENT_PUBLISHER,
   ExternalEventPublisher,
 } from '../../shared-kernel/write-side/application/external-event-publisher/external-event-publisher';
+import ApplicantInvitationCancelledPublicEvent = ApplicantInvitationPublicEvent.ApplicantInvitationCancelledPublicEvent;
+import ApplicantInvitedPublicEvent = ApplicantInvitationPublicEvent.ApplicantInvitedPublicEvent;
 
 /**
  * Test of InvitingApplicants. In tests of logic we bypass presentation layer.
@@ -58,8 +61,8 @@ describe('Feature: Inviting applicants', () => {
       });
 
       it('Then: Applicant should be invited', () => {
-        expectOnlyPublishedEvent(eventPublisherPublishSpy, {
-          type: ApplicantInvited,
+        expectLastPublishedEvent(eventPublisherPublishSpy, {
+          type: ApplicantInvitedPublicEvent,
           data: {
             firstName: inviteCommand.firstName,
             lastName: inviteCommand.lastName,
@@ -76,15 +79,19 @@ describe('Feature: Inviting applicants', () => {
           await commandBus.execute(cancelInvitationCommand);
         });
 
-        it('Then: Applicant invitation should be cancelled', () => {
-          expectOnlyPublishedEvent(eventPublisherPublishSpy, {
-            type: ApplicantInvitationCancelled,
-            data: {
-              firstName: inviteCommand.firstName,
-              lastName: inviteCommand.lastName,
-              personalEmail: inviteCommand.personalEmail,
+        it('Then: Applicant invitation should be cancelled', done => {
+          expectLastPublishedEventAsync(
+            eventPublisherPublishSpy,
+            {
+              type: ApplicantInvitationCancelledPublicEvent,
+              data: {
+                firstName: inviteCommand.firstName,
+                lastName: inviteCommand.lastName,
+                personalEmail: inviteCommand.personalEmail,
+              },
             },
-          });
+            done,
+          );
         });
       });
 

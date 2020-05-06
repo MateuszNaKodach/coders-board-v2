@@ -29,7 +29,7 @@ export namespace EventPropagator {
     handle(event: ApplicantInvitationDomainEvent.ApplicantInvited) {
       //TODO: Saving in outbox and publishing after in batches
       return this.externalEventPublisher.publish(
-        new ApplicantInvitationPublicEvent.ApplicantInvited(
+        new ApplicantInvitationPublicEvent.ApplicantInvitedPublicEvent(
           event.eventId.raw,
           event.occurredAt,
           event.aggregateId.raw,
@@ -59,7 +59,7 @@ export namespace EventPropagator {
         event.aggregateId,
       );
       return this.externalEventPublisher.publish(
-        new ApplicantInvitationPublicEvent.ApplicantInvitationCancelled(
+        new ApplicantInvitationPublicEvent.ApplicantInvitationCancelledPublicEvent(
           event.eventId.raw,
           event.occurredAt,
           event.aggregateId.raw,

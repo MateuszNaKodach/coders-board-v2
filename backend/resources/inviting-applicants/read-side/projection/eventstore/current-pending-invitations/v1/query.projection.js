@@ -10,7 +10,7 @@ class PendingInvitation {
   static from(event) {
     const data = event.data;
     const metadata = event.metadata;
-    const invitationId = metadata.streamId;
+    const invitationId = metadata.aggregateId;
     return new PendingInvitation(
         invitationId,
         data.firstName.raw,
@@ -19,36 +19,10 @@ class PendingInvitation {
         metadata.occurredAt
     )
   }
-
-  static invitationIdFromEvent(event) {
-    const data = event.data;
-    const metadata = event.metadata;
-    const invitationId = metadata.streamId;
-    return invitationId;
-  }
 }
 
-class CurrentPendingInvitationsReadModel {
-
-  constructor(pendingInvitations) {
-    this.pendingInvitations = pendingInvitations;
-  }
-
-  static of(pendingInvitations) {
-    return new CurrentPendingInvitationsReadModel(pendingInvitations);
-  }
-
-  static empty() {
-    return new CurrentPendingInvitationsReadModel([])
-  }
-
-  add(pendingInvitation) {
-    return new CurrentPendingInvitationsReadModel([...this.pendingInvitations, pendingInvitation])
-  }
-
-  removeByInvitationId(invitationId) {
-    return new CurrentPendingInvitationsReadModel(this.pendingInvitations.filter(it => it.invitationId !== invitationId));
-  }
+function invitationIdFromEvent(event) {
+  return event.metadata.aggregateId;
 }
 
 function updateProjectionStateMetadata(state, event) {
@@ -79,20 +53,12 @@ fromAll()
         }
       },
       ApplicantInvited: function (state, event) {
-        state.content.pendingInvitations =
-            CurrentPendingInvitationsReadModel
-                .of(state.content.pendingInvitations)
-                .add(PendingInvitation.from(event))
-                .pendingInvitations
+        state.content.pendingInvitations = [...state.content.pendingInvitations, PendingInvitation.from(event)]
         updateProjectionStateMetadata(state, event);
       },
       InvitationCancelled: function (state, event) {
-        const invitationId = PendingInvitation.invitationIdFromEvent(event);
-        state.content.pendingInvitations =
-            CurrentPendingInvitationsReadModel
-                .of(state.content.pendingInvitations)
-                .removeByInvitationId(invitationId)
-                .pendingInvitations;
+        const cancelledInvitationId = invitationIdFromEvent(event);
+        state.content.pendingInvitations = state.content.pendingInvitations.filter(it => it.invitationId !== cancelledInvitationId)
         updateProjectionStateMetadata(state, event);
       }
     })
