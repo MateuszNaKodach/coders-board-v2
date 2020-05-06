@@ -30,8 +30,14 @@ export class InvitingApplicantsWriteSideModule implements OnModuleInit {
       person.janKowalski.lastName,
     );
     const invitationId = await this.commandBus.execute(inviteCommand);
-    setTimeout(() => {
-      this.commandBus.execute(new CancelApplicantInvitation(invitationId));
-    }, 1000);
+    if (randomInt(0, 1) === 0) {
+      setTimeout(() => {
+        this.commandBus.execute(new CancelApplicantInvitation(invitationId));
+      }, 1000);
+    }
   }
+}
+
+function randomInt(min, max) {
+  return min + Math.floor((max - min) * Math.random());
 }

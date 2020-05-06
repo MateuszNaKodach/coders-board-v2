@@ -4,17 +4,25 @@ import { HttpService } from '@nestjs/common';
 import { EventStreamVersion } from '../../api/event-stream-version.valueobject';
 import { StorageEventEntry } from '../../api/storage-event-entry';
 import { Time } from '../../time.type';
-import { catchError, flatMap, map } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  delay,
+  flatMap,
+  map,
+  retryWhen,
+  take,
+} from 'rxjs/operators';
 import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
 import { axiosLoggingInterceptor } from '@coders-board-library/axios-utils';
-import { of, throwError } from 'rxjs';
+import { concat, of, pipe, throwError } from 'rxjs';
 import { AxiosResponse } from 'axios';
 
 const EXPECTED_ANY_VERSION = -2;
 const EXPECTED_STREAM_NOT_EXISTS = -1;
 const EXPECTED_STREAM_IS_EMPTY = 0;
 
-const POOL_EVERY_N_SECONDS_IF_ATOM_FEED_IS_EMPTY = 15;
+const POOL_EVERY_N_SECONDS_IF_ATOM_FEED_IS_EMPTY = 30;
 
 export class EventStoreEventStorage implements EventStorage {
   constructor(
@@ -52,7 +60,7 @@ export class EventStoreEventStorage implements EventStorage {
       data: event.data,
       metadata: {
         aggregateId: event.streamId,
-        occurredAt: event.occurredAt
+        occurredAt: event.occurredAt,
       },
     };
     return storageEventDto;
@@ -151,7 +159,9 @@ export class EventStoreEventStorage implements EventStorage {
     const maxEventDate = toDate ? toDate : this.time();
     return this.getEventsBy(eventStreamId).then(events =>
       events.filter(it =>
-        moment(it.occurredAt).isSameOrBefore(moment(maxEventDate)),
+        moment(it.occurredAt.getUTCDate()).isSameOrBefore(
+          moment(maxEventDate.getUTCDate()),
+        ),
       ),
     );
   }

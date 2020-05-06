@@ -103,10 +103,7 @@ const eventSourcingModule =
       inject: [EventBus, EVENT_STORAGE],
       useFactory: (eventBus: EventBus, eventStorage: EventStorage) =>
         new LoggingExternalEventPublisher(
-          new StoreInEventStorageAndForwardExternalEventBus(
-            eventStorage,
-            new NestJsExternalEventPublisher(eventBus),
-          ),
+          new NestJsExternalEventPublisher(eventBus),
         ),
     },
     {

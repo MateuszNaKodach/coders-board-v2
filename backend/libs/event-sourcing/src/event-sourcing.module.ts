@@ -89,11 +89,11 @@ export class EventSourcingModule {
     config: EventSourcingModuleAsyncConfig,
   ): DynamicModule {
     const eventStoreHttpModule = HttpModule.register({
-      baseURL: process.env.EVENTSTORE_URL,
+      baseURL: process.env.EVENTSTORE_URL || 'http://127.0.0.1:2113',
       withCredentials: true,
       auth: {
-        username: process.env.EVENTSTORE_USERNAME,
-        password: process.env.EVENTSTORE_PASSWORD,
+        username: process.env.EVENTSTORE_USERNAME || 'admin',
+        password: process.env.EVENTSTORE_PASSWORD || 'changeit',
       },
     });
     return {

@@ -1,20 +1,28 @@
-import {Module} from '@nestjs/common';
-import {InvitingApplicantsEventStoreProjectionModule} from './projection/eventstore/inviting-applicants-event-store-projection.module';
-import {ProjectionName} from "./projection/eventstore/projection-name";
+import { Module } from '@nestjs/common';
+import { InvitingApplicantsEventStoreProjectionsModule } from './infrastructure/eventstore/inviting-applicants-event-store-projections.module';
+import {
+  PROJECTION_CURRENT_PENDING_INVITATIONS,
+  PROJECTION_INVITED_APPLICANTS_COUNTER_V1,
+} from './projection/projection-names';
+import { InvitingApplicantsQueryHandler } from './query/handlers/inviting-applicants.query-handler';
+import { ApplicantInvitationV1ReadSideController } from './presentation/rest-api/v1/applicant-invitation.v1.read-side-controller';
+import { SharedKernelReadSideInfrastructureModule } from '../../shared-kernel/read-side/infrastructure/shared-kernel-read-side-infrastructure.module';
 
 //TODO: Add selecting projection engine! EventStore for example
-const eventStoreProjectionModule = InvitingApplicantsEventStoreProjectionModule.register(
-    {
-      projectionsDir: './resources/inviting-applicants/read-side/projection/eventstore',
-      projections: [
-        ProjectionName.fromProps({id: 'invited-applicants-counter', version: 1}),
-        ProjectionName.fromProps({id: 'current-pending-invitations', version: 2})
-      ]
-    }
+
+const eventStoreProjectionModule = InvitingApplicantsEventStoreProjectionsModule.eventStoreProjectionEngine(
+  [
+    PROJECTION_INVITED_APPLICANTS_COUNTER_V1,
+    PROJECTION_CURRENT_PENDING_INVITATIONS,
+  ],
 );
 
 @Module({
-  imports: [eventStoreProjectionModule],
+  controllers: [ApplicantInvitationV1ReadSideController],
+  imports: [
+    eventStoreProjectionModule,
+    SharedKernelReadSideInfrastructureModule,
+  ],
+  providers: [...InvitingApplicantsQueryHandler.All],
 })
-export class InvitingApplicantsReadSideModule {
-}
+export class InvitingApplicantsReadSideModule {}

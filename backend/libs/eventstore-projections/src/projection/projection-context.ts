@@ -1,14 +1,22 @@
 import { ProjectionsManager } from './projections-manager';
 import { flatMap, switchMap } from 'rxjs/operators';
 import { EMPTY, Observable, of } from 'rxjs';
-import {ProjectionName} from "./projection-name";
-import {ProjectionSource} from "./projection-source";
+import { ProjectionName } from './projection-name';
+import { ProjectionSource } from './projection-source';
 
 export class ProjectionContext {
   constructor(private readonly projectionsManager: ProjectionsManager) {}
 
-  async projectionState<T>(name: ProjectionName): Promise<T> {
-    return this.projectionsManager.getState<T>(name.raw).toPromise();
+  async projectionState<T>(name: ProjectionName): Promise<ProjectionState<T>> {
+    return this.projectionsManager
+      .getState<ProjectionState<T>>(name.raw)
+      .toPromise();
+  }
+
+  projectionStateObservable<T>(
+    name: ProjectionName,
+  ): Observable<ProjectionState<T>> {
+    return this.projectionsManager.getState<ProjectionState<T>>(name.raw);
   }
 
   async enableProjection(name: ProjectionName): Promise<void> {
@@ -22,7 +30,10 @@ export class ProjectionContext {
     await this.projectionsManager.enable(name.raw).toPromise();
   }
 
-  async ensureProjection(name: ProjectionName, source: ProjectionSource): Promise<void> {
+  async ensureProjection(
+    name: ProjectionName,
+    source: ProjectionSource,
+  ): Promise<void> {
     return this.projectionsManager
       .exists(name.raw)
       .pipe(
@@ -36,11 +47,21 @@ export class ProjectionContext {
       .toPromise();
   }
 
-  private addProjection(name: ProjectionName, source: ProjectionSource): Observable<boolean> {
-    return this.projectionsManager.create(name.raw, source.jsQuery, source.config.mode);
+  private addProjection(
+    name: ProjectionName,
+    source: ProjectionSource,
+  ): Observable<boolean> {
+    return this.projectionsManager.create(
+      name.raw,
+      source.jsQuery,
+      source.config.mode,
+    );
   }
 
-  private updateProjectionQuery(name: ProjectionName, query: string): Observable<boolean> {
+  private updateProjectionQuery(
+    name: ProjectionName,
+    query: string,
+  ): Observable<boolean> {
     return this.projectionsManager
       .getQuery(name.raw)
       .pipe(

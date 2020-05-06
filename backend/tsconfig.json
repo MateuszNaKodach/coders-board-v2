@@ -40,6 +40,12 @@
       ],
       "@coders-board-library/axios-utils/axios-utils/*": [
         "libs/axios-utils/src/*"
+      ],
+      "@coders-board-library/eventstore-projections": [
+        "libs/eventstore-projections/src"
+      ],
+      "@coders-board-library/eventstore-projections/*": [
+        "libs/eventstore-projections/src/*"
       ]
     }
   },

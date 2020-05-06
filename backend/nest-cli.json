@@ -46,6 +46,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/axios-utils/tsconfig.lib.json"
       }
+    },
+    "eventstore-projections": {
+      "type": "library",
+      "root": "libs/eventstore-projections",
+      "entryFile": "index",
+      "sourceRoot": "libs/eventstore-projections/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/eventstore-projections/tsconfig.lib.json"
+      }
     }
   },
   "compilerOptions": {

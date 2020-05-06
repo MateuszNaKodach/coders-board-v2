@@ -1,5 +1,5 @@
-import {ProjectionName} from "./projection-name";
-import {ProjectionSource} from "./projection-source";
+import { ProjectionName } from './projection-name';
+import { ProjectionSource } from './projection-source';
 
 export const PROJECTION_SOURCES_PROVIDER = Symbol(
   'PROJECTION_SOURCES_PROVIDER',

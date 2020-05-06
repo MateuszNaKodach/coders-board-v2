@@ -17,7 +17,7 @@ export abstract class AbstractPublicEvent<P extends any = any>
   ) {}
 
   get eventType(): string {
-    return "PUBLIC_" + Object.getPrototypeOf(this).constructor.name;
+    return 'PUBLIC_' + Object.getPrototypeOf(this).constructor.name;
   }
 
   abstract get aggregateType(): string;

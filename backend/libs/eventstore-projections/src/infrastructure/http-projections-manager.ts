@@ -1,7 +1,7 @@
-import { ProjectionsManager } from '../../projection/eventstore/projections-manager';
+import { ProjectionsManager } from '../projection/projections-manager';
 import { HttpService } from '@nestjs/common';
 import { Observable, of, throwError } from 'rxjs';
-import { ProjectionDetails } from '../../projection/eventstore/projection-details';
+import { ProjectionDetails } from '../projection/projection-details';
 import { catchError, map } from 'rxjs/operators';
 
 export class HttpProjectionsManager implements ProjectionsManager {
@@ -60,12 +60,13 @@ export class HttpProjectionsManager implements ProjectionsManager {
       .pipe(map(response => response.data));
   }
 
-  create(name: string, query: string, mode: "continuous" | "onetime" = "continuous"): Observable<boolean> {
+  create(
+    name: string,
+    query: string,
+    mode: 'continuous' | 'onetime' = 'continuous',
+  ): Observable<boolean> {
     return this.httpService
-      .post<void>(
-        `/projections/${mode}?name=${name}&type=JS&emit=true`,
-        query,
-      )
+      .post<void>(`/projections/${mode}?name=${name}&type=JS&emit=true`, query)
       .pipe(
         map(response => response.status === 201),
         catchError(err => {
