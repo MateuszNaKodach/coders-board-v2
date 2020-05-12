@@ -1,0 +1,35 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'docker-host-alpha'
+
+# A scrape configuration containing exactly one endpoint to scrape.
+scrape_configs:
+  - job_name: 'coders-board-monolith'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['coders-board-monolith:3000', 'host.docker.internal:3000']
+
+  - job_name: 'prometheus-exporter-node'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['prometheus-exporter-node:9100','host.docker.internal:9100']
+
+  - job_name: 'prometheus-exporter-cadvisor'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['prometheus-exporter-cadvisor:8080','host.docker.internal:8080']
+
+  - job_name: 'prometheus-exporter-eventstore'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['prometheus-exporter-eventstore:9448']
+#
+#  - job_name: 'prometheus'
+#    scrape_interval: 10s
+#    static_configs:
+#      - targets: ['localhost:9090']
