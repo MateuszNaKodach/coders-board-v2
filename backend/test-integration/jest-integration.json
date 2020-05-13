@@ -1,0 +1,27 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-integration.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@coders-board-library/event-sourcing/(.*)": "<rootDir>/../libs/event-sourcing/src/$1",
+    "@coders-board-library/event-sourcing": "<rootDir>/../libs/event-sourcing/src",
+    "@coders-board-library/time-provider/(.*)": "<rootDir>/../libs/time-provider/src/$1",
+    "@coders-board-library/time-provider": "<rootDir>/../libs/time-provider/src",
+    "@coders-board-library/public-messages/(.*)": "<rootDir>/../libs/public-messages/src/$1",
+    "@coders-board-library/public-messages": "<rootDir>/../libs/public-messages/src",
+    "@coders-board-library/rxjs-utils/(.*)": "<rootDir>/../libs/rxjs-utils/src/$1",
+    "@coders-board-library/rxjs-utils": "<rootDir>/../libs/rxjs-utils/src",
+    "@coders-board-library/axios-utils/(.*)": "<rootDir>/../libs/axios-utils/src/$1",
+    "@coders-board-library/axios-utils": "<rootDir>/../libs/axios-utils/src",
+    "@coders-board-library/eventstore-projections/(.*)": "<rootDir>/../libs/eventstore-projections/src/$1",
+    "@coders-board-library/eventstore-projections": "<rootDir>/../libs/eventstore-projections/src"
+  }
+}
