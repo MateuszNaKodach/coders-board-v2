@@ -161,7 +161,7 @@ jobs:
         working-directory: ${{ env.working-directory }}
         
       - name: Run module tests
-        run: npm run test:cov
+        run: npm run test:all:cov
         working-directory: ${{ env.working-directory }}
         
   e2e-tests:

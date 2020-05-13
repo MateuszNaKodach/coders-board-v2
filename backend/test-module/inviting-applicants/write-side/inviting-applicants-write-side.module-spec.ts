@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { InvitingApplicantsWriteSideModule } from './inviting-applicants-write-side.module';
+import { InvitingApplicantsWriteSideModule } from '../../../src/inviting-applicants/write-side/inviting-applicants-write-side.module';
 import { ApplicantInvitationCommand } from '@coders-board-library/public-messages/inviting-applicants/command/applicant-invitation.command';
 import InviteApplicantToAssociation = ApplicantInvitationCommand.InviteApplicantToAssociation;
 import { CommandBus } from '@nestjs/cqrs';
@@ -15,7 +15,7 @@ import CancelApplicantInvitation = ApplicantInvitationCommand.CancelApplicantInv
 import {
   EXTERNAL_EVENT_PUBLISHER,
   ExternalEventPublisher,
-} from '../../shared-kernel/write-side/application/external-event-publisher/external-event-publisher';
+} from '../../../src/shared-kernel/write-side/application/external-event-publisher/external-event-publisher';
 import ApplicantInvitationCancelledPublicEvent = ApplicantInvitationPublicEvent.ApplicantInvitationCancelledPublicEvent;
 import ApplicantInvitedPublicEvent = ApplicantInvitationPublicEvent.ApplicantInvitedPublicEvent;
 

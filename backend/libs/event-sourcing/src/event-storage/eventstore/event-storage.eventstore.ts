@@ -4,19 +4,13 @@ import { HttpService } from '@nestjs/common';
 import { EventStreamVersion } from '../../api/event-stream-version.valueobject';
 import { StorageEventEntry } from '../../api/storage-event-entry';
 import { Time } from '../../time.type';
-import {
-  catchError,
-  concatMap,
-  delay,
-  flatMap,
-  map,
-  retryWhen,
-  take,
-} from 'rxjs/operators';
+import { catchError, flatMap } from 'rxjs/operators';
 import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
 import { axiosLoggingInterceptor } from '@coders-board-library/axios-utils';
-import { concat, of, pipe, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { AxiosResponse } from 'axios';
+import '../../common/extension-method/error';
+import { errorCausedBy } from '@coders-board-library/event-sourcing/common/extension-method/error';
 
 const EXPECTED_ANY_VERSION = -2;
 const EXPECTED_STREAM_NOT_EXISTS = -1;
@@ -50,7 +44,9 @@ export class EventStoreEventStorage implements EventStorage {
       expectedVersion,
       [storageEventDto],
       eventStreamId,
-    );
+    )
+      .toPromise()
+      .then();
   }
 
   private static toStorageEventDto(event: StorageEventEntry) {
@@ -70,7 +66,7 @@ export class EventStoreEventStorage implements EventStorage {
     expectedVersion: EventStreamVersion,
     eventsToStore: StorageEventDto[],
     eventStreamId: EventStreamId,
-  ) {
+  ): Observable<any[] | AxiosResponse<any>> {
     const expectedStreamVersion = EventStoreEventStorage.expectedStoredStreamVersion(
       expectedVersion,
     );
@@ -92,7 +88,24 @@ export class EventStoreEventStorage implements EventStorage {
           'Content-Type': 'application/vnd.eventstore.events+json',
         },
       })
-      .toPromise();
+      .pipe(
+        flatMap(response =>
+          response.status == 201 ? of(response) : throwError(response),
+        ),
+        catchError(err => {
+          const eventStreamModifiedConcurrent =
+            err.response.status === 400 &&
+            err.response.statusText === 'Wrong expected EventNumber';
+          return eventStreamModifiedConcurrent
+            ? throwError(
+                errorCausedBy(
+                  new Error('EventStream modified concurrently!'),
+                  err,
+                ),
+              )
+            : throwError(err);
+        }),
+      );
   }
 
   private static expectedStoredStreamVersion(
@@ -152,17 +165,24 @@ export class EventStoreEventStorage implements EventStorage {
       expectedVersion,
       eventsToStore,
       eventStreamId,
-    ).then();
+    )
+      .toPromise()
+      .then();
   }
 
   readEvents(eventStreamId: EventStreamId, toDate?: Date) {
     const maxEventDate = toDate ? toDate : this.time();
     return this.getEventsBy(eventStreamId).then(events =>
-      events.filter(it =>
-        moment(it.occurredAt.getUTCDate()).isSameOrBefore(
-          moment(maxEventDate.getUTCDate()),
+      events
+        .filter(it =>
+          moment(it.occurredAt)
+            .utc()
+            .isSameOrBefore(moment(maxEventDate).utc()),
+        )
+        .sort(
+          (e1, e2) =>
+            moment(e1.occurredAt).valueOf() - moment(e2.occurredAt).valueOf(),
         ),
-      ),
     );
   }
 

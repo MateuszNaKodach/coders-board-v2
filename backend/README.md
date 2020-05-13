@@ -1,5 +1,76 @@
 # CodersBoard Backend
 
+## Project structure
+We need to keep extendable architecture in order to prepare for future changes, 
+because we work in very flexible manner and requirements changes and evolve a lot.
+
+### Backend Directory
+
+- **src** - 
+Folders in backend **src** keeps logical separated parts, which are Bounded Contexts pattern from Domain-Driven Design. Except of 
+`shared-kernel`, which contains code which can be reused between contexts.
+Each BC, which follow CQRS manner, has following subdirectories: write-side and read-side.
+Write-side is an implementation of business rule with rich domain model pattern. It uses Onion-Architecture layers:
+Domain / Application / Presentation and Infrastructure. On the other hand read-side is simple read model and this architecture is
+no standarized - depends on certain usecase, for example - if use EventStore Projections. Read-side is mostly responsible 
+for projections from domain events and presenting it thought HTTP endpoints.
+    ```
+    ├── inviting-applicants //example of Bounded Context
+    │   ├── read-side
+    │   │   ├── ...depends on use case...
+    │   └── write-side
+    │       ├── application
+    │       ├── domain
+    │       ├── infrastructure
+    │       └── presentation
+    │           └── rest-api
+    │               └── v1
+    ├── payments //example of Bounded Context
+    │   ├── read-side
+    │   │   ├── ...depends on use case...
+    │   └── write-side
+    │       ├── application
+    │       ├── domain
+    │       ├── infrastructure
+    │       └── presentation
+    │           └── rest-api
+    │               └── v1
+    └── shared-kernel //code in this directory can only be shared between contexts
+        ├── read-side
+        └── write-side
+            ├── application
+            ├── domain
+            └── infrastructure
+    ```
+
+- **libs** - technical parts of software - implementations of reusable components. 
+Mostly Adapters from [Ports&Adapters Architecture](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/).
+In the future will be moved to npm packages, but we leave it now for easier and faster development to avoid unnecessary complexity.
+This follow [NestJS monorepo pattern](https://docs.nestjs.com/cli/libraries).
+Each library has own sources and tests directories.
+    ```
+    ├── eventstore-projections
+    │   └── src
+    │   ├── test-e2e
+    │   └── test-unit
+    ├── public-messages
+        └── src
+        ├── test-e2e
+        └── test-unit
+    
+    ``` 
+
+- *test-unit* - specifications without external dependencies. Mostly focused on domain layer from read-side.
+Unit IS NOT a class, but single use case. If we treat class as unit we can end up with freezed design and many useless, failing tests
+when change of the design is necessary. 
+Tests of aggregates are the most important and  relatively simple:
+    - GIVEN: History of past events
+    - WHEN: Method invocation
+    - THEN: New event should be published, according to business rules  
+We treat aggregate as a blackbox to follow OOP encapsulation - do not assert state, only published events.
+
+//TODO: Describe other tests
+
 ## Know how
 
 Short and useful tutorials for developers.

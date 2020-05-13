@@ -1,10 +1,10 @@
-import { AbstractAggregateRoot } from './abstract-aggregate-root';
-import { TimeProviderPort } from './time-provider.port';
-import { AggregateId } from './aggregate-id.valueobject';
-import { AbstractDomainEvent } from './abstract-domain-event';
-import { DomainEventId } from './domain-event-id.valueobject';
+import { AbstractAggregateRoot } from '../../../../src/shared-kernel/write-side/domain/abstract-aggregate-root';
+import { TimeProviderPort } from '../../../../src/shared-kernel/write-side/domain/time-provider.port';
+import { AggregateId } from '../../../../src/shared-kernel/write-side/domain/aggregate-id.valueobject';
+import { AbstractDomainEvent } from '../../../../src/shared-kernel/write-side/domain/abstract-domain-event';
+import { DomainEventId } from '../../../../src/shared-kernel/write-side/domain/domain-event-id.valueobject';
 import { SystemTimeProvider } from '@coders-board-library/time-provider/system-time-provider';
-import { expectDomainEvent } from './aggregate-root.test-utils';
+import { expectDomainEvent } from '../../../../src/shared-kernel/write-side/domain/aggregate-root.test-utils';
 
 class SampleAggregateId implements AggregateId {
   private readonly TYPE = 'SampleAggregateId';

@@ -33,7 +33,10 @@ export class InvitingApplicantsWriteSideModule implements OnModuleInit {
     if (randomInt(0, 1) === 0) {
       setTimeout(() => {
         this.commandBus.execute(new CancelApplicantInvitation(invitationId));
-      }, 1000);
+      }, 2000);
+      setTimeout(() => {
+        this.commandBus.execute(new CancelApplicantInvitation(invitationId));
+      }, 10000);
     }
   }
 }
