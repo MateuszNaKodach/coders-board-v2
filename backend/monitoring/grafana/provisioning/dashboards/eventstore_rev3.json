@@ -54,7 +54,6 @@
       }
     ]
   },
-  "title": "EventStore",
   "description": "A dashboard for metrics exported with eventstore_exporter",
   "editable": true,
   "gnetId": 7673,
