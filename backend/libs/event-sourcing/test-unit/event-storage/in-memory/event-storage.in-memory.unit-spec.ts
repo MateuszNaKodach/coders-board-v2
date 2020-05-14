@@ -109,7 +109,7 @@ describe('Feature: In memory event storage', () => {
         };
         await expect(
           eventStorage.store(events.aggregate1.eventStreamName, anotherEvent2, EventStreamVersion.exactly(1)),
-        ).rejects.toMatch(`Event stream for aggregate was modified! Expected version: 1, but actual is: 2`);
+        ).rejects.toMatch(`Event stream for aggregate was modified concurrently!`);
       });
     });
   });

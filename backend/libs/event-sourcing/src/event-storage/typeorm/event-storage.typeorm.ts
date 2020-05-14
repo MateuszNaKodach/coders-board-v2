@@ -24,9 +24,7 @@ export class TypeOrmEventStorage implements EventStorage {
       where: { streamId: eventStreamName.streamId },
     });
     if (expectedVersion && expectedVersion.raw !== aggregateEvents) {
-      throw new Error(
-        `Event stream for aggregate was modified! Expected version: ${expectedVersion.raw}, but actual is: ${aggregateEvents}`,
-      );
+      throw new Error(`Event stream for aggregate was modified concurrently!`);
     }
     const nextEventOrder = aggregateEvents + 1;
     const typeOrmDomainEvent = DomainEventEntity.fromProps({

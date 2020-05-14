@@ -7,6 +7,10 @@ export class EventStreamVersion {
     return new EventStreamVersion(raw);
   }
 
+  static newStream() {
+    return new EventStreamVersion(0);
+  }
+
   isNew(): boolean {
     return this.raw === 0;
   }

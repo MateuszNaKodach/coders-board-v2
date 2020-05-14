@@ -4,13 +4,14 @@ import { HttpService } from '@nestjs/common';
 import { EventStreamVersion } from '../../api/event-stream-version.valueobject';
 import { StorageEventEntry } from '../../api/storage-event-entry';
 import { Time } from '../../time.type';
-import { catchError, flatMap } from 'rxjs/operators';
+import { catchError, flatMap, retryWhen } from 'rxjs/operators';
 import { EventStreamName } from '@coders-board-library/event-sourcing/api/event-stream-name.valueboject';
 import { axiosLoggingInterceptor } from '@coders-board-library/axios-utils';
 import { Observable, of, throwError } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import '../../common/extension-method/error';
 import { errorCausedBy } from '@coders-board-library/event-sourcing/common/extension-method/error';
+import { genericRetryStrategy } from '@coders-board-library/rxjs-utils';
 
 const EXPECTED_ANY_VERSION = -2;
 const EXPECTED_STREAM_NOT_EXISTS = -1;
@@ -20,19 +21,17 @@ const POOL_EVERY_N_SECONDS_IF_ATOM_FEED_IS_EMPTY = 30;
 
 export class EventStoreEventStorage implements EventStorage {
   constructor(private readonly time: Time, private readonly httpService: HttpService) {
-    const loggingInterceptor = axiosLoggingInterceptor(reqRes => console.log(reqRes), false, true);
+    const loggingInterceptor = axiosLoggingInterceptor(reqRes => console.log(reqRes), false, false);
     this.httpService.axiosRef.interceptors.response.use(loggingInterceptor.onFulfilled, loggingInterceptor.onRejected);
   }
 
   async store(
     eventStreamName: EventStreamName,
     event: StorageEventEntry,
-    expectedVersion: EventStreamVersion | undefined = undefined,
+    expectedVersion: EventStreamVersion | undefined = EventStreamVersion.newStream(),
   ): Promise<any> {
     const storageEventDto = EventStoreEventStorage.toStorageEventDto(event);
-    return this.storeEventsInEventStore(expectedVersion, [storageEventDto], eventStreamName)
-      .toPromise()
-      .then();
+    return this.storeEventsInEventStore(expectedVersion, [storageEventDto], eventStreamName).toPromise();
   }
 
   private static toStorageEventDto(event: StorageEventEntry) {
@@ -61,21 +60,34 @@ export class EventStoreEventStorage implements EventStorage {
       expectedStreamVersion,
       newStreamVersion,
     );
+    const defaultHeaders = {
+      'ES-ExpectedVersion': expectedStreamVersion,
+      'Content-Type': 'application/vnd.eventstore.events+json',
+    };
+    const headers = newStreamVersion
+      ? {
+          'ES-CurrentVersion': newStreamVersion,
+          ...defaultHeaders,
+        }
+      : defaultHeaders;
     return this.httpService
       .post(`/streams/${eventStreamName.raw}`, eventsToStore, {
-        headers: {
-          'ES-CurrentVersion': newStreamVersion,
-          'ES-ExpectedVersion': expectedStreamVersion,
-          'Content-Type': 'application/vnd.eventstore.events+json',
-        },
+        headers,
       })
       .pipe(
         flatMap(response => (response.status == 201 ? of(response) : throwError(response))),
+        retryWhen(
+          genericRetryStrategy({
+            maxRetryAttempts: 3,
+            delayTime: 500,
+            ignoredErrorCodes: [500],
+          }),
+        ),
         catchError(err => {
           const eventStreamModifiedConcurrent =
             err.response.status === 400 && err.response.statusText === 'Wrong expected EventNumber';
           return eventStreamModifiedConcurrent
-            ? throwError(errorCausedBy(new Error('EventStream modified concurrently!'), err))
+            ? throwError(errorCausedBy(new Error('Event stream for aggregate was modified concurrently!'), err))
             : throwError(err);
         }),
       );
@@ -91,7 +103,7 @@ export class EventStoreEventStorage implements EventStorage {
 
   private static newStreamVersion(expectedStreamVersion: number, eventsNumber: number) {
     return expectedStreamVersion === EXPECTED_ANY_VERSION
-      ? null
+      ? undefined
       : expectedStreamVersion == EXPECTED_STREAM_NOT_EXISTS
       ? 0
       : expectedStreamVersion + eventsNumber;
@@ -165,10 +177,11 @@ export class EventStoreEventStorage implements EventStorage {
 
   private readEventsFromAtomFeed(response: AxiosResponse) {
     return response.data.entries.map(it => {
+      const metadata = JSON.parse(it.metadata);
       return {
         eventId: it.eventId,
         eventType: it.eventType,
-        occurredAt: new Date(it.updated),
+        occurredAt: metadata.occurredAt ? new Date(metadata.occurredAt) : new Date(it.updated),
         streamId: EventStreamName.fromRaw(it.streamId).streamId,
         streamGroup: EventStreamName.fromRaw(it.streamId).streamGroup,
         data: JSON.parse(it.data),

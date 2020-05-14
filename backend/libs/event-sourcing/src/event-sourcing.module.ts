@@ -9,6 +9,7 @@ import { EventSourcingModuleAsyncConfig } from '@coders-board-library/event-sour
 import { EventSourcingModuleConfigFactory } from '@coders-board-library/event-sourcing/event-sourcing.module-config-factory';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { EventStoreEventStorage } from '@coders-board-library/event-sourcing/event-storage/eventstore/event-storage.eventstore';
+import uuid = require('uuid');
 
 const EVENT_SOURCING_CONFIG = Symbol();
 const DEFAULT_EVENT_STORAGE_NAME = 'public';
@@ -17,7 +18,15 @@ const DEFAULT_EVENT_STORAGE_NAME = 'public';
 export class EventSourcingModule {
   static registerTypeOrmAsync(
     config: EventSourcingModuleAsyncConfig,
-    databaseConnectionOptions: Omit<PostgresConnectionOptions, 'schema' | 'entities'>,
+    databaseConnectionOptions: Omit<PostgresConnectionOptions, 'schema' | 'entities'> = {
+      type: 'postgres',
+      host: process.env.DATABASE_HOST,
+      port: process.env.DATABASE_PORT ? parseInt(process.env.DATABASE_PORT, 10) : 5002,
+      username: process.env.DATABASE_USERNAME ? process.env.DATABASE_USERNAME : 'postgres',
+      password: process.env.DATABASE_PASSWORD ? process.env.DATABASE_PASSWORD : 'postgres',
+      database: 'coders-board',
+      synchronize: true,
+    },
   ): DynamicModule {
     const TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION = Symbol('TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION');
     return {
@@ -33,6 +42,7 @@ export class EventSourcingModule {
               ...databaseConnectionOptions,
               schema: config.eventStorageName || DEFAULT_EVENT_STORAGE_NAME,
               entities: [DomainEventEntity],
+              name: `typeorm-event-store=${uuid.v4()}`,
             }),
         },
         {
@@ -73,7 +83,7 @@ export class EventSourcingModule {
     });
     return {
       module: EventSourcingModule,
-      imports: [...config.imports, eventStoreHttpModule] || [],
+      imports: [...(config.imports || []), eventStoreHttpModule] || [],
       providers: [
         this.createAsyncProviders(config),
         {
