@@ -125,7 +125,7 @@ jobs:
         run: npm run ci-lint
         working-directory: ${{ env.working-directory }}
 
-  tests:
+  tests-unit:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -160,11 +160,89 @@ jobs:
         run: npm install
         working-directory: ${{ env.working-directory }}
         
-      - name: Run module tests
-        run: npm run test:all:cov
+      - name: Run tests
+        run: npm run test:unit:cov
         working-directory: ${{ env.working-directory }}
-        
-  e2e-tests:
+
+  tests-module:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest] #, windows-latest, macos-latest]
+        node: [12.x] # 10.x
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Get node_modules cache dir
+        id: npm-cache
+        run: |
+          echo "::set-output name=dir::$(npm config get cache)"
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ${{ env.working-directory }}
+
+      - name: Run tests
+        run: npm run test:module:cov
+        working-directory: ${{ env.working-directory }}
+
+  tests-integration:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest] #, windows-latest, macos-latest]
+        node: [12.x] # 10.x
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Get node_modules cache dir
+        id: npm-cache
+        run: |
+          echo "::set-output name=dir::$(npm config get cache)"
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ${{ env.working-directory }}
+
+      - name: Run tests
+        run: npm run test:integration:docker
+        working-directory: ${{ env.working-directory }}
+
+  tests-e2e:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -199,7 +277,7 @@ jobs:
         run: npm install
         working-directory: ${{ env.working-directory }}
         
-      - name: Run e2e tests
+      - name: Run tests
         run: npm run test:e2e
         working-directory: ${{ env.working-directory }}
         

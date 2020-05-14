@@ -93,8 +93,8 @@ describe('Feature: In memory event storage', () => {
       });
 
       it('Then: The event cannot be stored twice', async () => {
-        await expect(eventStorage.store(events.aggregate1.eventStreamName, events.aggregate1.event1)).rejects.toMatch(
-          `Event stream already contains this event with id ${events.aggregate1.event1.eventId}!`,
+        await expect(eventStorage.store(events.aggregate1.eventStreamName, events.aggregate1.event1)).rejects.toEqual(
+          new Error(`Event stream already contains this event with id ${events.aggregate1.event1.eventId}!`),
         );
       });
 
@@ -109,7 +109,7 @@ describe('Feature: In memory event storage', () => {
         };
         await expect(
           eventStorage.store(events.aggregate1.eventStreamName, anotherEvent2, EventStreamVersion.exactly(1)),
-        ).rejects.toMatch(`Event stream for aggregate was modified concurrently!`);
+        ).rejects.toEqual(new Error(`Event stream for aggregate was modified concurrently!`));
       });
     });
   });

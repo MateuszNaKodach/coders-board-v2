@@ -17,17 +17,17 @@ export class InMemoryEventStorage implements EventStorage {
   ): Promise<void> {
     const foundStream = this.eventStreams[eventStreamName.raw];
     if (foundStream && foundStream.find(e => e.eventId === event.eventId)) {
-      return Promise.reject(`Event stream already contains this event with id ${event.eventId}!`);
+      return Promise.reject(new Error(`Event stream already contains this event with id ${event.eventId}!`));
     }
     const aggregateEvents = !foundStream ? 0 : foundStream.length;
     if (!foundStream) {
       if (expectedVersion && expectedVersion.raw !== 0) {
-        return Promise.reject(`Event stream for aggregate was modified concurrently!`);
+        return Promise.reject(new Error(`Event stream for aggregate was modified concurrently!`));
       }
       this.eventStreams[eventStreamName.raw] = [event];
     } else {
       if (expectedVersion && expectedVersion.raw !== aggregateEvents) {
-        return Promise.reject(`Event stream for aggregate was modified concurrently!`);
+        return Promise.reject(new Error(`Event stream for aggregate was modified concurrently!`));
       }
       this.eventStreams[eventStreamName.raw].push(event);
     }
