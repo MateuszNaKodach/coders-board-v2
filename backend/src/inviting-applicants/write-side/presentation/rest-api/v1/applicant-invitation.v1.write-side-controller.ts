@@ -1,22 +1,11 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  Inject,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Inject, Param, Post } from '@nestjs/common';
 import { InviteApplicantRequestBody } from './request/invite-applicant.request-body';
 import {
   INTERNAL_COMMAND_SENDER,
   InternalCommandSender,
 } from '../../../../../shared-kernel/write-side/application/internal-command-sender/internal-command-sender';
 import { InviteApplicantResponseBody } from './response/invite-applicant.response-body';
-import {
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiNoContentResponse, ApiTags } from '@nestjs/swagger';
 import { InviteApplicant } from '../../../application/internal-command/invite-applicant.internal-command';
 import { CancelApplicantInvitation } from '../../../application/internal-command/cancel-applicant-invitation.internal-command';
 
@@ -38,9 +27,7 @@ export class ApplicantInvitationV1WriteSideController {
     @Body() body: InviteApplicantRequestBody,
   ): Promise<InviteApplicantResponseBody> {
     return this.internalCommandBus
-      .sendAndWait<string>(
-        new InviteApplicant(body.personalEmail, body.firstName, body.lastName),
-      )
+      .sendAndWait<string>(new InviteApplicant(body.personalEmail, body.firstName, body.lastName))
       .then(applicantId => new InviteApplicantResponseBody(applicantId));
   }
 
@@ -49,11 +36,7 @@ export class ApplicantInvitationV1WriteSideController {
   })
   @HttpCode(204)
   @Post(':invitationId/cancellation')
-  postApplicantInvitationCancellation(
-    @Param('invitationId') invitationId: string,
-  ) {
-    return this.internalCommandBus.sendAndWait(
-      new CancelApplicantInvitation(invitationId),
-    );
+  postApplicantInvitationCancellation(@Param('invitationId') invitationId: string) {
+    return this.internalCommandBus.sendAndWait(new CancelApplicantInvitation(invitationId));
   }
 }

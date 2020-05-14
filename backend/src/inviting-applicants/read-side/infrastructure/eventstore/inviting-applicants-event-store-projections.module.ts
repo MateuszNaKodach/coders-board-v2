@@ -7,9 +7,7 @@ import { APPLICANT_INVITATION_REPOSITORY } from '../../../write-side/domain/appl
 
 @Module({})
 export class InvitingApplicantsEventStoreProjectionsModule {
-  static eventStoreProjectionEngine(
-    projections: ProjectionName[],
-  ): DynamicModule {
+  static eventStoreProjectionEngine(projections: ProjectionName[]): DynamicModule {
     const eventStoreProjectionModule = EventStoreProjectionsModule.register({
       eventStore: {
         baseURL: process.env.EVENTSTORE_URL,
@@ -18,8 +16,7 @@ export class InvitingApplicantsEventStoreProjectionsModule {
           password: process.env.EVENTSTORE_PASSWORD,
         },
       },
-      projectionsDir:
-        './resources/inviting-applicants/read-side/projection/eventstore',
+      projectionsDir: './resources/inviting-applicants/read-side/projection/eventstore',
       projections,
     });
     return {
@@ -28,9 +25,7 @@ export class InvitingApplicantsEventStoreProjectionsModule {
       providers: [
         {
           inject: [EventStoreProjectionResultProvider],
-          useFactory: (
-            eventStoreProjectionStateProvider: EventStoreProjectionResultProvider,
-          ) =>
+          useFactory: (eventStoreProjectionStateProvider: EventStoreProjectionResultProvider) =>
             new EventStoreProjectionsInvitingApplicantInvitationRepository(
               eventStoreProjectionStateProvider,
             ),

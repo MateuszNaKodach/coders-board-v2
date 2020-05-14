@@ -3,10 +3,7 @@ import { InvitingApplicantsWriteSideModule } from './inviting-applicants/write-s
 import { InvitingApplicantsReadSideModule } from './inviting-applicants/read-side/inviting-applicants-read-side.module';
 
 const boundedContexts = {
-  invitingApplicants: [
-    InvitingApplicantsWriteSideModule,
-    InvitingApplicantsReadSideModule,
-  ],
+  invitingApplicants: [InvitingApplicantsWriteSideModule, InvitingApplicantsReadSideModule],
 };
 
 @Module({

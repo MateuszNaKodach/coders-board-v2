@@ -9,9 +9,7 @@ export class EventStoreProjectionResultProvider {
     return this.projectionContext.projectionResult<T>(name);
   }
 
-  projectionResultObservable<T>(
-    name: ProjectionName,
-  ): Observable<ProjectionState<T>> {
+  projectionResultObservable<T>(name: ProjectionName): Observable<ProjectionState<T>> {
     return this.projectionContext.projectionResultObservable<T>(name);
   }
 }

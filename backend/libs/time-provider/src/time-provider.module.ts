@@ -13,9 +13,7 @@ import { TimeProvider } from '@coders-board-library/time-provider/time-provider'
 @Global()
 @Module({})
 export class TimeProviderModule {
-  static register(
-    config: TimeProviderModuleConfig = { source: 'system' },
-  ): DynamicModule {
+  static register(config: TimeProviderModuleConfig = { source: 'system' }): DynamicModule {
     const timeProvider = {
       provide: TimeProvider,
       useFactory: () => {

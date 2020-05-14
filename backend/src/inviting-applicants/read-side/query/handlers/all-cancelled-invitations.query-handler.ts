@@ -7,19 +7,13 @@ import { CancelledInvitation } from '../../projection/cancelled-invitations/v1/c
 
 @QueryHandler(InvitingApplicantsQuery.AllCancelledInvitations)
 export class AllCancelledInvitationsQueryHandler
-  implements
-    IQueryHandler<
-      InvitingApplicantsQuery.AllCancelledInvitations,
-      CancelledInvitation[]
-    > {
+  implements IQueryHandler<InvitingApplicantsQuery.AllCancelledInvitations, CancelledInvitation[]> {
   constructor(
     @Inject(APPLICANT_INVITATION_REPOSITORY)
     private readonly repository: ApplicantInvitationRepository,
   ) {}
 
-  execute(
-    query: InvitingApplicantsQuery.AllCancelledInvitations,
-  ): Promise<CancelledInvitation[]> {
+  execute(query: InvitingApplicantsQuery.AllCancelledInvitations): Promise<CancelledInvitation[]> {
     return this.repository.findAllCancelled();
   }
 }

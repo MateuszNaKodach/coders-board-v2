@@ -39,18 +39,12 @@ export abstract class EventSourcedAggregateRootRepository<
 
   protected abstract newAggregate(): T;
 
-  protected abstract recreateEventFromStorage(
-    event: StorageEventEntry,
-  ): DomainEvent;
+  protected abstract recreateEventFromStorage(event: StorageEventEntry): DomainEvent;
 
   save(aggregate: T): Promise<void> {
     const uncommitedEvents = aggregate
       .getUncommittedEvents()
-      .map(it =>
-        EventSourcedAggregateRootRepository.toStorageDomainEventEntry(
-          it as DomainEvent,
-        ),
-      );
+      .map(it => EventSourcedAggregateRootRepository.toStorageDomainEventEntry(it as DomainEvent));
     return this.eventStorage
       .storeAll(
         EventStreamId.props({
@@ -60,20 +54,14 @@ export abstract class EventSourcedAggregateRootRepository<
         uncommitedEvents,
         EventStreamVersion.exactly(aggregate.committedVersion.raw),
       )
-      .then(() =>
-        this.domainEventPublisher.publishAll(aggregate.getUncommittedEvents()),
-      )
+      .then(() => this.domainEventPublisher.publishAll(aggregate.getUncommittedEvents()))
       .then(() => aggregate.clearUncommittedEvents())
       .catch(e =>
-        Promise.reject(
-          errorCausedBy(new Error('Cannot save aggregate in EventStorage!'), e),
-        ),
+        Promise.reject(errorCausedBy(new Error('Cannot save aggregate in EventStorage!'), e)),
       );
   }
 
-  private static toStorageDomainEventEntry(
-    event: DomainEvent,
-  ): StorageEventEntry {
+  private static toStorageDomainEventEntry(event: DomainEvent): StorageEventEntry {
     return {
       eventId: event.eventId.raw,
       streamId: event.aggregateId.raw,

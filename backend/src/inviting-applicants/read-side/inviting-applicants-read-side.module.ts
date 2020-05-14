@@ -21,10 +21,7 @@ const eventStoreProjectionModule = InvitingApplicantsEventStoreProjectionsModule
 
 @Module({
   controllers: [ApplicantInvitationV1ReadSideController],
-  imports: [
-    eventStoreProjectionModule,
-    SharedKernelReadSideInfrastructureModule,
-  ],
+  imports: [eventStoreProjectionModule, SharedKernelReadSideInfrastructureModule],
   providers: [...InvitingApplicantsQueryHandlers.All],
 })
 export class InvitingApplicantsReadSideModule {}

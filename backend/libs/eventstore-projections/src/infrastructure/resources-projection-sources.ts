@@ -1,10 +1,7 @@
 import { ProjectionSources } from '../projection/projection-sources';
 import * as fs from 'fs';
 import { ProjectionName } from '../projection/projection-name';
-import {
-  ProjectionConfig,
-  ProjectionSource,
-} from '../projection/projection-source';
+import { ProjectionConfig, ProjectionSource } from '../projection/projection-source';
 
 export class ResourcesProjectionSources implements ProjectionSources {
   constructor(private readonly projectionsDirectoryPath: string) {}
@@ -35,8 +32,6 @@ export class ResourcesProjectionSources implements ProjectionSources {
     } catch (e) {
       configFileContent = undefined;
     }
-    return configFileContent
-      ? JSON.parse(configFileContent)
-      : ProjectionConfig.default();
+    return configFileContent ? JSON.parse(configFileContent) : ProjectionConfig.default();
   }
 }

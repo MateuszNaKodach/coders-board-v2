@@ -19,15 +19,8 @@ const EXPECTED_STREAM_IS_EMPTY = 0;
 const POOL_EVERY_N_SECONDS_IF_ATOM_FEED_IS_EMPTY = 30;
 
 export class EventStoreEventStorage implements EventStorage {
-  constructor(
-    private readonly time: Time,
-    private readonly httpService: HttpService,
-  ) {
-    const loggingInterceptor = axiosLoggingInterceptor(
-      reqRes => console.log(reqRes),
-      false,
-      true,
-    );
+  constructor(private readonly time: Time, private readonly httpService: HttpService) {
+    const loggingInterceptor = axiosLoggingInterceptor(reqRes => console.log(reqRes), false, true);
     this.httpService.axiosRef.interceptors.response.use(
       loggingInterceptor.onFulfilled,
       loggingInterceptor.onRejected,
@@ -40,11 +33,7 @@ export class EventStoreEventStorage implements EventStorage {
     expectedVersion: EventStreamVersion | undefined = undefined,
   ): Promise<any> {
     const storageEventDto = EventStoreEventStorage.toStorageEventDto(event);
-    return this.storeEventsInEventStore(
-      expectedVersion,
-      [storageEventDto],
-      eventStreamId,
-    )
+    return this.storeEventsInEventStore(expectedVersion, [storageEventDto], eventStreamId)
       .toPromise()
       .then();
   }
@@ -89,28 +78,18 @@ export class EventStoreEventStorage implements EventStorage {
         },
       })
       .pipe(
-        flatMap(response =>
-          response.status == 201 ? of(response) : throwError(response),
-        ),
+        flatMap(response => (response.status == 201 ? of(response) : throwError(response))),
         catchError(err => {
           const eventStreamModifiedConcurrent =
-            err.response.status === 400 &&
-            err.response.statusText === 'Wrong expected EventNumber';
+            err.response.status === 400 && err.response.statusText === 'Wrong expected EventNumber';
           return eventStreamModifiedConcurrent
-            ? throwError(
-                errorCausedBy(
-                  new Error('EventStream modified concurrently!'),
-                  err,
-                ),
-              )
+            ? throwError(errorCausedBy(new Error('EventStream modified concurrently!'), err))
             : throwError(err);
         }),
       );
   }
 
-  private static expectedStoredStreamVersion(
-    expectedVersion: EventStreamVersion,
-  ) {
+  private static expectedStoredStreamVersion(expectedVersion: EventStreamVersion) {
     return expectedVersion === undefined
       ? EXPECTED_ANY_VERSION
       : expectedVersion.isNew()
@@ -118,10 +97,7 @@ export class EventStoreEventStorage implements EventStorage {
       : expectedVersion.raw - 1;
   }
 
-  private static newStreamVersion(
-    expectedStreamVersion: number,
-    eventsNumber: number,
-  ) {
+  private static newStreamVersion(expectedStreamVersion: number, eventsNumber: number) {
     return expectedStreamVersion === EXPECTED_ANY_VERSION
       ? null
       : expectedStreamVersion == EXPECTED_STREAM_NOT_EXISTS
@@ -155,17 +131,9 @@ export class EventStoreEventStorage implements EventStorage {
     events: StorageEventEntry[],
     expectedVersion: EventStreamVersion | undefined = undefined,
   ): Promise<void> {
-    const eventsInGivenStream = events.filter(
-      event => event.streamId === eventStreamId.streamId,
-    );
-    const eventsToStore = eventsInGivenStream.map(e =>
-      EventStoreEventStorage.toStorageEventDto(e),
-    );
-    return this.storeEventsInEventStore(
-      expectedVersion,
-      eventsToStore,
-      eventStreamId,
-    )
+    const eventsInGivenStream = events.filter(event => event.streamId === eventStreamId.streamId);
+    const eventsToStore = eventsInGivenStream.map(e => EventStoreEventStorage.toStorageEventDto(e));
+    return this.storeEventsInEventStore(expectedVersion, eventsToStore, eventStreamId)
       .toPromise()
       .then();
   }
@@ -179,16 +147,11 @@ export class EventStoreEventStorage implements EventStorage {
             .utc()
             .isSameOrBefore(moment(maxEventDate).utc()),
         )
-        .sort(
-          (e1, e2) =>
-            moment(e1.occurredAt).valueOf() - moment(e2.occurredAt).valueOf(),
-        ),
+        .sort((e1, e2) => moment(e1.occurredAt).valueOf() - moment(e2.occurredAt).valueOf()),
     );
   }
 
-  private getEventsBy(
-    eventStreamId: EventStreamId,
-  ): Promise<StorageEventEntry[]> {
+  private getEventsBy(eventStreamId: EventStreamId): Promise<StorageEventEntry[]> {
     return this.httpService
       .get(`/streams/${eventStreamId.raw}?embed=body`, {
         headers: {
@@ -198,9 +161,7 @@ export class EventStoreEventStorage implements EventStorage {
       })
       .pipe(
         flatMap(response =>
-          response.status == 200
-            ? of(this.readEventsFromAtomFeed(response))
-            : throwError(response),
+          response.status == 200 ? of(this.readEventsFromAtomFeed(response)) : throwError(response),
         ),
         catchError(err => {
           const eventStreamNotExists = err.response.status === 404;

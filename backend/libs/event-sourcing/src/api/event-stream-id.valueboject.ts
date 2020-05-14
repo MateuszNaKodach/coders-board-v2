@@ -2,10 +2,7 @@ export const EVENT_STREAM_GROUP_SEPARATOR = '-';
 
 //TODO: Change to EventStreamName?
 export class EventStreamId {
-  private constructor(
-    readonly streamGroup: string,
-    readonly streamId: string,
-  ) {}
+  private constructor(readonly streamGroup: string, readonly streamId: string) {}
 
   static from(streamGroup: string, streamId: string) {
     if (
@@ -27,10 +24,7 @@ export class EventStreamId {
   }
 
   static fromRaw(raw: string) {
-    const streamGroup = raw.substr(
-      0,
-      raw.indexOf(EVENT_STREAM_GROUP_SEPARATOR),
-    );
+    const streamGroup = raw.substr(0, raw.indexOf(EVENT_STREAM_GROUP_SEPARATOR));
     const streamId = raw.substr(raw.indexOf(EVENT_STREAM_GROUP_SEPARATOR) + 1);
     if (streamGroup === undefined || streamGroup === '') {
       throw new Error(

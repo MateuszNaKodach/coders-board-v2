@@ -14,19 +14,14 @@ import { LastName } from '../../domain/last-name.value-object';
 import { InviteApplicant } from '../internal-command/invite-applicant.internal-command';
 
 @CommandHandler(InviteApplicant)
-export class InviteApplicantInternalCommandHandler
-  implements ICommandHandler<InviteApplicant> {
+export class InviteApplicantInternalCommandHandler implements ICommandHandler<InviteApplicant> {
   constructor(
     @Inject(TIME_PROVIDER) private readonly timeProvider: TimeProviderPort,
     @Inject(APPLICANT_INVITATION_REPOSITORY)
     private readonly repository: ApplicantInvitationRepository,
   ) {}
 
-  async execute({
-    firstName,
-    lastName,
-    personalEmail,
-  }: InviteApplicant): Promise<string> {
+  async execute({ firstName, lastName, personalEmail }: InviteApplicant): Promise<string> {
     const invitation = new ApplicantInvitation(this.timeProvider);
     const id = ApplicantInvitationId.generate();
     invitation.forApplicant(id, {

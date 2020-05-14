@@ -2,9 +2,7 @@ import { DomainEvent } from './domain-event';
 import { AbstractFailureDomainEvent } from './abstract-failure-domain-event';
 
 export abstract class Result {
-  static success(
-    events: undefined | DomainEvent | DomainEvent[] = undefined,
-  ): Result {
+  static success(events: undefined | DomainEvent | DomainEvent[] = undefined): Result {
     return events === undefined
       ? Success.empty()
       : Array.isArray(events)

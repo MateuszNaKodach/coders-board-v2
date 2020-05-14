@@ -1,7 +1,4 @@
-import {
-  AbstractPublicEvent,
-  PublicEvent,
-} from '@coders-board-library/public-messages';
+import { AbstractPublicEvent, PublicEvent } from '@coders-board-library/public-messages';
 import SpyInstance = jest.SpyInstance;
 import DoneCallback = jest.DoneCallback;
 
@@ -52,8 +49,6 @@ export function isDefined<T>(x: T | undefined): x is T {
   return x !== undefined;
 }
 
-export function isPublicEvent(
-  event: unknown | undefined,
-): event is PublicEvent {
+export function isPublicEvent(event: unknown | undefined): event is PublicEvent {
   return isDefined(event) && event instanceof AbstractPublicEvent;
 }

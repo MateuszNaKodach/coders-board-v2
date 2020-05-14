@@ -15,9 +15,7 @@ export function expectDomainEvent<T extends DomainEvent>(
   aggregateRoot: AbstractAggregateRoot<any>,
   expected: ExpectedDomainEvent<T>,
 ) {
-  const domainEvents = aggregateRoot
-    .getUncommittedEvents()
-    .filter(it => isDomainEvent(it));
+  const domainEvents = aggregateRoot.getUncommittedEvents().filter(it => isDomainEvent(it));
   const foundEvent = domainEvents.find(it => it instanceof expected.type);
   if (isDomainEvent(foundEvent)) {
     expect(foundEvent).toBeInstanceOf(expected.type);
@@ -31,8 +29,6 @@ export function isDefined<T>(x: T | undefined): x is T {
   return x !== undefined;
 }
 
-export function isDomainEvent(
-  event: unknown | undefined,
-): event is DomainEvent {
+export function isDomainEvent(event: unknown | undefined): event is DomainEvent {
   return isDefined(event) && event instanceof AbstractDomainEvent;
 }

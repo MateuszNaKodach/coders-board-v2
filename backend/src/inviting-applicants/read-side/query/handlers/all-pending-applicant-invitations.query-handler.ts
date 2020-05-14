@@ -7,19 +7,13 @@ import { ApplicantInvitationRepository } from '../../projection/pending-invitati
 
 @QueryHandler(InvitingApplicantsQuery.AllPendingInvitations)
 export class AllPendingApplicantInvitationsQueryHandler
-  implements
-    IQueryHandler<
-      InvitingApplicantsQuery.AllPendingInvitations,
-      PendingInvitation[]
-    > {
+  implements IQueryHandler<InvitingApplicantsQuery.AllPendingInvitations, PendingInvitation[]> {
   constructor(
     @Inject(APPLICANT_INVITATION_REPOSITORY)
     private readonly repository: ApplicantInvitationRepository,
   ) {}
 
-  execute(
-    query: InvitingApplicantsQuery.AllPendingInvitations,
-  ): Promise<PendingInvitation[]> {
+  execute(query: InvitingApplicantsQuery.AllPendingInvitations): Promise<PendingInvitation[]> {
     return this.repository.findAllPending();
   }
 }

@@ -19,8 +19,5 @@ export interface EventStorage {
     expectedVersion?: EventStreamVersion,
   ): Promise<any>;
 
-  readEvents(
-    eventStreamId: EventStreamId,
-    toDate?: Date,
-  ): Promise<StorageEventEntry[]>;
+  readEvents(eventStreamId: EventStreamId, toDate?: Date): Promise<StorageEventEntry[]>;
 }

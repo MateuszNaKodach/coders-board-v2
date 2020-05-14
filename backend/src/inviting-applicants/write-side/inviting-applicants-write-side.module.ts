@@ -46,14 +46,10 @@ export class InvitingApplicantsWriteSideModule implements OnModuleInit {
     const invitationId = await this.commandBus.send(inviteCommand);
     if (randomInt(0, 1) === 0) {
       setTimeout(() => {
-        this.commandBus.send(
-          new CancelApplicantInvitationPublicCommand(invitationId),
-        );
+        this.commandBus.send(new CancelApplicantInvitationPublicCommand(invitationId));
       }, 2000);
       setTimeout(() => {
-        this.commandBus.send(
-          new CancelApplicantInvitationPublicCommand(invitationId),
-        );
+        this.commandBus.send(new CancelApplicantInvitationPublicCommand(invitationId));
       }, 10000);
     }
   }

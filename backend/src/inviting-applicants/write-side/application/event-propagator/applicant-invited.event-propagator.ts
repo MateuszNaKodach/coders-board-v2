@@ -8,8 +8,7 @@ import {
 import { ApplicantInvitedPublicEvent } from '@coders-board-library/public-messages';
 
 @EventsHandler(ApplicantInvited)
-export class ApplicantInvitedEventPropagator
-  implements IEventHandler<ApplicantInvited> {
+export class ApplicantInvitedEventPropagator implements IEventHandler<ApplicantInvited> {
   constructor(
     @Inject(EXTERNAL_EVENT_PUBLISHER)
     private readonly externalEventPublisher: ExternalEventPublisher,
@@ -18,16 +17,11 @@ export class ApplicantInvitedEventPropagator
   handle(event: ApplicantInvited) {
     //TODO: Saving in outbox and publishing after in batches
     return this.externalEventPublisher.publish(
-      new ApplicantInvitedPublicEvent(
-        event.eventId.raw,
-        event.occurredAt,
-        event.aggregateId.raw,
-        {
-          personalEmail: event.data.personalEmail.raw,
-          firstName: event.data.firstName.raw,
-          lastName: event.data.lastName.raw,
-        },
-      ),
+      new ApplicantInvitedPublicEvent(event.eventId.raw, event.occurredAt, event.aggregateId.raw, {
+        personalEmail: event.data.personalEmail.raw,
+        firstName: event.data.firstName.raw,
+        lastName: event.data.lastName.raw,
+      }),
     );
   }
 }

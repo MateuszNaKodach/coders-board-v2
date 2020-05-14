@@ -10,9 +10,7 @@ import { InvitationCancelled } from './event/invitation-cancelled.domain-events'
 import { CancelingApplicantInvitationFailed } from './event/cancelling-applicant-invitation-failed.domain-event';
 import { InvitingApplicantFailed } from './event/inviting-applicant-failed.domain-event';
 
-export class ApplicantInvitation extends AbstractAggregateRoot<
-  ApplicantInvitationId
-> {
+export class ApplicantInvitation extends AbstractAggregateRoot<ApplicantInvitationId> {
   private _status: InvitationStatus;
   private _personalEmail: PersonalEmail;
   private _firstName: FirstName;
@@ -37,9 +35,7 @@ export class ApplicantInvitation extends AbstractAggregateRoot<
               reason: 'Applicant already invited!',
             }),
           )
-        : Result.success(
-            ApplicantInvited.newFrom(id, this.currentDate, { ...command }),
-          ),
+        : Result.success(ApplicantInvited.newFrom(id, this.currentDate, { ...command })),
     );
 
   onApplicantInvited(event: ApplicantInvited) {
@@ -54,15 +50,11 @@ export class ApplicantInvitation extends AbstractAggregateRoot<
     this.executeCommand(() =>
       this._status === InvitationStatus.CANCELLED
         ? Result.failure(
-            CancelingApplicantInvitationFailed.newFrom(
-              this.id,
-              this.currentDate,
-              { reason: 'Applicant invitation already cancelled!' },
-            ),
+            CancelingApplicantInvitationFailed.newFrom(this.id, this.currentDate, {
+              reason: 'Applicant invitation already cancelled!',
+            }),
           )
-        : Result.success(
-            InvitationCancelled.newFrom(this.id, this.currentDate, {}),
-          ),
+        : Result.success(InvitationCancelled.newFrom(this.id, this.currentDate, {})),
     );
 
   onInvitationCancelled(event: InvitationCancelled) {

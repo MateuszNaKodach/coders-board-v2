@@ -8,7 +8,4 @@ import { InvitationCancelledEventPropagator } from './invitation-cancelled.event
  * TODO: Event propagators need something like Outbox to make possible retries and rebuilding write-side by querying.
  */
 
-export const All = [
-  ApplicantInvitedEventPropagator,
-  InvitationCancelledEventPropagator,
-];
+export const All = [ApplicantInvitedEventPropagator, InvitationCancelledEventPropagator];

@@ -21,17 +21,13 @@ export class EventStoreProjectionsInvitingApplicantInvitationRepository
 
   findAllPending(): Promise<PendingInvitation[]> {
     return this.eventStoreProjectionStateProvider
-      .projectionResult<PendingInvitationsV1ReadModel>(
-        PROJECTION_PENDING_INVITATIONS_V1,
-      )
+      .projectionResult<PendingInvitationsV1ReadModel>(PROJECTION_PENDING_INVITATIONS_V1)
       .then(projectionState => projectionState.content.pendingInvitations);
   }
 
   findAllCancelled(): Promise<CancelledInvitation[]> {
     return this.eventStoreProjectionStateProvider
-      .projectionResult<CancelledInvitationsV1ReadModel>(
-        PROJECTION_CANCELLED_INVITATIONS_V1,
-      )
+      .projectionResult<CancelledInvitationsV1ReadModel>(PROJECTION_CANCELLED_INVITATIONS_V1)
       .then(projectionState => projectionState.content.cancelledInvitations);
   }
 }

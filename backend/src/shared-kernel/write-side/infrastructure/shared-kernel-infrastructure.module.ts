@@ -36,15 +36,9 @@ const typeOrmEventSourcingModule = EventSourcingModule.registerTypeOrmAsync(
   {
     type: 'postgres',
     host: process.env.DATABASE_HOST,
-    port: process.env.DATABASE_PORT
-      ? parseInt(process.env.DATABASE_PORT, 10)
-      : 5002,
-    username: process.env.DATABASE_USERNAME
-      ? process.env.DATABASE_USERNAME
-      : 'postgres',
-    password: process.env.DATABASE_PASSWORD
-      ? process.env.DATABASE_PASSWORD
-      : 'postgres',
+    port: process.env.DATABASE_PORT ? parseInt(process.env.DATABASE_PORT, 10) : 5002,
+    username: process.env.DATABASE_USERNAME ? process.env.DATABASE_USERNAME : 'postgres',
+    password: process.env.DATABASE_PASSWORD ? process.env.DATABASE_PASSWORD : 'postgres',
     database: 'coders-board',
     synchronize: true,
   },
@@ -59,17 +53,15 @@ const inMemoryEventSourcingModule = EventSourcingModule.registerInMemoryAsync({
   },
 });
 
-const eventStoreEventSourcingModule = EventSourcingModule.registerEventStoreAsync(
-  {
-    imports: [timeProviderModule],
-    inject: [TimeProvider],
-    useFactory: (timeProvider: TimeProvider) => {
-      return {
-        time: timeProvider.currentDate,
-      };
-    },
+const eventStoreEventSourcingModule = EventSourcingModule.registerEventStoreAsync({
+  imports: [timeProviderModule],
+  inject: [TimeProvider],
+  useFactory: (timeProvider: TimeProvider) => {
+    return {
+      time: timeProvider.currentDate,
+    };
   },
-);
+});
 
 const eventSourcingModule =
   'typeorm' === process.env.EVENTSOURCING_MODE
@@ -89,29 +81,23 @@ const eventSourcingModule =
       provide: DOMAIN_EVENT_PUBLISHER,
       inject: [EventBus],
       useFactory: (eventBus: EventBus) =>
-        new LoggingDomainEventPublisher(
-          new NestJsDomainEventPublisher(eventBus),
-        ),
+        new LoggingDomainEventPublisher(new NestJsDomainEventPublisher(eventBus)),
     },
     {
       provide: EXTERNAL_EVENT_PUBLISHER,
       inject: [EventBus, EVENT_STORAGE],
       useFactory: (eventBus: EventBus, eventStorage: EventStorage) =>
-        new LoggingExternalEventPublisher(
-          new NestJsExternalEventPublisher(eventBus),
-        ),
+        new LoggingExternalEventPublisher(new NestJsExternalEventPublisher(eventBus)),
     },
     {
       provide: EXTERNAL_COMMAND_SENDER,
       inject: [CommandBus],
-      useFactory: (commandBus: CommandBus) =>
-        new NestJsExternalCommandSender(commandBus),
+      useFactory: (commandBus: CommandBus) => new NestJsExternalCommandSender(commandBus),
     },
     {
       provide: INTERNAL_COMMAND_SENDER,
       inject: [CommandBus],
-      useFactory: (commandBus: CommandBus) =>
-        new NestJsInternalCommandSender(commandBus),
+      useFactory: (commandBus: CommandBus) => new NestJsInternalCommandSender(commandBus),
     },
   ],
   exports: [

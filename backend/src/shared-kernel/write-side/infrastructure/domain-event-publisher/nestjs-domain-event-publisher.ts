@@ -13,8 +13,6 @@ export class NestJsDomainEventPublisher implements DomainEventPublisher {
   }
 
   publishAll(events: DomainEvent[]) {
-    return this.eventBus.publishAll(
-      events.filter(e => e.eventId && e.eventId.raw),
-    );
+    return this.eventBus.publishAll(events.filter(e => e.eventId && e.eventId.raw));
   }
 }

@@ -6,18 +6,12 @@ import {
   Module,
   OnModuleInit,
 } from '@nestjs/common';
-import {
-  PROJECTION_SOURCES_PROVIDER,
-  ProjectionSources,
-} from './projection/projection-sources';
+import { PROJECTION_SOURCES_PROVIDER, ProjectionSources } from './projection/projection-sources';
 import { ResourcesProjectionSources } from '@coders-board-library/eventstore-projections/infrastructure/resources-projection-sources';
 import { HttpProjectionsManager } from '@coders-board-library/eventstore-projections/infrastructure/http-projections-manager';
 import { ProjectionContext } from './projection/projection-context';
 import { ProjectionName } from './projection/projection-name';
-import {
-  PROJECTIONS_MANAGER,
-  ProjectionsManager,
-} from './projection/projections-manager';
+import { PROJECTIONS_MANAGER, ProjectionsManager } from './projection/projections-manager';
 import {
   EventStoreProjectionsModuleConfig,
   PROJECTIONS,
@@ -31,8 +25,7 @@ const PROJECTIONS_DIR = Symbol('PROJECTIONS_DIR');
   providers: [
     {
       inject: [PROJECTIONS_DIR],
-      useFactory: (projectionsDir: string) =>
-        new ResourcesProjectionSources(projectionsDir),
+      useFactory: (projectionsDir: string) => new ResourcesProjectionSources(projectionsDir),
       provide: PROJECTION_SOURCES_PROVIDER,
     },
     {
@@ -91,19 +84,9 @@ export class EventStoreProjectionsModule implements OnModuleInit {
   async onModuleInit() {
     return await Promise.all(
       this.projections.map(projectionName => {
-        const projectionSource = this.projectionSources.projectionSource(
-          projectionName,
-        );
-        return this.projectionContext.ensureProjection(
-          projectionName,
-          projectionSource,
-        );
+        const projectionSource = this.projectionSources.projectionSource(projectionName);
+        return this.projectionContext.ensureProjection(projectionName, projectionSource);
       }),
-    ).catch(
-      e =>
-        new Error(
-          'Failed to create required projections, due to: ' + e.message,
-        ),
-    );
+    ).catch(e => new Error('Failed to create required projections, due to: ' + e.message));
   }
 }

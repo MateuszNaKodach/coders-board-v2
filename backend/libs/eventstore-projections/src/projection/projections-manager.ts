@@ -16,11 +16,7 @@ export interface ProjectionsManager {
 
   enable(name: string): Observable<void>;
 
-  create(
-    name: string,
-    query: string,
-    mode: 'continuous' | 'onetime',
-  ): Observable<boolean>;
+  create(name: string, query: string, mode: 'continuous' | 'onetime'): Observable<boolean>;
 
   getResult<T>(name: string): Observable<T | undefined>;
 }

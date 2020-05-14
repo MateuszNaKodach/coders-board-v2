@@ -36,19 +36,14 @@ export class TypeOrmEventStorage implements EventStorage {
     return this.typeOrmRepository.save(typeOrmDomainEvent).then();
   }
 
-  async storeAll(
-    eventStreamId: EventStreamId,
-    events: StorageEventEntry[],
-  ): Promise<void> {
+  async storeAll(eventStreamId: EventStreamId, events: StorageEventEntry[]): Promise<void> {
     const aggregateEvents = await this.typeOrmRepository.count({
       where: { streamId: eventStreamId.streamId },
     });
     const nextEventOrder = aggregateEvents + 1;
     const typeOrmEvents = events
       .filter(event => event.streamId === eventStreamId.streamId)
-      .map((e, i) =>
-        DomainEventEntity.fromProps({ ...e, order: nextEventOrder + i }),
-      );
+      .map((e, i) => DomainEventEntity.fromProps({ ...e, order: nextEventOrder + i }));
     return this.typeOrmRepository.save(typeOrmEvents).then();
   }
 
@@ -57,9 +52,7 @@ export class TypeOrmEventStorage implements EventStorage {
     return this.typeOrmRepository
       .find({ where: { streamId: eventStreamId.streamId } }) // TODO: Query with occurredAt
       .then(found =>
-        found.filter(it =>
-          moment(it.occurredAt).isSameOrBefore(moment(maxEventDate)),
-        ),
+        found.filter(it => moment(it.occurredAt).isSameOrBefore(moment(maxEventDate))),
       );
   }
 }

@@ -6,8 +6,7 @@ import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-st
 
 const PUBLIC_EVENT_STORAGE_GROUP_PREFIX = 'PUBLIC_';
 
-export class StoreInEventStorageAndForwardExternalEventBus
-  implements ExternalEventPublisher {
+export class StoreInEventStorageAndForwardExternalEventBus implements ExternalEventPublisher {
   constructor(
     private readonly eventStorage: EventStorage,
     private readonly delegate: ExternalEventPublisher,
@@ -22,22 +21,16 @@ export class StoreInEventStorageAndForwardExternalEventBus
         PUBLIC_EVENT_STORAGE_GROUP_PREFIX + event.aggregateType,
         event.aggregateId,
       ),
-      StoreInEventStorageAndForwardExternalEventBus.toStoragePublicEventEntry(
-        event,
-      ),
+      StoreInEventStorageAndForwardExternalEventBus.toStoragePublicEventEntry(event),
     );
     return this.delegate.publish(event);
   }
 
   async publishAll(events: PublicEvent[]) {
-    return Promise.all([
-      events.filter(e => e.eventId).map(e => this.publish(e)),
-    ]);
+    return Promise.all([events.filter(e => e.eventId).map(e => this.publish(e))]);
   }
 
-  private static toStoragePublicEventEntry(
-    event: PublicEvent,
-  ): StorageEventEntry {
+  private static toStoragePublicEventEntry(event: PublicEvent): StorageEventEntry {
     return {
       eventId: event.eventId,
       streamId: event.aggregateId,

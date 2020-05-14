@@ -34,14 +34,12 @@ export class HttpProjectionsManager implements ProjectionsManager {
   }
 
   updateQuery(name: string, query: string): Observable<boolean> {
-    return this.httpService
-      .put<string>(`/projection/${name}/query?type=JS`, query)
-      .pipe(
-        map(response => {
-          const projectionUpdated = response.status === 200;
-          return projectionUpdated;
-        }),
-      );
+    return this.httpService.put<string>(`/projection/${name}/query?type=JS`, query).pipe(
+      map(response => {
+        const projectionUpdated = response.status === 200;
+        return projectionUpdated;
+      }),
+    );
   }
 
   exists(name: string): Observable<boolean> {

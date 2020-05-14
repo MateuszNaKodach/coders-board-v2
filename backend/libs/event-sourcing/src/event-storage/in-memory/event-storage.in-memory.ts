@@ -17,9 +17,7 @@ export class InMemoryEventStorage implements EventStorage {
   ): Promise<void> {
     const foundStream = this.eventStreams[eventStreamId.raw];
     if (foundStream && foundStream.find(e => e.eventId === event.eventId)) {
-      return Promise.reject(
-        `Event stream already contains this event with id ${event.eventId}!`,
-      );
+      return Promise.reject(`Event stream already contains this event with id ${event.eventId}!`);
     }
     const aggregateEvents = !foundStream ? 0 : foundStream.length;
     if (!foundStream) {

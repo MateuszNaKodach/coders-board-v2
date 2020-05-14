@@ -13,8 +13,6 @@ export class NestJsExternalEventPublisher implements ExternalEventPublisher {
   }
 
   publishAll(events: PublicEvent[]) {
-    return this.eventBus.publishAll(
-      events.filter(e => e.eventId !== undefined),
-    );
+    return this.eventBus.publishAll(events.filter(e => e.eventId !== undefined));
   }
 }

@@ -8,14 +8,10 @@ export class ProjectionContext {
   constructor(private readonly projectionsManager: ProjectionsManager) {}
 
   async projectionResult<T>(name: ProjectionName): Promise<ProjectionState<T>> {
-    return this.projectionsManager
-      .getResult<ProjectionState<T>>(name.raw)
-      .toPromise();
+    return this.projectionsManager.getResult<ProjectionState<T>>(name.raw).toPromise();
   }
 
-  projectionResultObservable<T>(
-    name: ProjectionName,
-  ): Observable<ProjectionState<T>> {
+  projectionResultObservable<T>(name: ProjectionName): Observable<ProjectionState<T>> {
     return this.projectionsManager.getResult<ProjectionState<T>>(name.raw);
   }
 
@@ -30,10 +26,7 @@ export class ProjectionContext {
     await this.projectionsManager.enable(name.raw).toPromise();
   }
 
-  async ensureProjection(
-    name: ProjectionName,
-    source: ProjectionSource,
-  ): Promise<void> {
+  async ensureProjection(name: ProjectionName, source: ProjectionSource): Promise<void> {
     return this.projectionsManager
       .exists(name.raw)
       .pipe(
@@ -47,28 +40,16 @@ export class ProjectionContext {
       .toPromise();
   }
 
-  private addProjection(
-    name: ProjectionName,
-    source: ProjectionSource,
-  ): Observable<boolean> {
-    return this.projectionsManager.create(
-      name.raw,
-      source.jsQuery,
-      source.config.mode,
-    );
+  private addProjection(name: ProjectionName, source: ProjectionSource): Observable<boolean> {
+    return this.projectionsManager.create(name.raw, source.jsQuery, source.config.mode);
   }
 
-  private updateProjectionQuery(
-    name: ProjectionName,
-    query: string,
-  ): Observable<boolean> {
+  private updateProjectionQuery(name: ProjectionName, query: string): Observable<boolean> {
     return this.projectionsManager
       .getQuery(name.raw)
       .pipe(
         flatMap(currentQuery =>
-          currentQuery === query
-            ? of(false)
-            : this.projectionsManager.updateQuery(name.raw, query),
+          currentQuery === query ? of(false) : this.projectionsManager.updateQuery(name.raw, query),
         ),
       );
   }

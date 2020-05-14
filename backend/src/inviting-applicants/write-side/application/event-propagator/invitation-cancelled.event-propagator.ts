@@ -8,8 +8,7 @@ import {
 import { InvitationCancelled } from '../../domain/event/invitation-cancelled.domain-events';
 
 @EventsHandler(InvitationCancelled)
-export class InvitationCancelledEventPropagator
-  implements IEventHandler<InvitationCancelled> {
+export class InvitationCancelledEventPropagator implements IEventHandler<InvitationCancelled> {
   constructor(
     @Inject(EXTERNAL_EVENT_PUBLISHER)
     private readonly externalEventPublisher: ExternalEventPublisher,

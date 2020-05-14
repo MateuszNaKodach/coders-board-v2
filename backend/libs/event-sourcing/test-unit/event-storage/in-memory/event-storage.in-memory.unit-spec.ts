@@ -65,67 +65,38 @@ describe('Feature: In memory event storage', () => {
   describe('Given: Events to store', () => {
     describe('When: store the events', () => {
       beforeEach(() => {
-        eventStorage.store(
-          events.aggregate1.eventStreamId,
-          events.aggregate1.event1,
-        );
-        eventStorage.store(
-          events.aggregate2.eventStreamId,
-          events.aggregate2.event1,
-        );
-        eventStorage.store(
-          events.aggregate1.eventStreamId,
-          events.aggregate1.event2,
-        );
-        eventStorage.store(
-          events.aggregate2.eventStreamId,
-          events.aggregate2.event2,
-        );
+        eventStorage.store(events.aggregate1.eventStreamId, events.aggregate1.event1);
+        eventStorage.store(events.aggregate2.eventStreamId, events.aggregate2.event1);
+        eventStorage.store(events.aggregate1.eventStreamId, events.aggregate1.event2);
+        eventStorage.store(events.aggregate2.eventStreamId, events.aggregate2.event2);
       });
 
       it('Then: The event should be queryable by all event', async () => {
         currentDate = time['1540'];
-        const stored = await eventStorage.readEvents(
-          events.aggregate1.eventStreamId,
-        );
+        const stored = await eventStorage.readEvents(events.aggregate1.eventStreamId);
         expect(stored).toContain(events.aggregate1.event1);
         expect(stored).toContain(events.aggregate1.event2);
       });
 
       it('Then: The event should be queryable by time', async () => {
         expect(
-          await eventStorage.readEvents(
-            events.aggregate1.eventStreamId,
-            time['1520'],
-          ),
+          await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1520']),
         ).toStrictEqual([]);
         expect(
-          await eventStorage.readEvents(
-            events.aggregate1.eventStreamId,
-            time['1530'],
-          ),
+          await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1530']),
         ).toContain(events.aggregate1.event1);
 
         expect(
-          await eventStorage.readEvents(
-            events.aggregate1.eventStreamId,
-            time['1540'],
-          ),
+          await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1540']),
         ).toContain(events.aggregate1.event1);
         expect(
-          await eventStorage.readEvents(
-            events.aggregate1.eventStreamId,
-            time['1540'],
-          ),
+          await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1540']),
         ).toContain(events.aggregate1.event2);
       });
 
       it('Then: The event cannot be stored twice', async () => {
         await expect(
-          eventStorage.store(
-            events.aggregate1.eventStreamId,
-            events.aggregate1.event1,
-          ),
+          eventStorage.store(events.aggregate1.eventStreamId, events.aggregate1.event1),
         ).rejects.toMatch(
           `Event stream already contains this event with id ${events.aggregate1.event1.eventId}!`,
         );

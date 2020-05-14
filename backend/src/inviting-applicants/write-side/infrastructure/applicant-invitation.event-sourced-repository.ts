@@ -20,10 +20,7 @@ import { InvitingApplicantsDomainEvents } from '../domain/event';
 
 @Injectable()
 export class ApplicantInvitationEventSourcedRepository
-  extends EventSourcedAggregateRootRepository<
-    ApplicantInvitationId,
-    ApplicantInvitation
-  >
+  extends EventSourcedAggregateRootRepository<ApplicantInvitationId, ApplicantInvitation>
   implements ApplicantInvitationRepository {
   constructor(
     @Inject(TIME_PROVIDER) timeProvider: TimeProviderPort,

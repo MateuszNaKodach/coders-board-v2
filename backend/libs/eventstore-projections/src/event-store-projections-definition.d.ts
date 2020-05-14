@@ -13,10 +13,7 @@ declare type RecordedEvent = {
   metadata_: string;
 };
 
-declare type HandlerFunction = (
-  state: ProjectionState,
-  event: RecordedEvent,
-) => ProjectionState;
+declare type HandlerFunction = (state: ProjectionState, event: RecordedEvent) => ProjectionState;
 
 declare type Handlers = {
   $init?: () => ProjectionState;
@@ -87,9 +84,7 @@ declare function fromStream(
   streamId: string,
 ): WhenFilter & PartitionByFilter & TransformByTransformation;
 
-declare function fromAll(): WhenFilter &
-  PartitionByFilter &
-  TransformByTransformation;
+declare function fromAll(): WhenFilter & PartitionByFilter & TransformByTransformation;
 
 declare function fromCategory(
   streamId: string,
