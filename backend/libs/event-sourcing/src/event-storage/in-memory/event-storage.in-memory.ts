@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { EventStreamVersion } from '../../api/event-stream-version.valueobject';
 import { StorageEventEntry } from '../../api/storage-event-entry';
 import { Time } from '../../time.type';
-import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
+import { EventStreamName } from '@coders-board-library/event-sourcing/api/event-stream-name.valueboject';
 
 export class InMemoryEventStorage implements EventStorage {
   private eventStreams: { [key: string]: StorageEventEntry[] } = {};
@@ -11,11 +11,11 @@ export class InMemoryEventStorage implements EventStorage {
   constructor(private readonly time: Time) {}
 
   store(
-    eventStreamId: EventStreamId,
+    eventStreamName: EventStreamName,
     event: StorageEventEntry,
     expectedVersion: EventStreamVersion | undefined = undefined,
   ): Promise<void> {
-    const foundStream = this.eventStreams[eventStreamId.raw];
+    const foundStream = this.eventStreams[eventStreamName.raw];
     if (foundStream && foundStream.find(e => e.eventId === event.eventId)) {
       return Promise.reject(`Event stream already contains this event with id ${event.eventId}!`);
     }
@@ -26,29 +26,29 @@ export class InMemoryEventStorage implements EventStorage {
           `Event stream for aggregate was modified! Expected version: ${expectedVersion.raw}, but actual is: ${aggregateEvents}`,
         );
       }
-      this.eventStreams[eventStreamId.raw] = [event];
+      this.eventStreams[eventStreamName.raw] = [event];
     } else {
       if (expectedVersion && expectedVersion.raw !== aggregateEvents) {
         return Promise.reject(
           `Event stream for aggregate was modified! Expected version: ${expectedVersion.raw}, but actual is: ${aggregateEvents}`,
         );
       }
-      this.eventStreams[eventStreamId.raw].push(event);
+      this.eventStreams[eventStreamName.raw].push(event);
     }
     return Promise.resolve();
   }
 
   storeAll(
-    eventStreamId: EventStreamId,
+    eventStreamName: EventStreamName,
     events: StorageEventEntry[],
     expectedVersion: EventStreamVersion | undefined = undefined,
   ): Promise<void> {
     return Promise.all(
       events
-        .filter(event => event.streamId === eventStreamId.streamId)
+        .filter(event => event.streamId === eventStreamName.streamId)
         .map((value, index) =>
           this.store(
-            eventStreamId,
+            eventStreamName,
             value,
             expectedVersion ? EventStreamVersion.exactly(expectedVersion.raw + index) : expectedVersion,
           ),
@@ -56,15 +56,15 @@ export class InMemoryEventStorage implements EventStorage {
     ).then();
   }
 
-  readEvents(eventStreamId: EventStreamId, toDate?: Date) {
+  readEvents(eventStreamName: EventStreamName, toDate?: Date) {
     const maxEventDate = toDate ? toDate : this.time();
-    const events = this.getEventsBy(eventStreamId).filter(it =>
+    const events = this.getEventsBy(eventStreamName).filter(it =>
       moment(it.occurredAt).isSameOrBefore(moment(maxEventDate)),
     );
     return Promise.resolve(events);
   }
 
-  private getEventsBy(eventStreamId: EventStreamId): StorageEventEntry[] {
-    return this.eventStreams[eventStreamId.raw] || [];
+  private getEventsBy(eventStreamName: EventStreamName): StorageEventEntry[] {
+    return this.eventStreams[eventStreamName.raw] || [];
   }
 }

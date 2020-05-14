@@ -5,7 +5,7 @@ import { DomainEvent } from '../../domain/domain-event';
 import { EventStorage } from '@coders-board-library/event-sourcing/api/event-storage';
 import { StorageEventEntry } from '@coders-board-library/event-sourcing/api/storage-event-entry';
 import { TimeProviderPort } from '../../domain/time-provider.port';
-import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
+import { EventStreamName } from '@coders-board-library/event-sourcing/api/event-stream-name.valueboject';
 import { EventStreamVersion } from '@coders-board-library/event-sourcing/api/event-stream-version.valueobject';
 import { DomainEventPublisher } from '../domain-event-publisher/domain-event-publisher';
 import { errorCausedBy } from '@coders-board-library/event-sourcing/common/extension-method/error';
@@ -22,7 +22,7 @@ export abstract class EventSourcedAggregateRootRepository<I extends AggregateId,
 
   async findById(id: I): Promise<T | null> {
     const events = await this.eventStorage.readEvents(
-      EventStreamId.props({
+      EventStreamName.props({
         streamId: id.raw,
         streamGroup: this.aggregateType,
       }),
@@ -45,7 +45,7 @@ export abstract class EventSourcedAggregateRootRepository<I extends AggregateId,
       .map(it => EventSourcedAggregateRootRepository.toStorageDomainEventEntry(it as DomainEvent));
     return this.eventStorage
       .storeAll(
-        EventStreamId.props({
+        EventStreamName.props({
           streamId: aggregate.aggregateId.raw,
           streamGroup: this.aggregateType,
         }),

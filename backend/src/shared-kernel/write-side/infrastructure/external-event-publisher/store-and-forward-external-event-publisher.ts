@@ -2,7 +2,7 @@ import { ExternalEventPublisher } from '../../application/external-event-publish
 import { PublicEvent } from '@coders-board-library/public-messages';
 import { EventStorage } from '@coders-board-library/event-sourcing/api/event-storage';
 import { StorageEventEntry } from '@coders-board-library/event-sourcing/api/storage-event-entry';
-import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
+import { EventStreamName } from '@coders-board-library/event-sourcing/api/event-stream-name.valueboject';
 
 const PUBLIC_EVENT_STORAGE_GROUP_PREFIX = 'PUBLIC_';
 
@@ -14,7 +14,7 @@ export class StoreInEventStorageAndForwardExternalEventBus implements ExternalEv
       return;
     }
     await this.eventStorage.store(
-      EventStreamId.from(PUBLIC_EVENT_STORAGE_GROUP_PREFIX + event.aggregateType, event.aggregateId),
+      EventStreamName.from(PUBLIC_EVENT_STORAGE_GROUP_PREFIX + event.aggregateType, event.aggregateId),
       StoreInEventStorageAndForwardExternalEventBus.toStoragePublicEventEntry(event),
     );
     return this.delegate.publish(event);

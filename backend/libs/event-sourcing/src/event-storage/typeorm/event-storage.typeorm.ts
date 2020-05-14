@@ -6,7 +6,7 @@ import { DomainEventEntity } from './event.typeorm-entity';
 import { StorageEventEntry } from '../../api/storage-event-entry';
 import { Repository } from 'typeorm';
 import { Time } from '../../time.type';
-import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
+import { EventStreamName } from '@coders-board-library/event-sourcing/api/event-stream-name.valueboject';
 
 export class TypeOrmEventStorage implements EventStorage {
   constructor(
@@ -16,12 +16,12 @@ export class TypeOrmEventStorage implements EventStorage {
   ) {}
 
   async store(
-    eventStreamId: EventStreamId,
+    eventStreamName: EventStreamName,
     event: StorageEventEntry,
     expectedVersion?: EventStreamVersion,
   ): Promise<void> {
     const aggregateEvents = await this.typeOrmRepository.count({
-      where: { streamId: eventStreamId.streamId },
+      where: { streamId: eventStreamName.streamId },
     });
     if (expectedVersion && expectedVersion.raw !== aggregateEvents) {
       throw new Error(
@@ -36,21 +36,21 @@ export class TypeOrmEventStorage implements EventStorage {
     return this.typeOrmRepository.save(typeOrmDomainEvent).then();
   }
 
-  async storeAll(eventStreamId: EventStreamId, events: StorageEventEntry[]): Promise<void> {
+  async storeAll(eventStreamName: EventStreamName, events: StorageEventEntry[]): Promise<void> {
     const aggregateEvents = await this.typeOrmRepository.count({
-      where: { streamId: eventStreamId.streamId },
+      where: { streamId: eventStreamName.streamId },
     });
     const nextEventOrder = aggregateEvents + 1;
     const typeOrmEvents = events
-      .filter(event => event.streamId === eventStreamId.streamId)
+      .filter(event => event.streamId === eventStreamName.streamId)
       .map((e, i) => DomainEventEntity.fromProps({ ...e, order: nextEventOrder + i }));
     return this.typeOrmRepository.save(typeOrmEvents).then();
   }
 
-  readEvents(eventStreamId: EventStreamId, toDate?: Date) {
+  readEvents(eventStreamName: EventStreamName, toDate?: Date) {
     const maxEventDate = toDate ? toDate : this.time();
     return this.typeOrmRepository
-      .find({ where: { streamId: eventStreamId.streamId } }) // TODO: Query with occurredAt
+      .find({ where: { streamId: eventStreamName.streamId } }) // TODO: Query with occurredAt
       .then(found => found.filter(it => moment(it.occurredAt).isSameOrBefore(moment(maxEventDate))));
   }
 }

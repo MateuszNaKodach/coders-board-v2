@@ -5,7 +5,7 @@ import { EventStreamVersion } from '../../api/event-stream-version.valueobject';
 import { StorageEventEntry } from '../../api/storage-event-entry';
 import { Time } from '../../time.type';
 import { catchError, flatMap } from 'rxjs/operators';
-import { EventStreamId } from '@coders-board-library/event-sourcing/api/event-stream-id.valueboject';
+import { EventStreamName } from '@coders-board-library/event-sourcing/api/event-stream-name.valueboject';
 import { axiosLoggingInterceptor } from '@coders-board-library/axios-utils';
 import { Observable, of, throwError } from 'rxjs';
 import { AxiosResponse } from 'axios';
@@ -25,12 +25,12 @@ export class EventStoreEventStorage implements EventStorage {
   }
 
   async store(
-    eventStreamId: EventStreamId,
+    eventStreamName: EventStreamName,
     event: StorageEventEntry,
     expectedVersion: EventStreamVersion | undefined = undefined,
   ): Promise<any> {
     const storageEventDto = EventStoreEventStorage.toStorageEventDto(event);
-    return this.storeEventsInEventStore(expectedVersion, [storageEventDto], eventStreamId)
+    return this.storeEventsInEventStore(expectedVersion, [storageEventDto], eventStreamName)
       .toPromise()
       .then();
   }
@@ -51,13 +51,18 @@ export class EventStoreEventStorage implements EventStorage {
   private storeEventsInEventStore(
     expectedVersion: EventStreamVersion,
     eventsToStore: StorageEventDto[],
-    eventStreamId: EventStreamId,
+    eventStreamName: EventStreamName,
   ): Observable<any[] | AxiosResponse<any>> {
     const expectedStreamVersion = EventStoreEventStorage.expectedStoredStreamVersion(expectedVersion);
     const newStreamVersion = EventStoreEventStorage.newStreamVersion(expectedStreamVersion, eventsToStore.length);
-    EventStoreEventStorage.logStoredDomainEvents(eventStreamId, eventsToStore, expectedStreamVersion, newStreamVersion);
+    EventStoreEventStorage.logStoredDomainEvents(
+      eventStreamName,
+      eventsToStore,
+      expectedStreamVersion,
+      newStreamVersion,
+    );
     return this.httpService
-      .post(`/streams/${eventStreamId.raw}`, eventsToStore, {
+      .post(`/streams/${eventStreamName.raw}`, eventsToStore, {
         headers: {
           'ES-CurrentVersion': newStreamVersion,
           'ES-ExpectedVersion': expectedStreamVersion,
@@ -93,17 +98,17 @@ export class EventStoreEventStorage implements EventStorage {
   }
 
   private static logStoredDomainEvents(
-    eventStreamId: EventStreamId,
+    eventStreamName: EventStreamName,
     eventsToStore: StorageEventDto[],
     expectedStreamVersion: number,
     newStreamVersion: number,
   ) {
-    if (!eventStreamId.streamGroup.includes('PUBLIC')) {
+    if (!eventStreamName.streamGroup.includes('PUBLIC')) {
       console.log('DOMAIN EVENT PUBLISHED TO EVENT STORE');
       console.table(
         eventsToStore.map(storageEventDto => {
           return {
-            eventStreamId: eventStreamId.raw,
+            eventStreamName: eventStreamName.raw,
             eventType: storageEventDto.eventType,
             expectedStreamVersion,
             newStreamVersion,
@@ -114,20 +119,20 @@ export class EventStoreEventStorage implements EventStorage {
   }
 
   storeAll(
-    eventStreamId: EventStreamId,
+    eventStreamName: EventStreamName,
     events: StorageEventEntry[],
     expectedVersion: EventStreamVersion | undefined = undefined,
   ): Promise<void> {
-    const eventsInGivenStream = events.filter(event => event.streamId === eventStreamId.streamId);
+    const eventsInGivenStream = events.filter(event => event.streamId === eventStreamName.streamId);
     const eventsToStore = eventsInGivenStream.map(e => EventStoreEventStorage.toStorageEventDto(e));
-    return this.storeEventsInEventStore(expectedVersion, eventsToStore, eventStreamId)
+    return this.storeEventsInEventStore(expectedVersion, eventsToStore, eventStreamName)
       .toPromise()
       .then();
   }
 
-  readEvents(eventStreamId: EventStreamId, toDate?: Date) {
+  readEvents(eventStreamName: EventStreamName, toDate?: Date) {
     const maxEventDate = toDate ? toDate : this.time();
-    return this.getEventsBy(eventStreamId).then(events =>
+    return this.getEventsBy(eventStreamName).then(events =>
       events
         .filter(it =>
           moment(it.occurredAt)
@@ -138,9 +143,9 @@ export class EventStoreEventStorage implements EventStorage {
     );
   }
 
-  private getEventsBy(eventStreamId: EventStreamId): Promise<StorageEventEntry[]> {
+  private getEventsBy(eventStreamName: EventStreamName): Promise<StorageEventEntry[]> {
     return this.httpService
-      .get(`/streams/${eventStreamId.raw}?embed=body`, {
+      .get(`/streams/${eventStreamName.raw}?embed=body`, {
         headers: {
           Accept: 'application/vnd.eventstore.atom+json',
           'ES-LongPool': POOL_EVERY_N_SECONDS_IF_ATOM_FEED_IS_EMPTY,
@@ -164,8 +169,8 @@ export class EventStoreEventStorage implements EventStorage {
         eventId: it.eventId,
         eventType: it.eventType,
         occurredAt: new Date(it.updated),
-        streamId: EventStreamId.fromRaw(it.streamId).streamId,
-        streamGroup: EventStreamId.fromRaw(it.streamId).streamGroup,
+        streamId: EventStreamName.fromRaw(it.streamId).streamId,
+        streamGroup: EventStreamName.fromRaw(it.streamId).streamGroup,
         data: JSON.parse(it.data),
       };
     });
