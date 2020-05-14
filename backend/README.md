@@ -1,5 +1,17 @@
 # CodersBoard Backend
 
+## How to run on local machine
+1. Execute `yarn install`.
+2. Run docker daemon on your local computer.
+3. Execute `docker-compose -f docker-compose.local.yml up` in `backend` directory.
+4. Execute `yarn start:dev:eventstorage-eventstore:debug`
+
+This will run application connected to EventStore. In order for different configurations see npm scripts in package.json
+
+- API base URL: `localhost:4000`
+- Swagger URL: `localhost:4000/swagger`
+- EventStore URL: `http://127.0.0.1:2113/` username: admin / password: changeit
+
 ## Project structure
 We need to keep extendable architecture in order to prepare for future changes, 
 because we work in very flexible manner and requirements changes and evolve a lot.
@@ -10,9 +22,11 @@ because we work in very flexible manner and requirements changes and evolve a lo
 Folders in backend **src** keeps logical separated parts, which are Bounded Contexts pattern from Domain-Driven Design. Except of 
 `shared-kernel`, which contains code which can be reused between contexts.
 Each BC, which follow CQRS manner, has following subdirectories: write-side and read-side.
+Bounded Contexts CANNOT share code between other bounded contexts - only dependency on shared-kernel is eligible.
+Bounded Contexts communicate with each other by mean of public-messages and ExternalEventPublisher / ExternalCommandSender
 Write-side is an implementation of business rule with rich domain model pattern. It uses Onion-Architecture layers:
 Domain / Application / Presentation and Infrastructure. On the other hand read-side is simple read model and this architecture is
-no standarized - depends on certain usecase, for example - if use EventStore Projections. Read-side is mostly responsible 
+no standardized - depends on certain usecase, for example - if use EventStore Projections. Read-side is mostly responsible 
 for projections from domain events and presenting it thought HTTP endpoints.
     ```
     ├── inviting-applicants //example of Bounded Context
@@ -53,11 +67,11 @@ Each library has own sources and tests directories.
     │   └── src
     │   ├── test-e2e
     │   └── test-unit
-    ├── public-messages
+    ├── event-sourcing
         └── src
         ├── test-e2e
         └── test-unit
-    
+        └── test-integration
     ``` 
 
 - *test-unit* - specifications without external dependencies. Mostly focused on domain layer from read-side.
