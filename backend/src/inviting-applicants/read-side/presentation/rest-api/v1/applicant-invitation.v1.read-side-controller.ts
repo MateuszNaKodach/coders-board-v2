@@ -1,9 +1,6 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { PendingInvitation } from '../../../projection/pending-invitations/v1/pending-invitations-v1-read.model';
-import {
-  INTERNAL_QUERY_BUS,
-  InternalQueryBus,
-} from '../../../../../shared-kernel/read-side/query/internal-query-bus';
+import { INTERNAL_QUERY_BUS, InternalQueryBus } from '../../../../../shared-kernel/read-side/query/internal-query-bus';
 import * as InvitingApplicantsQuery from '../../../query/inviting-applicants.query';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CancelledInvitation } from '../../../projection/cancelled-invitations/v1/cancelled-invitations-v1-read.model';

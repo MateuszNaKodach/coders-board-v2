@@ -8,9 +8,7 @@ export class HttpProjectionsManager implements ProjectionsManager {
   constructor(private readonly httpService: HttpService) {}
 
   getAll(): Observable<ProjectionDetails[]> {
-    return this.httpService
-      .get<ProjectionDetails[]>('/projections/any')
-      .pipe(map(response => response.data));
+    return this.httpService.get<ProjectionDetails[]>('/projections/any').pipe(map(response => response.data));
   }
 
   get(name: string): Observable<ProjectionDetails | undefined> {
@@ -53,25 +51,17 @@ export class HttpProjectionsManager implements ProjectionsManager {
   }
 
   enable(name: string): Observable<void> {
-    return this.httpService
-      .post<void>(`/projection/${name}/command/enable`)
-      .pipe(map(response => response.data));
+    return this.httpService.post<void>(`/projection/${name}/command/enable`).pipe(map(response => response.data));
   }
 
-  create(
-    name: string,
-    query: string,
-    mode: 'continuous' | 'onetime' = 'continuous',
-  ): Observable<boolean> {
-    return this.httpService
-      .post<void>(`/projections/${mode}?name=${name}&type=JS&emit=true`, query)
-      .pipe(
-        map(response => response.status === 201),
-        catchError(err => {
-          const isProjectionAlreadyExists = err.response.status === 409;
-          return isProjectionAlreadyExists ? of(true) : throwError(err);
-        }),
-      );
+  create(name: string, query: string, mode: 'continuous' | 'onetime' = 'continuous'): Observable<boolean> {
+    return this.httpService.post<void>(`/projections/${mode}?name=${name}&type=JS&emit=true`, query).pipe(
+      map(response => response.status === 201),
+      catchError(err => {
+        const isProjectionAlreadyExists = err.response.status === 409;
+        return isProjectionAlreadyExists ? of(true) : throwError(err);
+      }),
+    );
   }
 
   getResult<T>(name: string): Observable<T | undefined> {

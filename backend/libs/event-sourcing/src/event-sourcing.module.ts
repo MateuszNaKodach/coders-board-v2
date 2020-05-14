@@ -19,9 +19,7 @@ export class EventSourcingModule {
     config: EventSourcingModuleAsyncConfig,
     databaseConnectionOptions: Omit<PostgresConnectionOptions, 'schema' | 'entities'>,
   ): DynamicModule {
-    const TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION = Symbol(
-      'TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION',
-    );
+    const TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION = Symbol('TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION');
     return {
       module: EventSourcingModule,
       imports: config.imports || [],
@@ -41,10 +39,7 @@ export class EventSourcingModule {
           provide: EVENT_STORAGE,
           inject: [EVENT_SOURCING_CONFIG, TYPE_ORM_EVENT_STORAGE_DATABASE_CONNECTION],
           useFactory: (config: EventSourcingModuleConfig, connection: Connection) =>
-            new TypeOrmEventStorage(
-              config.time,
-              connection.getRepository<DomainEventEntity>(DomainEventEntity),
-            ),
+            new TypeOrmEventStorage(config.time, connection.getRepository<DomainEventEntity>(DomainEventEntity)),
         },
       ],
       exports: [EVENT_STORAGE],

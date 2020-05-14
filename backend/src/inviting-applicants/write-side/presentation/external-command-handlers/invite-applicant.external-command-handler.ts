@@ -8,23 +8,20 @@ import {
   InternalCommandSender,
 } from '../../../../shared-kernel/write-side/application/internal-command-sender/internal-command-sender';
 import { InviteApplicant } from '../../application/internal-command/invite-applicant.internal-command';
+import { v4 as uuid } from 'uuid';
 
 @CommandHandler(InviteApplicantPublicCommand)
-export class InviteApplicantExternalCommandHandler
-  implements ICommandHandler<InviteApplicantPublicCommand> {
+export class InviteApplicantExternalCommandHandler implements ICommandHandler<InviteApplicantPublicCommand> {
   constructor(
     @Inject(TIME_PROVIDER) private readonly timeProvider: TimeProviderPort,
     @Inject(INTERNAL_COMMAND_SENDER)
     private readonly internalCommandSender: InternalCommandSender,
   ) {}
 
-  async execute({
-    firstName,
-    lastName,
-    personalEmail,
-  }: InviteApplicantPublicCommand): Promise<string> {
-    return this.internalCommandSender.sendAndWait(
-      new InviteApplicant(personalEmail, firstName, lastName),
-    );
+  async execute({ firstName, lastName, personalEmail }: InviteApplicantPublicCommand): Promise<string> {
+    const applicantInvitationId = uuid();
+    return this.internalCommandSender
+      .sendAndWait(new InviteApplicant(applicantInvitationId, personalEmail, firstName, lastName))
+      .then(() => applicantInvitationId);
   }
 }

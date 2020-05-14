@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CommandBus, CqrsModule, EventBus } from '@nestjs/cqrs';
 import { CodersBoardTimeProviderAdapter } from './time/coders-board-time-provider.adapter';
-import {
-  TIME_PROVIDER,
-  TimeProvider,
-  TimeProviderModule,
-} from '@coders-board-library/time-provider';
+import { TIME_PROVIDER, TimeProvider, TimeProviderModule } from '@coders-board-library/time-provider';
 import { EventSourcingModule } from '@coders-board-library/event-sourcing';
 import { DOMAIN_EVENT_PUBLISHER } from './domain-event-publisher/domain-event-publisher';
 import { NestJsDomainEventPublisher } from './domain-event-publisher/nestjs-domain-event-publisher';
@@ -15,12 +11,11 @@ import { LoggingExternalEventPublisher } from './external-event-publisher/loggin
 import { NestJsExternalEventPublisher } from './external-event-publisher/nest-js-external-event-publisher';
 import { EXTERNAL_COMMAND_SENDER } from '../application/external-command-sender/external-command-sender';
 import { NestJsExternalCommandSender } from './external-command-sender/nest-js-external-command-sender';
-import {
-  EVENT_STORAGE,
-  EventStorage,
-} from '@coders-board-library/event-sourcing/api/event-storage';
+import { EVENT_STORAGE, EventStorage } from '@coders-board-library/event-sourcing/api/event-storage';
 import { INTERNAL_COMMAND_SENDER } from '../application/internal-command-sender/internal-command-sender';
 import { NestJsInternalCommandSender } from './internal-command-sender/nest-js-internal-command-sender';
+import { ClassValidatorInternalCommandSender } from './internal-command-sender/class-validatior-command-sender';
+import { ClassValidatorExternalCommandSender } from './external-command-sender/class-validator-external-command-sender';
 
 const timeProviderModule = TimeProviderModule.register({ source: 'system' });
 const typeOrmEventSourcingModule = EventSourcingModule.registerTypeOrmAsync(
@@ -80,8 +75,7 @@ const eventSourcingModule =
     {
       provide: DOMAIN_EVENT_PUBLISHER,
       inject: [EventBus],
-      useFactory: (eventBus: EventBus) =>
-        new LoggingDomainEventPublisher(new NestJsDomainEventPublisher(eventBus)),
+      useFactory: (eventBus: EventBus) => new LoggingDomainEventPublisher(new NestJsDomainEventPublisher(eventBus)),
     },
     {
       provide: EXTERNAL_EVENT_PUBLISHER,
@@ -92,12 +86,14 @@ const eventSourcingModule =
     {
       provide: EXTERNAL_COMMAND_SENDER,
       inject: [CommandBus],
-      useFactory: (commandBus: CommandBus) => new NestJsExternalCommandSender(commandBus),
+      useFactory: (commandBus: CommandBus) =>
+        new ClassValidatorExternalCommandSender(new NestJsExternalCommandSender(commandBus)),
     },
     {
       provide: INTERNAL_COMMAND_SENDER,
       inject: [CommandBus],
-      useFactory: (commandBus: CommandBus) => new NestJsInternalCommandSender(commandBus),
+      useFactory: (commandBus: CommandBus) =>
+        new ClassValidatorInternalCommandSender(new NestJsInternalCommandSender(commandBus)),
     },
   ],
   exports: [

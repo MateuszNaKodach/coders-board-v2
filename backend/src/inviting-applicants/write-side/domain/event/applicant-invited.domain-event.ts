@@ -11,9 +11,7 @@ export type ApplicantInvitedData = {
   lastName: LastName;
 };
 
-export class ApplicantInvited extends AbstractApplicantInvitationSuccessDomainEvent<
-  ApplicantInvitedData
-> {
+export class ApplicantInvited extends AbstractApplicantInvitationSuccessDomainEvent<ApplicantInvitedData> {
   static newFrom(aggregateId: ApplicantInvitationId, occurredAt: Date, data: ApplicantInvitedData) {
     return new ApplicantInvited(DomainEventId.generate(), occurredAt, aggregateId, data);
   }

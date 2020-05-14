@@ -17,9 +17,8 @@ export class ProjectionContext {
 
   async enableProjection(name: ProjectionName): Promise<void> {
     const isProjectionEnabled =
-      (await this.projectionsManager.getAll().toPromise()).find(
-        p => p.name == name.raw && p.status != 'Stopped',
-      ) !== undefined;
+      (await this.projectionsManager.getAll().toPromise()).find(p => p.name == name.raw && p.status != 'Stopped') !==
+      undefined;
     if (isProjectionEnabled) {
       return;
     }
@@ -31,9 +30,7 @@ export class ProjectionContext {
       .exists(name.raw)
       .pipe(
         flatMap(exists =>
-          exists
-            ? this.updateProjectionQuery(name, source.jsQuery)
-            : this.addProjection(name, source),
+          exists ? this.updateProjectionQuery(name, source.jsQuery) : this.addProjection(name, source),
         ),
         switchMap(() => EMPTY),
       )

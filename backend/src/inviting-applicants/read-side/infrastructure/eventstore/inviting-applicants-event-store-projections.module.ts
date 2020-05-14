@@ -26,9 +26,7 @@ export class InvitingApplicantsEventStoreProjectionsModule {
         {
           inject: [EventStoreProjectionResultProvider],
           useFactory: (eventStoreProjectionStateProvider: EventStoreProjectionResultProvider) =>
-            new EventStoreProjectionsInvitingApplicantInvitationRepository(
-              eventStoreProjectionStateProvider,
-            ),
+            new EventStoreProjectionsInvitingApplicantInvitationRepository(eventStoreProjectionStateProvider),
           provide: APPLICANT_INVITATION_REPOSITORY,
         },
       ],

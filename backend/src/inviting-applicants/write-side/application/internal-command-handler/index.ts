@@ -4,10 +4,7 @@ import { ApplicantInvitation } from '../../domain/applicant-invitation.aggregate
 import { InviteApplicantInternalCommandHandler } from './invite-applicant.internal-command-handler';
 import { CancelApplicantInvitationInternalCommandHandler } from './cancel-applicant-invitation.internal-command-handler';
 
-export const All = [
-  InviteApplicantInternalCommandHandler,
-  CancelApplicantInvitationInternalCommandHandler,
-];
+export const All = [InviteApplicantInternalCommandHandler, CancelApplicantInvitationInternalCommandHandler];
 
 export const executeCommand = async (
   repository: ApplicantInvitationRepository,

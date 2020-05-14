@@ -16,12 +16,7 @@ export class InvitationCancelledEventPropagator implements IEventHandler<Invitat
 
   async handle(event: InvitationCancelled) {
     return this.externalEventPublisher.publish(
-      new ApplicantInvitationCancelledPublicEvent(
-        event.eventId.raw,
-        event.occurredAt,
-        event.aggregateId.raw,
-        {},
-      ),
+      new ApplicantInvitationCancelledPublicEvent(event.eventId.raw, event.occurredAt, event.aggregateId.raw, {}),
     );
   }
 }

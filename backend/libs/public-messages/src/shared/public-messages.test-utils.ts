@@ -33,10 +33,7 @@ export type ExpectedPublishEvent<T extends PublicEvent> = {
   data: T['data'];
 };
 
-export function expectEvent<T extends PublicEvent>(
-  actual: unknown,
-  expected: ExpectedPublishEvent<T>,
-) {
+export function expectEvent<T extends PublicEvent>(actual: unknown, expected: ExpectedPublishEvent<T>) {
   if (isPublicEvent(actual)) {
     expect(actual).toBeInstanceOf(expected.type);
     expect(actual.data).toStrictEqual(expected.data);

@@ -5,15 +5,11 @@ import { AbstractSuccessDomainEvent } from '../../../../shared-kernel/write-side
 import { AbstractFailureDomainEvent } from '../../../../shared-kernel/write-side/domain/abstract-failure-domain-event';
 import { FailureReason } from '../../../../shared-kernel/write-side/domain/failure-reason';
 
-export abstract class AbstractApplicantInvitationSuccessDomainEvent<
-  P = any
-> extends AbstractSuccessDomainEvent<ApplicantInvitationId, P> {
-  constructor(
-    eventId: DomainEventId,
-    occurredAt: Date,
-    aggregateId: ApplicantInvitationId,
-    data: P,
-  ) {
+export abstract class AbstractApplicantInvitationSuccessDomainEvent<P = any> extends AbstractSuccessDomainEvent<
+  ApplicantInvitationId,
+  P
+> {
+  constructor(eventId: DomainEventId, occurredAt: Date, aggregateId: ApplicantInvitationId, data: P) {
     super(eventId, occurredAt, aggregateId, data);
   }
 
@@ -25,12 +21,7 @@ export abstract class AbstractApplicantInvitationSuccessDomainEvent<
 export abstract class AbstractApplicantInvitationFailureDomainEvent<
   P extends FailureReason = FailureReason
 > extends AbstractFailureDomainEvent<ApplicantInvitationId, P> {
-  constructor(
-    eventId: DomainEventId,
-    occurredAt: Date,
-    aggregateId: ApplicantInvitationId,
-    data: P,
-  ) {
+  constructor(eventId: DomainEventId, occurredAt: Date, aggregateId: ApplicantInvitationId, data: P) {
     super(eventId, occurredAt, aggregateId, data);
   }
 

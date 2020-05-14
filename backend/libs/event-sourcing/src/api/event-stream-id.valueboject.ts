@@ -5,20 +5,13 @@ export class EventStreamId {
   private constructor(readonly streamGroup: string, readonly streamId: string) {}
 
   static from(streamGroup: string, streamId: string) {
-    if (
-      streamGroup === undefined ||
-      streamGroup === '' ||
-      streamId === undefined ||
-      streamId === ''
-    ) {
+    if (streamGroup === undefined || streamGroup === '' || streamId === undefined || streamId === '') {
       throw new Error(
         `EventStreamId must follow format: "streamGroup${EVENT_STREAM_GROUP_SEPARATOR}streamId". Actual: ${streamGroup}${EVENT_STREAM_GROUP_SEPARATOR}${streamId}`,
       );
     }
     if (streamGroup.includes(EVENT_STREAM_GROUP_SEPARATOR)) {
-      throw new Error(
-        `Stream group cannot include ${EVENT_STREAM_GROUP_SEPARATOR}. Actual: ${streamGroup}`,
-      );
+      throw new Error(`Stream group cannot include ${EVENT_STREAM_GROUP_SEPARATOR}. Actual: ${streamGroup}`);
     }
     return new EventStreamId(streamGroup, streamId);
   }

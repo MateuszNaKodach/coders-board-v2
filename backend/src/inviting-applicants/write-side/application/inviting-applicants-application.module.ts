@@ -5,10 +5,7 @@ import * as ApplicantInvitationInternalCommandHandlers from './internal-command-
 
 @Module({
   imports: [InvitingApplicantsInfrastructureModule],
-  providers: [
-    ...ApplicantInvitationInternalCommandHandlers.All,
-    ...ApplicantInvitationEventPropagators.All,
-  ],
+  providers: [...ApplicantInvitationInternalCommandHandlers.All, ...ApplicantInvitationEventPropagators.All],
   exports: [],
 })
 export class InvitingApplicantsApplicationModule {}

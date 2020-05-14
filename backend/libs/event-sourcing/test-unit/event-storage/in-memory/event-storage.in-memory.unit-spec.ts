@@ -79,25 +79,21 @@ describe('Feature: In memory event storage', () => {
       });
 
       it('Then: The event should be queryable by time', async () => {
-        expect(
-          await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1520']),
-        ).toStrictEqual([]);
-        expect(
-          await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1530']),
-        ).toContain(events.aggregate1.event1);
+        expect(await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1520'])).toStrictEqual([]);
+        expect(await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1530'])).toContain(
+          events.aggregate1.event1,
+        );
 
-        expect(
-          await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1540']),
-        ).toContain(events.aggregate1.event1);
-        expect(
-          await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1540']),
-        ).toContain(events.aggregate1.event2);
+        expect(await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1540'])).toContain(
+          events.aggregate1.event1,
+        );
+        expect(await eventStorage.readEvents(events.aggregate1.eventStreamId, time['1540'])).toContain(
+          events.aggregate1.event2,
+        );
       });
 
       it('Then: The event cannot be stored twice', async () => {
-        await expect(
-          eventStorage.store(events.aggregate1.eventStreamId, events.aggregate1.event1),
-        ).rejects.toMatch(
+        await expect(eventStorage.store(events.aggregate1.eventStreamId, events.aggregate1.event1)).rejects.toMatch(
           `Event stream already contains this event with id ${events.aggregate1.event1.eventId}!`,
         );
       });
@@ -112,14 +108,8 @@ describe('Feature: In memory event storage', () => {
           data: {},
         };
         await expect(
-          eventStorage.store(
-            events.aggregate1.eventStreamId,
-            anotherEvent2,
-            EventStreamVersion.exactly(1),
-          ),
-        ).rejects.toMatch(
-          `Event stream for aggregate was modified! Expected version: 1, but actual is: 2`,
-        );
+          eventStorage.store(events.aggregate1.eventStreamId, anotherEvent2, EventStreamVersion.exactly(1)),
+        ).rejects.toMatch(`Event stream for aggregate was modified! Expected version: 1, but actual is: 2`);
       });
     });
   });

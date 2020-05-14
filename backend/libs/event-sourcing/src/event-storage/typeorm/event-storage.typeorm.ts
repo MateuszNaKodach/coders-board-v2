@@ -51,8 +51,6 @@ export class TypeOrmEventStorage implements EventStorage {
     const maxEventDate = toDate ? toDate : this.time();
     return this.typeOrmRepository
       .find({ where: { streamId: eventStreamId.streamId } }) // TODO: Query with occurredAt
-      .then(found =>
-        found.filter(it => moment(it.occurredAt).isSameOrBefore(moment(maxEventDate))),
-      );
+      .then(found => found.filter(it => moment(it.occurredAt).isSameOrBefore(moment(maxEventDate))));
   }
 }

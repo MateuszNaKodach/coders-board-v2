@@ -5,11 +5,6 @@ import { AbstractApplicantInvitationFailureDomainEvent } from './applicant-invit
 
 export class CancelingApplicantInvitationFailed extends AbstractApplicantInvitationFailureDomainEvent {
   static newFrom(aggregateId: ApplicantInvitationId, occurredAt: Date, data: FailureReason) {
-    return new CancelingApplicantInvitationFailed(
-      DomainEventId.generate(),
-      occurredAt,
-      aggregateId,
-      data,
-    );
+    return new CancelingApplicantInvitationFailed(DomainEventId.generate(), occurredAt, aggregateId, data);
   }
 }

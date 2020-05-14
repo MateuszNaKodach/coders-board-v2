@@ -18,9 +18,7 @@ describe('Feature: EventStreamId', () => {
     const streamGroup = 'streamGroup';
     const streamId = 'StreamId-From-Multiple-Segments';
 
-    const eventStreamId = EventStreamId.fromRaw(
-      streamGroup + EVENT_STREAM_GROUP_SEPARATOR + streamId,
-    );
+    const eventStreamId = EventStreamId.fromRaw(streamGroup + EVENT_STREAM_GROUP_SEPARATOR + streamId);
 
     expect(eventStreamId.streamGroup).toEqual(streamGroup);
     expect(eventStreamId.streamId).toEqual(streamId);

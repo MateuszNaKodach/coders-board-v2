@@ -13,11 +13,8 @@ import {
   CancelledInvitationsV1ReadModel,
 } from '../../projection/cancelled-invitations/v1/cancelled-invitations-v1-read.model';
 
-export class EventStoreProjectionsInvitingApplicantInvitationRepository
-  implements ApplicantInvitationRepository {
-  constructor(
-    private readonly eventStoreProjectionStateProvider: EventStoreProjectionResultProvider,
-  ) {}
+export class EventStoreProjectionsInvitingApplicantInvitationRepository implements ApplicantInvitationRepository {
+  constructor(private readonly eventStoreProjectionStateProvider: EventStoreProjectionResultProvider) {}
 
   findAllPending(): Promise<PendingInvitation[]> {
     return this.eventStoreProjectionStateProvider

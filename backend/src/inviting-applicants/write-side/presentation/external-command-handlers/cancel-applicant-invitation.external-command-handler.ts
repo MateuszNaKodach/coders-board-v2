@@ -16,8 +16,6 @@ export class CancelApplicantInvitationExternalCommandHandler
   ) {}
 
   async execute({ applicantInvitationId }: CancelApplicantInvitationPublicCommand) {
-    return this.internalCommandSender.sendAndWait(
-      new CancelApplicantInvitation(applicantInvitationId),
-    );
+    return this.internalCommandSender.sendAndWait(new CancelApplicantInvitation(applicantInvitationId));
   }
 }

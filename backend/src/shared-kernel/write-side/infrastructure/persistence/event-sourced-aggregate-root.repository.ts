@@ -10,10 +10,8 @@ import { EventStreamVersion } from '@coders-board-library/event-sourcing/api/eve
 import { DomainEventPublisher } from '../domain-event-publisher/domain-event-publisher';
 import { errorCausedBy } from '@coders-board-library/event-sourcing/common/extension-method/error';
 
-export abstract class EventSourcedAggregateRootRepository<
-  I extends AggregateId,
-  T extends AbstractAggregateRoot<I>
-> implements AggregateRootRepository<I, T> {
+export abstract class EventSourcedAggregateRootRepository<I extends AggregateId, T extends AbstractAggregateRoot<I>>
+  implements AggregateRootRepository<I, T> {
   protected abstract aggregateType: string;
 
   protected constructor(
@@ -56,9 +54,7 @@ export abstract class EventSourcedAggregateRootRepository<
       )
       .then(() => this.domainEventPublisher.publishAll(aggregate.getUncommittedEvents()))
       .then(() => aggregate.clearUncommittedEvents())
-      .catch(e =>
-        Promise.reject(errorCausedBy(new Error('Cannot save aggregate in EventStorage!'), e)),
-      );
+      .catch(e => Promise.reject(errorCausedBy(new Error('Cannot save aggregate in EventStorage!'), e)));
   }
 
   private static toStorageDomainEventEntry(event: DomainEvent): StorageEventEntry {

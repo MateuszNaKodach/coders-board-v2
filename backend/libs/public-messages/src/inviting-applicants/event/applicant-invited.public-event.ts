@@ -6,9 +6,7 @@ export type ApplicantInvitedData = {
   lastName: string;
 };
 
-export class ApplicantInvitedPublicEvent extends ApplicantInvitationAbstractPublicEvent<
-  ApplicantInvitedData
-> {
+export class ApplicantInvitedPublicEvent extends ApplicantInvitationAbstractPublicEvent<ApplicantInvitedData> {
   constructor(eventId: string, occurredAt: Date, aggregateId: string, data: ApplicantInvitedData) {
     super(eventId, occurredAt, aggregateId, data);
   }

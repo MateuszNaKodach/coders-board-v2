@@ -8,6 +8,7 @@ import { InviteApplicantResponseBody } from './response/invite-applicant.respons
 import { ApiCreatedResponse, ApiNoContentResponse, ApiTags } from '@nestjs/swagger';
 import { InviteApplicant } from '../../../application/internal-command/invite-applicant.internal-command';
 import { CancelApplicantInvitation } from '../../../application/internal-command/cancel-applicant-invitation.internal-command';
+import { v4 as uuid } from 'uuid';
 
 @ApiTags('inviting-applicants')
 @Controller('/rest-api/v1/applicant-invitations')
@@ -23,12 +24,11 @@ export class ApplicantInvitationV1WriteSideController {
   })
   @HttpCode(201)
   @Post()
-  postApplicantInvitation(
-    @Body() body: InviteApplicantRequestBody,
-  ): Promise<InviteApplicantResponseBody> {
+  postApplicantInvitation(@Body() body: InviteApplicantRequestBody): Promise<InviteApplicantResponseBody> {
+    const applicantInvitationId = uuid();
     return this.internalCommandBus
-      .sendAndWait<string>(new InviteApplicant(body.personalEmail, body.firstName, body.lastName))
-      .then(applicantId => new InviteApplicantResponseBody(applicantId));
+      .sendAndWait(new InviteApplicant(applicantInvitationId, body.personalEmail, body.firstName, body.lastName))
+      .then(() => new InviteApplicantResponseBody(applicantInvitationId));
   }
 
   @ApiNoContentResponse({

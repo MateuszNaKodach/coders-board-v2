@@ -80,12 +80,8 @@ interface PartitionByFilter {
  * Selects events from a single stream.
  * @param streamId Unique identifier of the stream
  */
-declare function fromStream(
-  streamId: string,
-): WhenFilter & PartitionByFilter & TransformByTransformation;
+declare function fromStream(streamId: string): WhenFilter & PartitionByFilter & TransformByTransformation;
 
 declare function fromAll(): WhenFilter & PartitionByFilter & TransformByTransformation;
 
-declare function fromCategory(
-  streamId: string,
-): WhenFilter & PartitionByFilter & TransformByTransformation;
+declare function fromCategory(streamId: string): WhenFilter & PartitionByFilter & TransformByTransformation;

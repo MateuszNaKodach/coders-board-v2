@@ -1,21 +1,11 @@
-import {
-  DynamicModule,
-  HttpModule,
-  HttpService,
-  Inject,
-  Module,
-  OnModuleInit,
-} from '@nestjs/common';
+import { DynamicModule, HttpModule, HttpService, Inject, Module, OnModuleInit } from '@nestjs/common';
 import { PROJECTION_SOURCES_PROVIDER, ProjectionSources } from './projection/projection-sources';
 import { ResourcesProjectionSources } from '@coders-board-library/eventstore-projections/infrastructure/resources-projection-sources';
 import { HttpProjectionsManager } from '@coders-board-library/eventstore-projections/infrastructure/http-projections-manager';
 import { ProjectionContext } from './projection/projection-context';
 import { ProjectionName } from './projection/projection-name';
 import { PROJECTIONS_MANAGER, ProjectionsManager } from './projection/projections-manager';
-import {
-  EventStoreProjectionsModuleConfig,
-  PROJECTIONS,
-} from './event-store-projections.module-config';
+import { EventStoreProjectionsModuleConfig, PROJECTIONS } from './event-store-projections.module-config';
 import { EventStoreProjectionResultProvider } from '@coders-board-library/eventstore-projections/api/event-store-projection-result-provider';
 
 const PROJECTIONS_DIR = Symbol('PROJECTIONS_DIR');

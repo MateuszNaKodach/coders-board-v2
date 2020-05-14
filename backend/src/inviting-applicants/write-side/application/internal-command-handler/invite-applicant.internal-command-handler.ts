@@ -21,14 +21,14 @@ export class InviteApplicantInternalCommandHandler implements ICommandHandler<In
     private readonly repository: ApplicantInvitationRepository,
   ) {}
 
-  async execute({ firstName, lastName, personalEmail }: InviteApplicant): Promise<string> {
+  async execute({ applicantInvitationId, firstName, lastName, personalEmail }: InviteApplicant): Promise<void> {
     const invitation = new ApplicantInvitation(this.timeProvider);
-    const id = ApplicantInvitationId.generate();
+    const id = ApplicantInvitationId.of(applicantInvitationId);
     invitation.forApplicant(id, {
       personalEmail: PersonalEmail.from(personalEmail),
       firstName: FirstName.from(firstName),
       lastName: LastName.from(lastName),
     });
-    return this.repository.save(invitation).then(() => id.raw);
+    return this.repository.save(invitation).then();
   }
 }

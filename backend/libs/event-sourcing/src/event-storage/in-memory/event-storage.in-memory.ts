@@ -50,9 +50,7 @@ export class InMemoryEventStorage implements EventStorage {
           this.store(
             eventStreamId,
             value,
-            expectedVersion
-              ? EventStreamVersion.exactly(expectedVersion.raw + index)
-              : expectedVersion,
+            expectedVersion ? EventStreamVersion.exactly(expectedVersion.raw + index) : expectedVersion,
           ),
         ),
     ).then();

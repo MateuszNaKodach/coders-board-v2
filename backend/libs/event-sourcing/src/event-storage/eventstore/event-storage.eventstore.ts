@@ -21,10 +21,7 @@ const POOL_EVERY_N_SECONDS_IF_ATOM_FEED_IS_EMPTY = 30;
 export class EventStoreEventStorage implements EventStorage {
   constructor(private readonly time: Time, private readonly httpService: HttpService) {
     const loggingInterceptor = axiosLoggingInterceptor(reqRes => console.log(reqRes), false, true);
-    this.httpService.axiosRef.interceptors.response.use(
-      loggingInterceptor.onFulfilled,
-      loggingInterceptor.onRejected,
-    );
+    this.httpService.axiosRef.interceptors.response.use(loggingInterceptor.onFulfilled, loggingInterceptor.onRejected);
   }
 
   async store(
@@ -56,19 +53,9 @@ export class EventStoreEventStorage implements EventStorage {
     eventsToStore: StorageEventDto[],
     eventStreamId: EventStreamId,
   ): Observable<any[] | AxiosResponse<any>> {
-    const expectedStreamVersion = EventStoreEventStorage.expectedStoredStreamVersion(
-      expectedVersion,
-    );
-    const newStreamVersion = EventStoreEventStorage.newStreamVersion(
-      expectedStreamVersion,
-      eventsToStore.length,
-    );
-    EventStoreEventStorage.logStoredDomainEvents(
-      eventStreamId,
-      eventsToStore,
-      expectedStreamVersion,
-      newStreamVersion,
-    );
+    const expectedStreamVersion = EventStoreEventStorage.expectedStoredStreamVersion(expectedVersion);
+    const newStreamVersion = EventStoreEventStorage.newStreamVersion(expectedStreamVersion, eventsToStore.length);
+    EventStoreEventStorage.logStoredDomainEvents(eventStreamId, eventsToStore, expectedStreamVersion, newStreamVersion);
     return this.httpService
       .post(`/streams/${eventStreamId.raw}`, eventsToStore, {
         headers: {

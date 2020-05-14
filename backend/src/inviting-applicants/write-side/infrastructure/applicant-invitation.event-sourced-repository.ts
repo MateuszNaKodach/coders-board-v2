@@ -2,10 +2,7 @@ import { EventSourcedAggregateRootRepository } from '../../../shared-kernel/writ
 import { ApplicantInvitationId } from '../domain/applicant-invitation-id.valueobject';
 import { ApplicantInvitation } from '../domain/applicant-invitation.aggregate-root';
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  EVENT_STORAGE,
-  EventStorage,
-} from '@coders-board-library/event-sourcing/api/event-storage';
+import { EVENT_STORAGE, EventStorage } from '@coders-board-library/event-sourcing/api/event-storage';
 import { TimeProviderPort } from '../../../shared-kernel/write-side/domain/time-provider.port';
 import { StorageEventEntry } from '@coders-board-library/event-sourcing/api/storage-event-entry';
 import { DomainEvent } from '../../../shared-kernel/write-side/domain/domain-event';

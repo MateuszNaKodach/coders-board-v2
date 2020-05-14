@@ -11,13 +11,11 @@ import * as InvitingApplicantsQueryHandlers from './query/handlers';
 
 //TODO: Add selecting projection engine! EventStore for example
 
-const eventStoreProjectionModule = InvitingApplicantsEventStoreProjectionsModule.eventStoreProjectionEngine(
-  [
-    PROJECTION_INVITED_APPLICANTS_COUNTER_V1,
-    PROJECTION_PENDING_INVITATIONS_V1,
-    PROJECTION_CANCELLED_INVITATIONS_V1,
-  ],
-);
+const eventStoreProjectionModule = InvitingApplicantsEventStoreProjectionsModule.eventStoreProjectionEngine([
+  PROJECTION_INVITED_APPLICANTS_COUNTER_V1,
+  PROJECTION_PENDING_INVITATIONS_V1,
+  PROJECTION_CANCELLED_INVITATIONS_V1,
+]);
 
 @Module({
   controllers: [ApplicantInvitationV1ReadSideController],
