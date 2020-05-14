@@ -1,4 +1,4 @@
-import uuid = require('uuid');
+import { v4 as uuid } from 'uuid';
 
 export class DomainEventId {
   private readonly TYPE = 'DomainEventId';
@@ -6,7 +6,7 @@ export class DomainEventId {
   private constructor(readonly raw: string) {}
 
   static generate() {
-    return new DomainEventId(uuid.v4());
+    return new DomainEventId(uuid());
   }
 
   static of(raw: string) {

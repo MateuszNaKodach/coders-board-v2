@@ -9,7 +9,6 @@ import {
 import { TimeProviderPort } from '../../../shared-kernel/write-side/domain/time-provider.port';
 import { StorageEventEntry } from '@coders-board-library/event-sourcing/api/storage-event-entry';
 import { DomainEvent } from '../../../shared-kernel/write-side/domain/domain-event';
-import { ApplicantInvitationDomainEvent } from '../domain/applicant-invitation.domain-event';
 import { DomainEventId } from '../../../shared-kernel/write-side/domain/domain-event-id.valueobject';
 import { ApplicantInvitationRepository } from '../domain/applicant-invitation.repository';
 import { TIME_PROVIDER } from '@coders-board-library/time-provider';
@@ -17,6 +16,7 @@ import {
   DOMAIN_EVENT_PUBLISHER,
   DomainEventPublisher,
 } from '../../../shared-kernel/write-side/infrastructure/domain-event-publisher/domain-event-publisher';
+import { InvitingApplicantsDomainEvents } from '../domain/event';
 
 @Injectable()
 export class ApplicantInvitationEventSourcedRepository
@@ -39,7 +39,7 @@ export class ApplicantInvitationEventSourcedRepository
 
   protected recreateEventFromStorage(event: StorageEventEntry): DomainEvent {
     try {
-      return new ApplicantInvitationDomainEvent[event.eventType](
+      return new InvitingApplicantsDomainEvents[event.eventType](
         DomainEventId.of(event.eventId),
         event.occurredAt,
         ApplicantInvitationId.of(event.streamId),

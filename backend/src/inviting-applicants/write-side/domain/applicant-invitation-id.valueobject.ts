@@ -1,4 +1,4 @@
-import uuid = require('uuid');
+import { v4 as uuid } from 'uuid';
 import { AggregateId } from '../../../shared-kernel/write-side/domain/aggregate-id.valueobject';
 
 export class ApplicantInvitationId implements AggregateId {
@@ -7,7 +7,7 @@ export class ApplicantInvitationId implements AggregateId {
   private constructor(readonly raw: string) {}
 
   static generate() {
-    return new ApplicantInvitationId(uuid.v4());
+    return new ApplicantInvitationId(uuid());
   }
 
   static of(raw: string) {

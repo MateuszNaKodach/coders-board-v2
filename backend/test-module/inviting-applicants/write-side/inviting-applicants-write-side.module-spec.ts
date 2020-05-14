@@ -1,22 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { InvitingApplicantsWriteSideModule } from '../../../src/inviting-applicants/write-side/inviting-applicants-write-side.module';
-import { ApplicantInvitationPublicCommand } from '@coders-board-library/public-messages/inviting-applicants/command/applicant-invitation.public-command';
-import InviteApplicantToAssociation = ApplicantInvitationPublicCommand.InviteApplicantCommand;
 import {
-  ApplicantInvitationPublicEvent,
-  expectLastPublishedEventAsync,
+  ApplicantInvitationCancelledPublicEvent,
+  ApplicantInvitedPublicEvent,
+  CancelApplicantInvitationPublicCommand,
+  expectLastPublishedEventAsync, InviteApplicantPublicCommand,
 } from '@coders-board-library/public-messages';
 import {
   EventPublisherSpy,
   expectLastPublishedEvent,
 } from '@coders-board-library/public-messages/shared/public-messages.test-utils';
-import CancelApplicantInvitation = ApplicantInvitationPublicCommand.CancelApplicantInvitationCommand;
 import {
   EXTERNAL_EVENT_PUBLISHER,
   ExternalEventPublisher,
 } from '../../../src/shared-kernel/write-side/application/external-event-publisher/external-event-publisher';
-import ApplicantInvitationCancelledPublicEvent = ApplicantInvitationPublicEvent.ApplicantInvitationCancelledPublicEvent;
-import ApplicantInvitedPublicEvent = ApplicantInvitationPublicEvent.ApplicantInvitedPublicEvent;
 import {
   EXTERNAL_COMMAND_SENDER,
   ExternalCommandSender
@@ -51,7 +48,7 @@ describe('Feature: Inviting applicants', () => {
   });
 
   describe('Given: Applicant to invite', () => {
-    const inviteCommand = new InviteApplicantToAssociation(
+    const inviteCommand = new InviteApplicantPublicCommand(
       person.janKowalski.personalEmail,
       person.janKowalski.firstName,
       person.janKowalski.lastName,
@@ -76,10 +73,10 @@ describe('Feature: Inviting applicants', () => {
       });
 
       describe('And: Cancel the invitation', () => {
-        let cancelInvitationCommand: CancelApplicantInvitation;
+        let cancelInvitationCommand: CancelApplicantInvitationPublicCommand;
 
         beforeEach(async () => {
-          cancelInvitationCommand = new CancelApplicantInvitation(invitationId);
+          cancelInvitationCommand = new CancelApplicantInvitationPublicCommand(invitationId);
           await commandBus.send(cancelInvitationCommand);
         });
 
@@ -88,11 +85,7 @@ describe('Feature: Inviting applicants', () => {
             eventPublisherPublishSpy,
             {
               type: ApplicantInvitationCancelledPublicEvent,
-              data: {
-                firstName: inviteCommand.firstName,
-                lastName: inviteCommand.lastName,
-                personalEmail: inviteCommand.personalEmail,
-              },
+              data: {},
             },
             done,
           );

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { InvitingApplicantsInfrastructureModule } from '../../infrastructure/inviting-applicants-infrastructure.module';
-import { ApplicantInvitationExternalCommandHandler } from './applicant-invitation.external-command-handler';
+import * as ApplicantInvitationExternalCommandHandlers from './index';
 
 @Module({
   imports: [InvitingApplicantsInfrastructureModule],
-  providers: [...ApplicantInvitationExternalCommandHandler.All],
+  providers: [...ApplicantInvitationExternalCommandHandlers.All],
   exports: [],
 })
 export class InvitingApplicantsExternalCommandHandlersModule {}

@@ -1,12 +1,16 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { InvitingApplicantsApplicationModule } from './application/inviting-applicants-application.module';
 import { InvitingApplicantsInfrastructureModule } from './infrastructure/inviting-applicants-infrastructure.module';
-import { ApplicantInvitationPublicCommand } from '@coders-board-library/public-messages';
-import InviteApplicantToAssociation = ApplicantInvitationPublicCommand.InviteApplicantCommand;
-import { CommandBus } from '@nestjs/cqrs';
-import CancelApplicantInvitation = ApplicantInvitationPublicCommand.CancelApplicantInvitationCommand;
+import {
+  CancelApplicantInvitationPublicCommand,
+  InviteApplicantPublicCommand,
+} from '@coders-board-library/public-messages';
 import { InvitingApplicantsExternalCommandHandlersModule } from './presentation/external-command-handlers/inviting-applicants-external-command-handlers.module';
 import { InvitingApplicantsWriteSideRestApiModule } from './presentation/rest-api/inviting-applicants-write-side-rest-api.module';
+import {
+  EXTERNAL_COMMAND_SENDER,
+  ExternalCommandSender,
+} from '../../shared-kernel/write-side/application/external-command-sender/external-command-sender';
 
 const writeRestApi = InvitingApplicantsWriteSideRestApiModule;
 const externalCommandHandlers = InvitingApplicantsExternalCommandHandlersModule;
@@ -20,7 +24,10 @@ const externalCommandHandlers = InvitingApplicantsExternalCommandHandlersModule;
   ],
 })
 export class InvitingApplicantsWriteSideModule implements OnModuleInit {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    @Inject(EXTERNAL_COMMAND_SENDER)
+    private readonly commandBus: ExternalCommandSender,
+  ) {}
 
   //FIXME: Delete. Just to init some data.
   async onModuleInit() {
@@ -31,18 +38,22 @@ export class InvitingApplicantsWriteSideModule implements OnModuleInit {
         lastName: 'Kowalski',
       },
     };
-    const inviteCommand = new InviteApplicantToAssociation(
+    const inviteCommand = new InviteApplicantPublicCommand(
       person.janKowalski.personalEmail,
       person.janKowalski.firstName,
       person.janKowalski.lastName,
     );
-    const invitationId = await this.commandBus.execute(inviteCommand);
+    const invitationId = await this.commandBus.send(inviteCommand);
     if (randomInt(0, 1) === 0) {
       setTimeout(() => {
-        this.commandBus.execute(new CancelApplicantInvitation(invitationId));
+        this.commandBus.send(
+          new CancelApplicantInvitationPublicCommand(invitationId),
+        );
       }, 2000);
       setTimeout(() => {
-        this.commandBus.execute(new CancelApplicantInvitation(invitationId));
+        this.commandBus.send(
+          new CancelApplicantInvitationPublicCommand(invitationId),
+        );
       }, 10000);
     }
   }

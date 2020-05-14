@@ -5,12 +5,11 @@ import { FirstName } from '../../../../src/inviting-applicants/write-side/domain
 import { LastName } from '../../../../src/inviting-applicants/write-side/domain/last-name.value-object';
 import { ApplicantInvitation } from '../../../../src/inviting-applicants/write-side/domain/applicant-invitation.aggregate-root';
 import { ApplicantInvitationId } from '../../../../src/inviting-applicants/write-side/domain/applicant-invitation-id.valueobject';
-import { ApplicantInvitationDomainEvent } from '../../../../src/inviting-applicants/write-side/domain/applicant-invitation.domain-event';
-import ApplicantInvited = ApplicantInvitationDomainEvent.ApplicantInvited;
-import InvitationCancelled = ApplicantInvitationDomainEvent.InvitationCancelled;
 import { expectDomainEvent } from '../../../../src/shared-kernel/write-side/domain/aggregate-root.test-utils';
-import InvitingApplicantFailed = ApplicantInvitationDomainEvent.InvitingApplicantFailed;
-import CancelingApplicantInvitationFailed = ApplicantInvitationDomainEvent.CancelingApplicantInvitationFailed;
+import {ApplicantInvited} from "../../../../src/inviting-applicants/write-side/domain/event/applicant-invited.domain-event";
+import {InvitingApplicantFailed} from "../../../../src/inviting-applicants/write-side/domain/event/inviting-applicant-failed.domain-event";
+import {InvitationCancelled} from "../../../../src/inviting-applicants/write-side/domain/event/invitation-cancelled.domain-events";
+import {CancelingApplicantInvitationFailed} from "../../../../src/inviting-applicants/write-side/domain/event/cancelling-applicant-invitation-failed.domain-event";
 
 const person = {
   janKowalski: {
@@ -33,7 +32,7 @@ describe('Feature: Applicant invitation', () => {
     describe('Given: An applicant to invite', () => {
       describe('When: Try to invite an applicant', () => {
         beforeEach(() => {
-          applicantInvitation.invite(applicantInvitationId, {
+          applicantInvitation.forApplicant(applicantInvitationId, {
             ...person.janKowalski,
           });
         });
@@ -62,7 +61,7 @@ describe('Feature: Applicant invitation', () => {
 
       describe('When: Try to invite an applicant', () => {
         beforeEach(() => {
-          applicantInvitation.invite(applicantInvitationId, {
+          applicantInvitation.forApplicant(applicantInvitationId, {
             ...person.janKowalski,
           });
         });
