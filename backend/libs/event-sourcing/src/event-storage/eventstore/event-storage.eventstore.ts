@@ -177,7 +177,7 @@ export class EventStoreEventStorage implements EventStorage {
 
   private readEventsFromAtomFeed(response: AxiosResponse) {
     return response.data.entries.map(it => {
-      const metadata = JSON.parse(it.metadata);
+      const metadata = JSON.parse(it.metaData);
       return {
         eventId: it.eventId,
         eventType: it.eventType,
