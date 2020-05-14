@@ -94,6 +94,8 @@ To be familiar with projections please read following EventStore documentation c
 - [Getting Started | Step 3 - Projections](https://eventstore.com/docs/getting-started/projections/index.html?tabs=tabid-1%2Ctabid-4%2Ctabid-http-api%2Ctabid-create-proj-bash%2Ctabid-8%2Ctabid-update-proj-http%2Ctabid-reset-http%2Ctabid-read-stream-http%2Ctabid-update-proj-config-http%2Ctabid-read-projection-events-renamed-http%2Ctabid-enablebycategory-http%2Ctabid-projections-count-per-stream-http%2Ctabid-read-partition-http)
 - [Projections](https://eventstore.com/docs/projections/index.html)
 
+Or watch [Read models and projections in Event Sourcing with Alexey Zimarev - 14th May 2020](https://youtu.be/5YNkOoBioPE)
+
 If you are not familiar with EventStore at all is recommended to start from the very beginning: [Getting Started | Step 1 - Install, run, and write your first event](https://eventstore.com/docs/getting-started/index.html?tabs=tabid-1%2Ctabid-dotnet-client%2Ctabid-dotnet-client-connect%2Ctabid-4)
 
 Shortly, projection is an interpretation of events. You can interpret certain events on different ways.
