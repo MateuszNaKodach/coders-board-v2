@@ -1,10 +1,4 @@
-import {
-  DynamicModule,
-  ForwardReference,
-  Inject,
-  Module,
-  Type,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { CommandBus, CqrsModule, EventBus } from '@nestjs/cqrs';
 import { CodersBoardTimeProviderAdapter } from './time/coders-board-time-provider.adapter';
 import {
@@ -20,12 +14,13 @@ import { EXTERNAL_EVENT_PUBLISHER } from '../application/external-event-publishe
 import { LoggingExternalEventPublisher } from './external-event-publisher/logging-external-event-publisher';
 import { NestJsExternalEventPublisher } from './external-event-publisher/nest-js-external-event-publisher';
 import { EXTERNAL_COMMAND_SENDER } from '../application/external-command-sender/external-command-sender';
-import { NestJsExternalCommandSender } from './external-command-sender/nestjs-external-command-sender';
-import { StoreInEventStorageAndForwardExternalEventBus } from './external-event-publisher/store-and-forward-external-event-publisher';
+import { NestJsExternalCommandSender } from './external-command-sender/nest-js-external-command-sender';
 import {
   EVENT_STORAGE,
   EventStorage,
 } from '@coders-board-library/event-sourcing/api/event-storage';
+import { INTERNAL_COMMAND_SENDER } from '../application/internal-command-sender/internal-command-sender';
+import { NestJsInternalCommandSender } from './internal-command-sender/nest-js-internal-command-sender';
 
 const timeProviderModule = TimeProviderModule.register({ source: 'system' });
 const typeOrmEventSourcingModule = EventSourcingModule.registerTypeOrmAsync(
@@ -112,6 +107,12 @@ const eventSourcingModule =
       useFactory: (commandBus: CommandBus) =>
         new NestJsExternalCommandSender(commandBus),
     },
+    {
+      provide: INTERNAL_COMMAND_SENDER,
+      inject: [CommandBus],
+      useFactory: (commandBus: CommandBus) =>
+        new NestJsInternalCommandSender(commandBus),
+    },
   ],
   exports: [
     CqrsModule,
@@ -120,6 +121,8 @@ const eventSourcingModule =
     timeProviderModule,
     DOMAIN_EVENT_PUBLISHER,
     EXTERNAL_EVENT_PUBLISHER,
+    EXTERNAL_COMMAND_SENDER,
+    INTERNAL_COMMAND_SENDER,
   ],
 })
 export class SharedKernelInfrastructureModule {}

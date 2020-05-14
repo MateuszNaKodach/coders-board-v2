@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { InvitingApplicantsWriteSideModule } from '../../../src/inviting-applicants/write-side/inviting-applicants-write-side.module';
-import { ApplicantInvitationCommand } from '@coders-board-library/public-messages/inviting-applicants/command/applicant-invitation.command';
-import InviteApplicantToAssociation = ApplicantInvitationCommand.InviteApplicantToAssociation;
-import { CommandBus } from '@nestjs/cqrs';
+import { ApplicantInvitationPublicCommand } from '@coders-board-library/public-messages/inviting-applicants/command/applicant-invitation.public-command';
+import InviteApplicantToAssociation = ApplicantInvitationPublicCommand.InviteApplicantCommand;
 import {
   ApplicantInvitationPublicEvent,
   expectLastPublishedEventAsync,
@@ -11,13 +10,17 @@ import {
   EventPublisherSpy,
   expectLastPublishedEvent,
 } from '@coders-board-library/public-messages/shared/public-messages.test-utils';
-import CancelApplicantInvitation = ApplicantInvitationCommand.CancelApplicantInvitation;
+import CancelApplicantInvitation = ApplicantInvitationPublicCommand.CancelApplicantInvitationCommand;
 import {
   EXTERNAL_EVENT_PUBLISHER,
   ExternalEventPublisher,
 } from '../../../src/shared-kernel/write-side/application/external-event-publisher/external-event-publisher';
 import ApplicantInvitationCancelledPublicEvent = ApplicantInvitationPublicEvent.ApplicantInvitationCancelledPublicEvent;
 import ApplicantInvitedPublicEvent = ApplicantInvitationPublicEvent.ApplicantInvitedPublicEvent;
+import {
+  EXTERNAL_COMMAND_SENDER,
+  ExternalCommandSender
+} from "../../../src/shared-kernel/write-side/application/external-command-sender/external-command-sender";
 
 /**
  * Test of InvitingApplicants. In tests of logic we bypass presentation layer.
@@ -25,6 +28,7 @@ import ApplicantInvitedPublicEvent = ApplicantInvitationPublicEvent.ApplicantInv
  */
 
 //TODO: When communication between components will be more stable we can introduce special DSL to reduce boilerplate in tests
+//TODO: Internal or external command sender in test?
 const person = {
   janKowalski: {
     personalEmail: 'jan.kowalski@gmail.com',
@@ -34,7 +38,7 @@ const person = {
 };
 
 describe('Feature: Inviting applicants', () => {
-  let commandBus: CommandBus;
+  let commandBus: ExternalCommandSender;
   let eventPublisherPublishSpy: EventPublisherSpy;
 
   beforeEach(async () => {
@@ -42,7 +46,7 @@ describe('Feature: Inviting applicants', () => {
       imports: [InvitingApplicantsWriteSideModule],
     }).compile();
     await app.init();
-    commandBus = app.get<CommandBus>(CommandBus);
+    commandBus = app.get<ExternalCommandSender>(EXTERNAL_COMMAND_SENDER);
     eventPublisherPublishSpy = eventPublisherSpy(app);
   });
 
@@ -57,7 +61,7 @@ describe('Feature: Inviting applicants', () => {
       let invitationId: string;
 
       beforeEach(async () => {
-        invitationId = await commandBus.execute(inviteCommand);
+        invitationId = await commandBus.send(inviteCommand);
       });
 
       it('Then: Applicant should be invited', () => {
@@ -76,7 +80,7 @@ describe('Feature: Inviting applicants', () => {
 
         beforeEach(async () => {
           cancelInvitationCommand = new CancelApplicantInvitation(invitationId);
-          await commandBus.execute(cancelInvitationCommand);
+          await commandBus.send(cancelInvitationCommand);
         });
 
         it('Then: Applicant invitation should be cancelled', done => {

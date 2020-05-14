@@ -2,16 +2,16 @@ import { ProjectionContext } from '@coders-board-library/eventstore-projections/
 import { ProjectionName } from '@coders-board-library/eventstore-projections/projection/projection-name';
 import { Observable } from 'rxjs';
 
-export class EventStoreProjectionStateProvider {
+export class EventStoreProjectionResultProvider {
   constructor(private readonly projectionContext: ProjectionContext) {}
 
-  async projectionState<T>(name: ProjectionName): Promise<ProjectionState<T>> {
-    return this.projectionContext.projectionState<T>(name);
+  async projectionResult<T>(name: ProjectionName): Promise<ProjectionState<T>> {
+    return this.projectionContext.projectionResult<T>(name);
   }
 
-  projectionStateObservable<T>(
+  projectionResultObservable<T>(
     name: ProjectionName,
   ): Observable<ProjectionState<T>> {
-    return this.projectionContext.projectionStateObservable<T>(name);
+    return this.projectionContext.projectionResultObservable<T>(name);
   }
 }

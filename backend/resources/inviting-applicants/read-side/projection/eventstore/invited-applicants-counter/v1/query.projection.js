@@ -31,10 +31,12 @@ fromAll()
       ApplicantInvited: function (state, event) {
         state.content.invited = increase(state.content.invited);
         updateProjectionStateMetadata(state, event);
+        return state;
       },
       InvitationCancelled: function (state, event) {
         state.content.cancelled = increase(state.content.cancelled);
         updateProjectionStateMetadata(state, event);
+        return state;
       }
     })
 

@@ -1,16 +1,17 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InvitingApplicantsQuery } from '../inviting-applicants.query';
-import { ApplicantInvitationRepository } from '../../projection/current-pending-invitations/v1/applicant-invitation.repository';
-import { PendingInvitation } from '../../projection/current-pending-invitations/v1/current-pending-invitations.v1.read-model';
+import { ApplicantInvitationRepository } from '../../projection/pending-invitations/v1/applicant-invitation.repository';
+import { PendingInvitation } from '../../projection/pending-invitations/v1/pending-invitations-v1-read.model';
 import { Inject } from '@nestjs/common';
 import { APPLICANT_INVITATION_REPOSITORY } from '../../../write-side/domain/applicant-invitation.repository';
+import { CancelledInvitation } from '../../projection/cancelled-invitations/v1/cancelled-invitations-v1-read.model';
 
 export namespace InvitingApplicantsQueryHandler {
-  @QueryHandler(InvitingApplicantsQuery.AllApplicantInvitations)
-  class AllApplicantInvitations
+  @QueryHandler(InvitingApplicantsQuery.AllPendingInvitations)
+  class AllPendingApplicantInvitations
     implements
       IQueryHandler<
-        InvitingApplicantsQuery.AllApplicantInvitations,
+        InvitingApplicantsQuery.AllPendingInvitations,
         PendingInvitation[]
       > {
     constructor(
@@ -19,11 +20,30 @@ export namespace InvitingApplicantsQueryHandler {
     ) {}
 
     execute(
-      query: InvitingApplicantsQuery.AllApplicantInvitations,
+      query: InvitingApplicantsQuery.AllPendingInvitations,
     ): Promise<PendingInvitation[]> {
       return this.repository.findAllPending();
     }
   }
 
-  export const All = [AllApplicantInvitations];
+  @QueryHandler(InvitingApplicantsQuery.AllCancelledInvitations)
+  class AllCancelledInvitations
+    implements
+      IQueryHandler<
+        InvitingApplicantsQuery.AllCancelledInvitations,
+        CancelledInvitation[]
+      > {
+    constructor(
+      @Inject(APPLICANT_INVITATION_REPOSITORY)
+      private readonly repository: ApplicantInvitationRepository,
+    ) {}
+
+    execute(
+      query: InvitingApplicantsQuery.AllCancelledInvitations,
+    ): Promise<CancelledInvitation[]> {
+      return this.repository.findAllCancelled();
+    }
+  }
+
+  export const All = [AllPendingApplicantInvitations, AllCancelledInvitations];
 }

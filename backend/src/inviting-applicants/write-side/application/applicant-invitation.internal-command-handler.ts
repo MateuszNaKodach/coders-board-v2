@@ -1,23 +1,23 @@
-import { ApplicantInvitationCommand } from '@coders-board-library/public-messages/inviting-applicants/command/applicant-invitation.command';
+import { ApplicantInvitationInternalCommand } from './applicant-invitation.internal-command';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { TIME_PROVIDER } from '@coders-board-library/time-provider';
+import { Inject } from '@nestjs/common';
 import {
   APPLICANT_INVITATION_REPOSITORY,
   ApplicantInvitationRepository,
 } from '../domain/applicant-invitation.repository';
 import { TimeProviderPort } from '../../../shared-kernel/write-side/domain/time-provider.port';
-import { ApplicantInvitationId } from '../domain/applicant-invitation-id.valueobject';
 import { ApplicantInvitation } from '../domain/applicant-invitation.aggregate-root';
+import { ApplicantInvitationId } from '../domain/applicant-invitation-id.valueobject';
 import { PersonalEmail } from '../domain/personal-email.valueobject';
 import { FirstName } from '../domain/first-name.value-object';
 import { LastName } from '../domain/last-name.value-object';
-import { Inject } from '@nestjs/common';
-import { TIME_PROVIDER } from '@coders-board-library/time-provider';
 
-export namespace ApplicantInvitationCommandHandler {
-  @CommandHandler(ApplicantInvitationCommand.InviteApplicantToAssociation)
+export namespace ApplicantInvitationInternalCommandHandler {
+  @CommandHandler(ApplicantInvitationInternalCommand.InviteApplicant)
   class InviteApplicantToAssociation
     implements
-      ICommandHandler<ApplicantInvitationCommand.InviteApplicantToAssociation> {
+      ICommandHandler<ApplicantInvitationInternalCommand.InviteApplicant> {
     constructor(
       @Inject(TIME_PROVIDER) private readonly timeProvider: TimeProviderPort,
       @Inject(APPLICANT_INVITATION_REPOSITORY)
@@ -28,9 +28,7 @@ export namespace ApplicantInvitationCommandHandler {
       firstName,
       lastName,
       personalEmail,
-    }: ApplicantInvitationCommand.InviteApplicantToAssociation): Promise<
-      string
-    > {
+    }: ApplicantInvitationInternalCommand.InviteApplicant): Promise<string> {
       const invitation = new ApplicantInvitation(this.timeProvider);
       const id = ApplicantInvitationId.generate();
       invitation.invite(id, {
@@ -42,10 +40,12 @@ export namespace ApplicantInvitationCommandHandler {
     }
   }
 
-  @CommandHandler(ApplicantInvitationCommand.CancelApplicantInvitation)
+  @CommandHandler(ApplicantInvitationInternalCommand.CancelApplicantInvitation)
   class CancelApplicantInvitation
     implements
-      ICommandHandler<ApplicantInvitationCommand.CancelApplicantInvitation> {
+      ICommandHandler<
+        ApplicantInvitationInternalCommand.CancelApplicantInvitation
+      > {
     constructor(
       @Inject(APPLICANT_INVITATION_REPOSITORY)
       private readonly repository: ApplicantInvitationRepository,
@@ -53,7 +53,7 @@ export namespace ApplicantInvitationCommandHandler {
 
     async execute({
       applicantInvitationId,
-    }: ApplicantInvitationCommand.CancelApplicantInvitation) {
+    }: ApplicantInvitationInternalCommand.CancelApplicantInvitation) {
       return executeCommand(
         this.repository,
         ApplicantInvitationId.of(applicantInvitationId),

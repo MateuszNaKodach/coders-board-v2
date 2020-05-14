@@ -22,5 +22,5 @@ export interface ProjectionsManager {
     mode: 'continuous' | 'onetime',
   ): Observable<boolean>;
 
-  getState<T>(name: string): Observable<T | undefined>;
+  getResult<T>(name: string): Observable<T | undefined>;
 }

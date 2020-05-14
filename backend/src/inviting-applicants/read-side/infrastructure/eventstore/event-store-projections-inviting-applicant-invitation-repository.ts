@@ -1,22 +1,37 @@
-import { ApplicantInvitationRepository } from '../../projection/current-pending-invitations/v1/applicant-invitation.repository';
+import { ApplicantInvitationRepository } from '../../projection/pending-invitations/v1/applicant-invitation.repository';
 import {
-  CurrentPendingInvitationsV1ReadModel,
+  PendingInvitationsV1ReadModel,
   PendingInvitation,
-} from '../../projection/current-pending-invitations/v1/current-pending-invitations.v1.read-model';
-import { EventStoreProjectionStateProvider } from '@coders-board-library/eventstore-projections/api/event-store-projection-state-provider';
-import { PROJECTION_CURRENT_PENDING_INVITATIONS } from '../../projection/projection-names';
+} from '../../projection/pending-invitations/v1/pending-invitations-v1-read.model';
+import { EventStoreProjectionResultProvider } from '@coders-board-library/eventstore-projections/api/event-store-projection-result-provider';
+import {
+  PROJECTION_CANCELLED_INVITATIONS_V1,
+  PROJECTION_PENDING_INVITATIONS_V1,
+} from '../../projection/projection-names';
+import {
+  CancelledInvitation,
+  CancelledInvitationsV1ReadModel,
+} from '../../projection/cancelled-invitations/v1/cancelled-invitations-v1-read.model';
 
 export class EventStoreProjectionsInvitingApplicantInvitationRepository
   implements ApplicantInvitationRepository {
   constructor(
-    private readonly eventStoreProjectionStateProvider: EventStoreProjectionStateProvider,
+    private readonly eventStoreProjectionStateProvider: EventStoreProjectionResultProvider,
   ) {}
 
   findAllPending(): Promise<PendingInvitation[]> {
     return this.eventStoreProjectionStateProvider
-      .projectionState<CurrentPendingInvitationsV1ReadModel>(
-        PROJECTION_CURRENT_PENDING_INVITATIONS,
+      .projectionResult<PendingInvitationsV1ReadModel>(
+        PROJECTION_PENDING_INVITATIONS_V1,
       )
       .then(projectionState => projectionState.content.pendingInvitations);
+  }
+
+  findAllCancelled(): Promise<CancelledInvitation[]> {
+    return this.eventStoreProjectionStateProvider
+      .projectionResult<CancelledInvitationsV1ReadModel>(
+        PROJECTION_CANCELLED_INVITATIONS_V1,
+      )
+      .then(projectionState => projectionState.content.cancelledInvitations);
   }
 }

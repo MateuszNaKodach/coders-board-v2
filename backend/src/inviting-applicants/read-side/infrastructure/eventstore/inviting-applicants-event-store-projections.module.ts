@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { EventStoreProjectionsModule } from '@coders-board-library/eventstore-projections';
 import { ProjectionName } from '@coders-board-library/eventstore-projections/projection/projection-name';
-import { EventStoreProjectionStateProvider } from '@coders-board-library/eventstore-projections/api/event-store-projection-state-provider';
+import { EventStoreProjectionResultProvider } from '@coders-board-library/eventstore-projections/api/event-store-projection-result-provider';
 import { EventStoreProjectionsInvitingApplicantInvitationRepository } from './event-store-projections-inviting-applicant-invitation-repository';
 import { APPLICANT_INVITATION_REPOSITORY } from '../../../write-side/domain/applicant-invitation.repository';
 
@@ -27,9 +27,9 @@ export class InvitingApplicantsEventStoreProjectionsModule {
       module: InvitingApplicantsEventStoreProjectionsModule,
       providers: [
         {
-          inject: [EventStoreProjectionStateProvider],
+          inject: [EventStoreProjectionResultProvider],
           useFactory: (
-            eventStoreProjectionStateProvider: EventStoreProjectionStateProvider,
+            eventStoreProjectionStateProvider: EventStoreProjectionResultProvider,
           ) =>
             new EventStoreProjectionsInvitingApplicantInvitationRepository(
               eventStoreProjectionStateProvider,

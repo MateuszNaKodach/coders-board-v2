@@ -76,8 +76,8 @@ export class HttpProjectionsManager implements ProjectionsManager {
       );
   }
 
-  getState<T>(name: string): Observable<T | undefined> {
-    return this.httpService.get<T>(`/projection/${name}/state`).pipe(
+  getResult<T>(name: string): Observable<T | undefined> {
+    return this.httpService.get<T>(`/projection/${name}/result`).pipe(
       map(response => (response.status === 200 ? response.data : undefined)),
       catchError(() => of(undefined)),
     );

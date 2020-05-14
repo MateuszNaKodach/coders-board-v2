@@ -7,16 +7,16 @@ import { ProjectionSource } from './projection-source';
 export class ProjectionContext {
   constructor(private readonly projectionsManager: ProjectionsManager) {}
 
-  async projectionState<T>(name: ProjectionName): Promise<ProjectionState<T>> {
+  async projectionResult<T>(name: ProjectionName): Promise<ProjectionState<T>> {
     return this.projectionsManager
-      .getState<ProjectionState<T>>(name.raw)
+      .getResult<ProjectionState<T>>(name.raw)
       .toPromise();
   }
 
-  projectionStateObservable<T>(
+  projectionResultObservable<T>(
     name: ProjectionName,
   ): Observable<ProjectionState<T>> {
-    return this.projectionsManager.getState<ProjectionState<T>>(name.raw);
+    return this.projectionsManager.getResult<ProjectionState<T>>(name.raw);
   }
 
   async enableProjection(name: ProjectionName): Promise<void> {

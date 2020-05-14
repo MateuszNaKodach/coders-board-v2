@@ -16,7 +16,7 @@ declare type RecordedEvent = {
 declare type HandlerFunction = (
   state: ProjectionState,
   event: RecordedEvent,
-) => void;
+) => ProjectionState;
 
 declare type Handlers = {
   $init?: () => ProjectionState;
@@ -57,8 +57,8 @@ interface WhenFilter {
 
 interface TransformByTransformation {
   /**
-   * Allows only the given events of a particular type to pass through the projection.
-   * @param handlers handlers
+   * Allows transform projection state for different result.
+   * @param state projection state after handlers
    * @example
    ```typescript
    fromStream('account-1')
@@ -72,7 +72,7 @@ interface TransformByTransformation {
 })
    ```
    */
-  transformBy(state: any): void;
+  transformBy(state: ProjectionState): ProjectionState;
 }
 
 interface PartitionByFilter {

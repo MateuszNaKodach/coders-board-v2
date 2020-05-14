@@ -65,5 +65,23 @@
         "watchAssets": true
       }
     ]
-  }
+  },
+  "plugins": [
+    {
+      "name": "@nestjs/swagger/plugin",
+      "options": {
+        "classValidatorShim": true,
+        "dtoFileNameSuffix": [
+          ".request-body.ts",
+          ".response-body.ts"
+        ],
+        "controllerFileNameSuffix": [
+          ".controller.ts",
+          ".rest-controller.ts",
+          ".write-side-controller.ts",
+          ".read-side-controller.ts"
+        ]
+      }
+    }
+  ]
 }

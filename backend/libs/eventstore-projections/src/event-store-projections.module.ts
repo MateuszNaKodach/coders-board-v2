@@ -22,7 +22,7 @@ import {
   EventStoreProjectionsModuleConfig,
   PROJECTIONS,
 } from './event-store-projections.module-config';
-import { EventStoreProjectionStateProvider } from '@coders-board-library/eventstore-projections/api/event-store-projection-state-provider';
+import { EventStoreProjectionResultProvider } from '@coders-board-library/eventstore-projections/api/event-store-projection-result-provider';
 
 const PROJECTIONS_DIR = Symbol('PROJECTIONS_DIR');
 
@@ -52,9 +52,9 @@ const PROJECTIONS_DIR = Symbol('PROJECTIONS_DIR');
     {
       inject: [ProjectionContext],
       useFactory: (projectionContext: ProjectionContext) => {
-        return new EventStoreProjectionStateProvider(projectionContext);
+        return new EventStoreProjectionResultProvider(projectionContext);
       },
-      provide: EventStoreProjectionStateProvider,
+      provide: EventStoreProjectionResultProvider,
     },
   ],
 })
@@ -77,7 +77,7 @@ export class EventStoreProjectionsModule implements OnModuleInit {
       imports: [eventStoreHttpModule],
       module: EventStoreProjectionsModule,
       providers: [projections, projectionsDir],
-      exports: [EventStoreProjectionStateProvider],
+      exports: [EventStoreProjectionResultProvider],
     };
   }
 
