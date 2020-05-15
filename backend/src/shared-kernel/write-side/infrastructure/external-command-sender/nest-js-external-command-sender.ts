@@ -6,6 +6,6 @@ export class NestJsExternalCommandSender implements ExternalCommandSender {
   constructor(private readonly commandBus: CommandBus) {}
 
   send<T extends PublicCommand>(command: T) {
-    return this.commandBus.execute(command);
+    return this.commandBus.execute<T>(command);
   }
 }

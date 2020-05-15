@@ -137,20 +137,14 @@ export class EventStoreEventStorage implements EventStorage {
   ): Promise<void> {
     const eventsInGivenStream = events.filter(event => event.streamId === eventStreamName.streamId);
     const eventsToStore = eventsInGivenStream.map(e => EventStoreEventStorage.toStorageEventDto(e));
-    return this.storeEventsInEventStore(expectedVersion, eventsToStore, eventStreamName)
-      .toPromise()
-      .then();
+    return this.storeEventsInEventStore(expectedVersion, eventsToStore, eventStreamName).toPromise().then();
   }
 
   readEvents(eventStreamName: EventStreamName, toDate?: Date) {
     const maxEventDate = toDate ? toDate : this.time();
     return this.getEventsBy(eventStreamName).then(events =>
       events
-        .filter(it =>
-          moment(it.occurredAt)
-            .utc()
-            .isSameOrBefore(moment(maxEventDate).utc()),
-        )
+        .filter(it => moment(it.occurredAt).utc().isSameOrBefore(moment(maxEventDate).utc()))
         .sort((e1, e2) => moment(e1.occurredAt).valueOf() - moment(e2.occurredAt).valueOf()),
     );
   }

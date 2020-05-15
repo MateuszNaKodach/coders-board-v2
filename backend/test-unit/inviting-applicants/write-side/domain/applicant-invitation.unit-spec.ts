@@ -6,10 +6,10 @@ import { LastName } from '../../../../src/inviting-applicants/write-side/domain/
 import { ApplicantInvitation } from '../../../../src/inviting-applicants/write-side/domain/applicant-invitation.aggregate-root';
 import { ApplicantInvitationId } from '../../../../src/inviting-applicants/write-side/domain/applicant-invitation-id.valueobject';
 import { expectDomainEvent } from '../../../../src/shared-kernel/write-side/domain/aggregate-root.test-utils';
-import {ApplicantInvited} from "../../../../src/inviting-applicants/write-side/domain/event/applicant-invited.domain-event";
-import {InvitingApplicantFailed} from "../../../../src/inviting-applicants/write-side/domain/event/inviting-applicant-failed.domain-event";
-import {InvitationCancelled} from "../../../../src/inviting-applicants/write-side/domain/event/invitation-cancelled.domain-events";
-import {CancelingApplicantInvitationFailed} from "../../../../src/inviting-applicants/write-side/domain/event/cancelling-applicant-invitation-failed.domain-event";
+import { ApplicantInvited } from '../../../../src/inviting-applicants/write-side/domain/event/applicant-invited.domain-event';
+import { InvitingApplicantFailed } from '../../../../src/inviting-applicants/write-side/domain/event/inviting-applicant-failed.domain-event';
+import { InvitationCancelled } from '../../../../src/inviting-applicants/write-side/domain/event/invitation-cancelled.domain-events';
+import { CancelingApplicantInvitationFailed } from '../../../../src/inviting-applicants/write-side/domain/event/cancelling-applicant-invitation-failed.domain-event';
 
 const person = {
   janKowalski: {
@@ -51,11 +51,7 @@ describe('Feature: Applicant invitation', () => {
     describe('Given: An applicant which was invited', () => {
       beforeEach(() => {
         applicantInvitation.loadFromHistory([
-          ApplicantInvited.newFrom(
-            applicantInvitationId,
-            timeProvider.currentDate(),
-            { ...person.janKowalski },
-          ),
+          ApplicantInvited.newFrom(applicantInvitationId, timeProvider.currentDate(), { ...person.janKowalski }),
         ]);
       });
 
@@ -80,11 +76,7 @@ describe('Feature: Applicant invitation', () => {
     describe('Given: An applicant which was invited', () => {
       beforeEach(() => {
         applicantInvitation.loadFromHistory([
-          ApplicantInvited.newFrom(
-            applicantInvitationId,
-            timeProvider.currentDate(),
-            { ...person.janKowalski },
-          ),
+          ApplicantInvited.newFrom(applicantInvitationId, timeProvider.currentDate(), { ...person.janKowalski }),
         ]);
       });
 

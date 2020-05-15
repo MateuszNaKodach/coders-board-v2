@@ -4,7 +4,8 @@ import {
   ApplicantInvitationCancelledPublicEvent,
   ApplicantInvitedPublicEvent,
   CancelApplicantInvitationPublicCommand,
-  expectLastPublishedEventAsync, InviteApplicantPublicCommand,
+  expectLastPublishedEventAsync,
+  InviteApplicantPublicCommand,
 } from '@coders-board-library/public-messages';
 import {
   EventPublisherSpy,
@@ -16,8 +17,8 @@ import {
 } from '../../../src/shared-kernel/write-side/application/external-event-publisher/external-event-publisher';
 import {
   EXTERNAL_COMMAND_SENDER,
-  ExternalCommandSender
-} from "../../../src/shared-kernel/write-side/application/external-command-sender/external-command-sender";
+  ExternalCommandSender,
+} from '../../../src/shared-kernel/write-side/application/external-command-sender/external-command-sender';
 
 /**
  * Test of InvitingApplicants. In tests of logic we bypass presentation layer.

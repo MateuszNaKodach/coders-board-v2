@@ -21,15 +21,8 @@ class SampleAggregateId implements AggregateId {
 }
 
 export namespace SampleDomainEvent {
-  abstract class AbstractSampleAbstractDomainEvent<
-    P = any
-  > extends AbstractDomainEvent<SampleAggregateId, P> {
-    constructor(
-      eventId: DomainEventId,
-      occurredAt: Date,
-      aggregateId: SampleAggregateId,
-      data: P,
-    ) {
+  abstract class AbstractSampleAbstractDomainEvent<P = any> extends AbstractDomainEvent<SampleAggregateId, P> {
+    constructor(eventId: DomainEventId, occurredAt: Date, aggregateId: SampleAggregateId, data: P) {
       super(eventId, occurredAt, aggregateId, data);
     }
 
@@ -43,31 +36,15 @@ export namespace SampleDomainEvent {
     numberVariable: number;
   };
 
-  export class SomethingHappened extends AbstractSampleAbstractDomainEvent<
-    SomethingHappenedData
-  > {
-    static newFrom(
-      aggregateId: SampleAggregateId,
-      occurredAt: Date,
-      data: SomethingHappenedData,
-    ) {
-      return new SomethingHappened(
-        DomainEventId.generate(),
-        occurredAt,
-        aggregateId,
-        data,
-      );
+  export class SomethingHappened extends AbstractSampleAbstractDomainEvent<SomethingHappenedData> {
+    static newFrom(aggregateId: SampleAggregateId, occurredAt: Date, data: SomethingHappenedData) {
+      return new SomethingHappened(DomainEventId.generate(), occurredAt, aggregateId, data);
     }
   }
 
   export class SomethingWithoutEventHandlerHappened extends AbstractSampleAbstractDomainEvent<{}> {
     static newFrom(aggregateId: SampleAggregateId, occurredAt: Date, data: {}) {
-      return new SomethingWithoutEventHandlerHappened(
-        DomainEventId.generate(),
-        occurredAt,
-        aggregateId,
-        data,
-      );
+      return new SomethingWithoutEventHandlerHappened(DomainEventId.generate(), occurredAt, aggregateId, data);
     }
   }
 }
@@ -79,10 +56,7 @@ class SampleAggregateRoot extends AbstractAggregateRoot<SampleAggregateId> {
     super(timeProvider);
   }
 
-  doSomething(
-    id: SampleAggregateId,
-    command: { stringVariable: string; numberVariable: number },
-  ) {
+  doSomething(id: SampleAggregateId, command: { stringVariable: string; numberVariable: number }) {
     this.apply(
       SampleDomainEvent.SomethingHappened.newFrom(id, this.currentDate, {
         ...command,
@@ -96,13 +70,7 @@ class SampleAggregateRoot extends AbstractAggregateRoot<SampleAggregateId> {
   }
 
   doSomethingWithoutEventHandler() {
-    this.apply(
-      SampleDomainEvent.SomethingWithoutEventHandlerHappened.newFrom(
-        this.id,
-        this.currentDate,
-        {},
-      ),
-    );
+    this.apply(SampleDomainEvent.SomethingWithoutEventHandlerHappened.newFrom(this.id, this.currentDate, {}));
   }
 }
 
@@ -138,12 +106,8 @@ describe('Feature: Event Sourced Aggregate Root', () => {
 
     describe('When: Invoke method without handler', () => {
       it('Then: Event should not be applied', () => {
-        expect(() =>
-          sampleAggregateRoot.doSomethingWithoutEventHandler(),
-        ).toThrow(
-          new Error(
-            'Handler for domain event SomethingWithoutEventHandlerHappened not found!',
-          ),
+        expect(() => sampleAggregateRoot.doSomethingWithoutEventHandler()).toThrow(
+          new Error('Handler for domain event SomethingWithoutEventHandlerHappened not found!'),
         );
       });
     });
