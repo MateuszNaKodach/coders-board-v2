@@ -28,6 +28,8 @@
     "@coders-board-library/axios-utils/(.*)": "<rootDir>/../libs/axios-utils/src/$1",
     "@coders-board-library/axios-utils": "<rootDir>/../libs/axios-utils/src",
     "@coders-board-library/eventstore-projections/(.*)": "<rootDir>/../libs/eventstore-projections/src/$1",
-    "@coders-board-library/eventstore-projections": "<rootDir>/../libs/eventstore-projections/src"
+    "@coders-board-library/eventstore-projections": "<rootDir>/../libs/eventstore-projections/src",
+    "@coders-board-library/typescript-sdk/(.*)": "<rootDir>/../libs/typescript-sdk/src/$1",
+    "@coders-board-library/typescript-sdk": "<rootDir>/../libs/typescript-sdk/src"
   }
 }

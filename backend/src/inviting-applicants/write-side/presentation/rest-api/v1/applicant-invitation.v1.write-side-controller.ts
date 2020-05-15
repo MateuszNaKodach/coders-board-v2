@@ -9,6 +9,7 @@ import { ApiCreatedResponse, ApiNoContentResponse, ApiTags } from '@nestjs/swagg
 import { InviteApplicant } from '../../../application/internal-command/invite-applicant.internal-command';
 import { CancelApplicantInvitation } from '../../../application/internal-command/cancel-applicant-invitation.internal-command';
 import { v4 as uuid } from 'uuid';
+import { CancelApplicantInvitationRequestParams } from './request-params/cancel-applicant-invitation.request-params';
 
 @ApiTags('inviting-applicants')
 @Controller('/rest-api/v1/applicant-invitations')
@@ -36,7 +37,7 @@ export class ApplicantInvitationV1WriteSideController {
   })
   @HttpCode(204)
   @Post(':invitationId/cancellation')
-  postApplicantInvitationCancellation(@Param('invitationId') invitationId: string) {
-    return this.internalCommandBus.sendAndWait(new CancelApplicantInvitation(invitationId));
+  postApplicantInvitationCancellation(@Param() params: CancelApplicantInvitationRequestParams) {
+    return this.internalCommandBus.sendAndWait(new CancelApplicantInvitation(params.invitationId));
   }
 }

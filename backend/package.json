@@ -51,6 +51,7 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "moment": "^2.25.3",
+    "monet": "^0.9.1",
     "pg": "^8.2.0",
     "postgres": "^1.0.2",
     "reflect-metadata": "^0.1.13",
@@ -115,7 +116,9 @@
       "@coders-board-library/axios-utils/(.*)": "<rootDir>/libs/axios-utils/src/$1",
       "@coders-board-library/axios-utils": "<rootDir>/libs/axios-utils/src",
       "@coders-board-library/eventstore-projections/(.*)": "<rootDir>/libs/eventstore-projections/src/$1",
-      "@coders-board-library/eventstore-projections": "<rootDir>/libs/eventstore-projections/src"
+      "@coders-board-library/eventstore-projections": "<rootDir>/libs/eventstore-projections/src",
+      "@coders-board-library/typescript-sdk/(.*)": "<rootDir>/libs/typescript-sdk/src/$1",
+      "@coders-board-library/typescript-sdk": "<rootDir>/libs/typescript-sdk/src"
     }
   },
   "eslintIgnore": [

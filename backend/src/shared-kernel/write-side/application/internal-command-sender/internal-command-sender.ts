@@ -6,5 +6,5 @@ export interface InternalCommandSender {
   sendAndWait<R = void>(command: InternalCommand): Promise<R>;
 
   //TODO: Add inbox and ack
-  sendAndForget(command: InternalCommand): void;
+  sendAndForget(command: InternalCommand): Promise<void>;
 }

@@ -9,7 +9,8 @@ export class NestJsInternalCommandSender implements InternalCommandSender {
     return this.commandBus.execute(command);
   }
 
-  sendAndForget<T extends InternalCommand>(command: T) {
+  sendAndForget<T extends InternalCommand>(command: T): Promise<void> {
     this.commandBus.execute(command).then();
+    return Promise.resolve();
   }
 }

@@ -55,6 +55,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/eventstore-projections/tsconfig.lib.json"
       }
+    },
+    "typescript-sdk": {
+      "type": "library",
+      "root": "libs/typescript-sdk",
+      "entryFile": "index",
+      "sourceRoot": "libs/typescript-sdk/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/typescript-sdk/tsconfig.lib.json"
+      }
     }
   },
   "compilerOptions": {

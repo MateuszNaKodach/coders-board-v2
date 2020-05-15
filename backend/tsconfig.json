@@ -46,6 +46,12 @@
       ],
       "@coders-board-library/eventstore-projections/*": [
         "libs/eventstore-projections/src/*"
+      ],
+      "@coders-board-library/typescript-sdk": [
+        "libs/typescript-sdk/src"
+      ],
+      "@coders-board-library/typescript-sdk/*": [
+        "libs/typescript-sdk/src/*"
       ]
     }
   },
