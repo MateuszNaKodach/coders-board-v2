@@ -1,3 +1,5 @@
+name: CodersBoard backend Continuous Integration pipeline
+
 on:
   push:
     paths:
