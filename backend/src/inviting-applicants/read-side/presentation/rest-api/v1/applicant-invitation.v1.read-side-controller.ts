@@ -1,9 +1,10 @@
 import { Controller, Get, Inject } from '@nestjs/common';
-import { PendingInvitation } from '../../../projection/pending-invitations/v1/pending-invitations-v1-read.model';
+import { PendingInvitation } from '../../../readmodel/pending-invitations/v1/pending-invitations-v1-read.model';
 import { INTERNAL_QUERY_BUS, InternalQueryBus } from '../../../../../shared-kernel/read-side/query/internal-query-bus';
 import * as InvitingApplicantsQuery from '../../../query/inviting-applicants.query';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { CancelledInvitation } from '../../../projection/cancelled-invitations/v1/cancelled-invitations-v1-read.model';
+import { CancelledInvitation } from '../../../readmodel/cancelled-invitations/v1/cancelled-invitations-v1-read.model';
+import {ApplicantInvitationSummary} from "../../../readmodel/applicant-invitation-summary/applicant-invitation-summary";
 
 @ApiTags('inviting-applicants')
 @Controller('/rest-api/v1/applicant-invitations')
@@ -18,7 +19,7 @@ export class ApplicantInvitationV1ReadSideController {
     type: [PendingInvitation],
   })
   @Get('/pending')
-  getAllPendingApplicantInvitations(): Promise<PendingInvitation[]> {
+  getAllPendingApplicantInvitations(): Promise<ApplicantInvitationSummary[]> {
     return this.internalQueryBus.execute(InvitingApplicantsQuery.AllPending);
   }
 
@@ -27,7 +28,7 @@ export class ApplicantInvitationV1ReadSideController {
     type: [CancelledInvitation],
   })
   @Get('/cancelled')
-  getAllCancelledApplicantInvitations(): Promise<CancelledInvitation[]> {
+  getAllCancelledApplicantInvitations(): Promise<ApplicantInvitationSummary[]> {
     return this.internalQueryBus.execute(InvitingApplicantsQuery.AllCancelled);
   }
 }
