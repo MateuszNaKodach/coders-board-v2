@@ -15,6 +15,10 @@ export class ApplicantInvitedEventPropagator implements IEventHandler<ApplicantI
   ) {}
 
   handle(event: ApplicantInvited) {
+    // only for testing...
+    console.log(`\x1b[97m\x1b[101m Event...: \x1b[0m`, event); //ANSI escape codes
+    // tu chciałem na próbę skorzystać z EmailSenderProvider, bo i tak nie mam pojącia skąd i jakim sposobem
+    // to wywoływać, ale zrobienie @Inject w tym miejscu, jeśli w ogóle to dobyr kierunek, mnie przerasta...
     //TODO: Saving in outbox and publishing after in batches
     return this.externalEventPublisher.publish(
       new ApplicantInvitedPublicEvent(event.eventId.raw, event.occurredAt, event.aggregateId.raw, {
