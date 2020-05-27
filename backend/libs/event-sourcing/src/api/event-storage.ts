@@ -16,4 +16,5 @@ export interface EventStorage {
   ): Promise<any>;
 
   readEvents(eventStreamName: EventStreamName, toDate?: Date): Promise<StorageEventEntry[]>;
+
 }

@@ -1,6 +1,6 @@
 import { Observable, throwError } from 'rxjs';
 import { timer } from 'rxjs';
-import { mergeMap, finalize } from 'rxjs/operators';
+import { mergeMap, finalize, catchError } from 'rxjs/operators';
 
 //retryWhen(errors => errors.pipe(delay(1000), take(10), concatMap(throwError))
 //TODO: Refactor

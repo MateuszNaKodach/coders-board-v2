@@ -10,6 +10,8 @@ import { EventSourcingModuleConfigFactory } from '@coders-board-library/event-so
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { EventStoreEventStorage } from '@coders-board-library/event-sourcing/event-storage/eventstore/event-storage.eventstore';
 import uuid = require('uuid');
+import { EVENT_STORAGE_SUBSCRIPTIONS } from '@coders-board-library/event-sourcing/api/event-storage-subscriptions';
+import { EventStoreEventStorageSubscriptions } from '@coders-board-library/event-sourcing/event-storage/eventstore/event-storage-subscriptions.eventstore';
 
 const EVENT_SOURCING_CONFIG = Symbol();
 const DEFAULT_EVENT_STORAGE_NAME = 'public';
@@ -90,6 +92,12 @@ export class EventSourcingModule {
           provide: EVENT_STORAGE,
           useFactory: (config: EventSourcingModuleConfig, httpService: HttpService) =>
             new EventStoreEventStorage(config.time, httpService),
+          inject: [EVENT_SOURCING_CONFIG, HttpService],
+        },
+        {
+          provide: EVENT_STORAGE_SUBSCRIPTIONS,
+          useFactory: (config: EventSourcingModuleConfig, httpService: HttpService) =>
+            new EventStoreEventStorageSubscriptions(config.time, httpService),
           inject: [EVENT_SOURCING_CONFIG, HttpService],
         },
       ],

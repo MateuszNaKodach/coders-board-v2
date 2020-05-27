@@ -115,19 +115,17 @@ export class EventStoreEventStorage implements EventStorage {
     expectedStreamVersion: number,
     newStreamVersion: number,
   ) {
-    if (!eventStreamName.streamGroup.includes('PUBLIC')) {
-      console.log('DOMAIN EVENT PUBLISHED TO EVENT STORE');
-      console.table(
-        eventsToStore.map(storageEventDto => {
-          return {
-            eventStreamName: eventStreamName.raw,
-            eventType: storageEventDto.eventType,
-            expectedStreamVersion,
-            newStreamVersion,
-          };
-        }),
-      );
-    }
+    console.log(`${eventsToStore.length} EVENT(S) PUBLISHED TO EVENT STORE`);
+    console.table(
+      eventsToStore.map(storageEventDto => {
+        return {
+          eventStreamName: eventStreamName.raw,
+          eventType: storageEventDto.eventType,
+          expectedStreamVersion,
+          newStreamVersion,
+        };
+      }),
+    );
   }
 
   storeAll(
