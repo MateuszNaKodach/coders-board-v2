@@ -6,14 +6,16 @@ import { HttpService, HttpStatus } from '@nestjs/common';
 import { Time } from '@coders-board-library/event-sourcing/time.type';
 import { flatMap, map, tap } from 'rxjs/operators';
 import { AxiosResponse } from 'axios';
+import { SubscriptionInfo } from '@coders-board-library/event-sourcing/api/subscription-info';
+import { fromArray } from 'rxjs/internal/observable/fromArray';
 
 export class EventStoreEventStorageSubscriptions implements EventStorageSubscriptions {
   constructor(private readonly time: Time, private readonly httpService: HttpService) {}
 
-  observeFor(eventStreamName: EventStreamName | string, subscriberGroupName: string): Observable<StorageEventEntry> {
+  observeFor(eventStreamName: EventStreamName, subscriberGroupName: string): Observable<StorageEventEntry> {
     return this.createPersistentSubscription(eventStreamName, subscriberGroupName).pipe(
       map(response => (response.status === HttpStatus.CREATED ? response : throwError(response))),
-      flatMap(response => this.connectToPersistentSubscription(eventStreamName, subscriberGroupName)),
+      flatMap(response => this.connectToPersistentSubscriptionForEvent(eventStreamName, subscriberGroupName)),
       flatMap(atomResponse => (atomResponse.status !== 200 ? throwError(atomResponse) : of(atomResponse))),
       map(atomResponse => this.atomEntries(atomResponse)),
       map(atomEntries => atomEntries[0]),
@@ -26,15 +28,37 @@ export class EventStoreEventStorageSubscriptions implements EventStorageSubscrip
     );
   }
 
+  observeForBatch(
+    eventStreamName: EventStreamName,
+    subscriberGroupName: string,
+    batchSize: number,
+  ): Observable<StorageEventEntry> {
+    return this.createPersistentSubscription(eventStreamName, subscriberGroupName).pipe(
+      map(response => (response.status === HttpStatus.CREATED ? response : throwError(response))),
+      flatMap(response =>
+        this.connectToPersistentSubscriptionForBatch(eventStreamName, subscriberGroupName, batchSize),
+      ),
+      flatMap(atomResponse => (atomResponse.status !== 200 ? throwError(atomResponse) : of(atomResponse))),
+      map(atomResponse => this.atomEntries(atomResponse)),
+      flatMap(atomEntries => fromArray(atomEntries)),
+      flatMap(atomResponse => {
+        const ackUri = this.getAckUri(atomResponse);
+        return this.httpService
+          .post(ackUri, {}, { headers: { 'Content-Type': 'application/json' } })
+          .pipe(flatMap(response => of(this.toStorageEventEntry(atomResponse))));
+      }),
+    );
+  }
+
   subscribeFor(
-    eventStreamName: EventStreamName | string,
+    eventStreamName: EventStreamName,
     subscriberGroupName: string,
     subscriber: (event: StorageEventEntry) => unknown,
   ): Promise<void> {
     return this.createPersistentSubscription(eventStreamName, subscriberGroupName)
       .pipe(
         map(response => (response.status === HttpStatus.CREATED ? response : throwError(response))),
-        flatMap(response => this.connectToPersistentSubscription(eventStreamName, subscriberGroupName)),
+        flatMap(response => this.connectToPersistentSubscriptionForEvent(eventStreamName, subscriberGroupName)),
         flatMap(atomResponse => (atomResponse.status !== 200 ? throwError(atomResponse) : of(atomResponse))),
         map(atomResponse => this.atomEntries(atomResponse)),
         map(atomEntries => atomEntries[0]),
@@ -58,19 +82,29 @@ export class EventStoreEventStorageSubscriptions implements EventStorageSubscrip
     return atomEvent.links.filter(it => it.relation === 'ack').map(it => it.uri)[0];
   }
 
-  subscribeForBatches(
-    eventStreamName: EventStreamName | string,
-    subscriberGroupName: string,
-  ): Observable<StorageEventEntry[]> {
+  subscribeForBatches(eventStreamName: EventStreamName, subscriberGroupName: string): Observable<StorageEventEntry[]> {
     return undefined;
   }
 
-  private connectToPersistentSubscription(
-    eventStreamName: EventStreamName | string,
+  private connectToPersistentSubscriptionForEvent(
+    eventStreamName: EventStreamName,
     subscriberGroupName: string,
   ): Observable<AxiosResponse<StorageEventEntry>> {
     const streamName = eventStreamName instanceof EventStreamName ? eventStreamName.raw : eventStreamName;
     return this.httpService.get(`/subscriptions/${streamName}/${subscriberGroupName}?embed=body`, {
+      headers: {
+        Accept: 'application/vnd.eventstore.competingatom+json',
+      },
+    });
+  }
+
+  private connectToPersistentSubscriptionForBatch(
+    eventStreamName: EventStreamName,
+    subscriberGroupName: string,
+    batchSize = 1,
+  ): Observable<AxiosResponse<StorageEventEntry[]>> {
+    const streamName = eventStreamName instanceof EventStreamName ? eventStreamName.raw : eventStreamName;
+    return this.httpService.get(`/subscriptions/${streamName}/${subscriberGroupName}/${batchSize}?embed=body`, {
       headers: {
         Accept: 'application/vnd.eventstore.competingatom+json',
       },
@@ -114,5 +148,11 @@ export class EventStoreEventStorageSubscriptions implements EventStorageSubscrip
 
   private atomEntries(response: AxiosResponse<any>): any[] {
     return response.data.entries;
+  }
+
+  subscriptionInfo(eventStreamName: EventStreamName, subscriberGroupName: string): Observable<SubscriptionInfo> {
+    return this.httpService
+      .get<SubscriptionInfo>(`/subscriptions/${eventStreamName.raw}/${subscriberGroupName}/info`)
+      .pipe(map(response => response.data));
   }
 }

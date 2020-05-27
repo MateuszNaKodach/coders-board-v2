@@ -9,7 +9,7 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "testMatch": [ "**/test-integration/**/*.[jt]s?(x)", "**/?(*.)+(it-spec|it-test).[jt]s?(x)" ],
+  "testMatch": [ "**/test-integration/**/?(*.)+(it-spec|it-test).[jt]s?(x)" ],
   "roots": [
     "<rootDir>/../src/",
     "<rootDir>/../libs/",
